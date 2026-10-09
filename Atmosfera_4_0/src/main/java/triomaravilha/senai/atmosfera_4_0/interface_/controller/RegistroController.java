@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("adm/registro")
+@RequestMapping("/registro")
 @RequiredArgsConstructor
 public class RegistroController {
     private final RepositoryRegistro repositoryRegistro;
