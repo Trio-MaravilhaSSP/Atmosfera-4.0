@@ -12,7 +12,7 @@ public interface AtuadorMapper {
         return new AtuadorResponse(
                 model.getId_atuador(),
                 model.getNome_atuador(),
-                DispositivoResponse.fromModel(model.getId_dispositivo_fk()),
+                model.getId_dispositivo_fk(),
                 model.getStatus_atual(),
                 model.getUltimo_comando()
         );
@@ -22,7 +22,7 @@ public interface AtuadorMapper {
         if (request == null) return null;
 
         return new AtuadorModel(
-            request.dispositivo().toModel(),
+            request.dispositivo(),
             request.nomeAtuador(),
             request.status(),
             request.ultimoComando()

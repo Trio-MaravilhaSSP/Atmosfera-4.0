@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public record RegistroRequest(
-     DispositivoRequest dispositivo,
+     int dispositivo,
      Timestamp timestamp,
      LocalDateTime dataHora,
      float temperatura,
