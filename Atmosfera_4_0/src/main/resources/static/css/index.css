@@ -18,6 +18,11 @@
     --cor-fundo-body-dark: #000;
 }
 
+@font-face {
+    font-family: 'Inter';
+    src: url('../font/Inter.ttf') format('truetype');
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -26,6 +31,7 @@
 
 html {
     height: 100%;
+    font-family: 'Inter', sans-serif;
 }
 
 body {
