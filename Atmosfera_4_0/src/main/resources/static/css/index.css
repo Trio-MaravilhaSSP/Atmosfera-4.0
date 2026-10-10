@@ -1,5 +1,9 @@
 :root {
     --border-rad: 15px;
+    --box-shadow-light: 2px 4px 4px 1px rgba(255, 255, 255, 0.4);
+    --box-shadow-dark: 2px 4px 4px 1px rgba(87, 87, 87, 0.4);
+
+    --escurecer-tela: rgba(0, 0, 0, 0.5);
 
     --size-font-title: 32px;
     --size-font-subtitle: 24px;
@@ -16,6 +20,7 @@
 
     --cor-fundo-body-light: #d9d9d9;
     --cor-fundo-body-dark: #000;
+    --image-fundo-body: url('../images/Senai_Background.jpg');
 }
 
 @font-face {
@@ -139,6 +144,38 @@ header {
             }
         }
     }
+
+    .Tooltip-Config {
+        position: relative;
+        /* display: none; */
+
+        .Overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 998;
+
+            width: 100%;
+            height: 100%;
+
+            background: var(--escurecer-tela);
+        }
+
+        .Tooltip-Conteudo {
+            position: absolute;
+            top: 122px;
+            right: 120px;
+            z-index: 999;
+
+            width: 500px;
+            height: 174px;
+            
+            border-radius: var(--border-rad);
+
+            box-shadow: var(--box-shadow-light);
+            background: var(--cor-fundo-card-light);
+        }
+    }
 }
 
 .Dashboard-Container {
@@ -217,6 +254,81 @@ header {
                     }
                 }
             }
+        }
+    }
+
+    main {
+        position: relative;
+        overflow: hidden;
+
+        width: 91.8%;
+
+        display: flex;
+        flex-direction: row;
+        background-color: #000;
+
+        section {
+            width: 100%;
+            height: 100%;
+        }
+
+        .section-content {
+            display: none;
+
+
+            .Cards-container {
+                height: 100%;
+
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 550px));
+                gap: 0px 128px;
+
+                align-items: center;
+                justify-content: center;
+
+                .Card {
+                    height: 223px;
+
+
+                    border-radius: var(--border-rad);
+
+                    box-shadow: var(--box-shadow-light);
+                    background: var(--cor-fundo-card-light);
+
+                    .Conteudo {
+                        img {
+                            width: 92.87px;
+                            height: 92.87px;
+                        }
+                    }
+                }
+            }
+        }
+
+        .active {
+            display: block;
+        }
+
+        &::before {
+            content: '';
+
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+
+            width: 100%;
+            height: 100%;
+
+            opacity: 0.25;
+            background-image: var(--image-fundo-body);
+            background-size: cover;
+            background-position: center;
+        }
+
+        &>* {
+            position: relative;
+            z-index: 1;
         }
     }
 }
