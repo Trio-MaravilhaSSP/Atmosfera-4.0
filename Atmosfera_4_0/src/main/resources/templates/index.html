@@ -7,15 +7,15 @@
     <title>SENAI - Atmosfera 4.0</title>
 
     <link rel="shortcut icon" href="../static/images/Senai_Perfil.png" type="image/x-icon">
-    <link rel="stylesheet" href="../static/css/index.css"/>
+    <link rel="stylesheet" href="../static/css/index.css" />
 </head>
 
-<body>
+<body class="light">
     <header>
         <navbar>
 
             <div class="Logo">
-                <img src="../static/images/Senai_Logo.png" alt="Senai_Logo" width="256" height="66"/>
+                <img src="../static/images/Senai_Logo.png" alt="Senai_Logo" width="256" height="66" />
             </div>
 
             <div class="Options">
@@ -37,7 +37,7 @@
 
                 <div class="Option">
                     <img src="../static/images/icons/cogwheel-icon.png" alt="Config_Icon" />
-                    <p>Configurações</p>
+                    <p onclick="toggleTooltipConfig()">Configurações</p>
                 </div>
 
             </div>
@@ -45,10 +45,22 @@
         </navbar>
 
         <div class="Tooltip-Config">
-            <div class="Overlay"></div>
+            <div class="Overlay" onclick="toggleTooltipConfig()"></div>
 
             <div class="Tooltip-Conteudo">
-                
+
+                <div class="Tema">
+                    <p id="Tooltip-P-Tema"></p>
+
+                    <button onclick="trocarTema()">Trocar</button>
+                </div>
+
+                <div class="Image">
+                    <p id="Tooltip-P-Image"></p>
+
+                    <button id="Tooltip-Btn-Image" onclick="toggleBackgroundImage()"></button>
+                </div>
+
             </div>
         </div>
     </header>
@@ -83,12 +95,12 @@
 
         </aside>
 
-        <main>
+        <main class="imageOn">
 
             <section id="sec-inicio" class="section-content active">
 
                 <div class="Cards-container">
-                    
+
                     <div class="Card">
                         <div class="Temp">
                             <h1>Temperatura</h1>
@@ -186,6 +198,6 @@
     </div>
 
 </body>
-<script src="../static/js/index.js" type="module"></script>
+<script src="../static/js/index.js"></script>
 
 </html>

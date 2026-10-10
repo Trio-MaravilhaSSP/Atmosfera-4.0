@@ -1,7 +1,8 @@
 :root {
-    --border-rad: 15px;
-    --box-shadow-light: 2px 4px 4px 1px rgba(255, 255, 255, 0.4);
-    --box-shadow-dark: 2px 4px 4px 1px rgba(87, 87, 87, 0.4);
+    --border-rad-common: 15px;
+    --border-rad-tooltip: 15px 0px 15px 15px;
+
+    --box-shadow: 2px 4px 4px 1px rgba(255, 255, 255, 0.4);
 
     --escurecer-tela: rgba(0, 0, 0, 0.5);
 
@@ -9,17 +10,15 @@
     --size-font-subtitle: 24px;
 
     --cor-texto-option: #fff;
-    --cor-texto-comum-light: #575757;
-    --cor-texto-comum-dark: #ccc;
+    --cor-texto-comum: #575757;
 
     --cor-destaque-red: #DA000D;
     --cor-destaque-wine: #590005;
 
-    --cor-fundo-card-light: #fff;
-    --cor-fundo-card-dark: #454545;
+    --cor-fundo-card: #fff;
+    --cor-fundo-main: #d9d9d9;
 
-    --cor-fundo-body-light: #d9d9d9;
-    --cor-fundo-body-dark: #000;
+    --cor-fundo-body: #d9d9d9;
     --image-fundo-body: url('../images/Senai_Background.jpg');
 }
 
@@ -39,6 +38,15 @@ html {
     font-family: 'Inter', sans-serif;
 }
 
+
+body.dark {
+    --box-shadow: 2px 4px 4px 1px rgba(87, 87, 87, 0.4);
+    --cor-texto-comum: #ccc;
+    --cor-fundo-card: #454545;
+    --cor-fundo-main: #1e1e1e;
+    --cor-fundo-body: #000;
+}
+
 body {
     width: 100%;
     min-height: 100vh;
@@ -46,7 +54,8 @@ body {
     display: flex;
     flex-direction: column;
 
-    background: var(--cor-fundo-body-light);
+    transition: background 0.5s, color 0.5s;
+    background: var(--cor-fundo-body);
 }
 
 header {
@@ -147,7 +156,7 @@ header {
 
     .Tooltip-Config {
         position: relative;
-        /* display: none; */
+        display: none;
 
         .Overlay {
             position: fixed;
@@ -170,10 +179,10 @@ header {
             width: 500px;
             height: 174px;
             
-            border-radius: var(--border-rad);
+            border-radius: var(--border-rad-tooltip);
 
-            box-shadow: var(--box-shadow-light);
-            background: var(--cor-fundo-card-light);
+            box-shadow: var(--box-shadow);
+            background: var(--cor-fundo-card);
         }
     }
 }
@@ -191,6 +200,7 @@ header {
         width: 8.2%;
 
         padding: 60px 0 0 20px;
+        border-right: 2px solid var(--cor-destaque-wine);
 
         .Options {
             width: 80%;
@@ -257,6 +267,12 @@ header {
         }
     }
 
+    main.imageOff {
+        --box-shadow: 2px 4px 4px 1px rgba(87, 87, 87, 0.4);
+
+        background-color: var(--cor-fundo-main);
+    }
+
     main {
         position: relative;
         overflow: hidden;
@@ -290,10 +306,10 @@ header {
                     height: 223px;
 
 
-                    border-radius: var(--border-rad);
+                    border-radius: var(--border-rad-common);
 
-                    box-shadow: var(--box-shadow-light);
-                    background: var(--cor-fundo-card-light);
+                    box-shadow: var(--box-shadow);
+                    background: var(--cor-fundo-card);
 
                     .Conteudo {
                         img {
@@ -309,7 +325,11 @@ header {
             display: block;
         }
 
-        &::before {
+        &.imageOff::before {
+            display: none;
+        }
+
+        &.imageOn::before {
             content: '';
 
             position: absolute;
