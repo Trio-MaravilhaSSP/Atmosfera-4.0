@@ -1,21 +1,30 @@
 :root {
-    --border-rad: 15px;
+    --border-rad-common: 15px;
+    --border-rad-tooltip: 15px 0px 15px 15px;
+
+    --box-shadow: 2px 4px 4px 1px rgba(255, 255, 255, 0.4);
+
+    --escurecer-tela: rgba(0, 0, 0, 0.5);
 
     --size-font-title: 32px;
     --size-font-subtitle: 24px;
 
     --cor-texto-option: #fff;
-    --cor-texto-comum-light: #575757;
-    --cor-texto-comum-dark: #ccc;
+    --cor-texto-comum: #575757;
 
     --cor-destaque-red: #DA000D;
     --cor-destaque-wine: #590005;
 
-    --cor-fundo-card-light: #fff;
-    --cor-fundo-card-dark: #454545;
+    --cor-fundo-card: #fff;
+    --cor-fundo-main: #d9d9d9;
 
-    --cor-fundo-body-light: #d9d9d9;
-    --cor-fundo-body-dark: #000;
+    --cor-fundo-body: #d9d9d9;
+    --image-fundo-body: url('../images/Senai_Background.jpg');
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../font/Inter.ttf') format('truetype');
 }
 
 * {
@@ -26,6 +35,16 @@
 
 html {
     height: 100%;
+    font-family: 'Inter', sans-serif;
+}
+
+
+body.dark {
+    --box-shadow: 2px 4px 4px 1px rgba(87, 87, 87, 0.4);
+    --cor-texto-comum: #ccc;
+    --cor-fundo-card: #454545;
+    --cor-fundo-main: #1e1e1e;
+    --cor-fundo-body: #000;
 }
 
 body {
@@ -35,7 +54,8 @@ body {
     display: flex;
     flex-direction: column;
 
-    background: var(--cor-fundo-body-light);
+    transition: background 0.5s, color 0.5s;
+    background: var(--cor-fundo-body);
 }
 
 header {
@@ -133,6 +153,38 @@ header {
             }
         }
     }
+
+    .Tooltip-Config {
+        position: relative;
+        display: none;
+
+        .Overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 998;
+
+            width: 100%;
+            height: 100%;
+
+            background: var(--escurecer-tela);
+        }
+
+        .Tooltip-Conteudo {
+            position: absolute;
+            top: 122px;
+            right: 120px;
+            z-index: 999;
+
+            width: 500px;
+            height: 174px;
+            
+            border-radius: var(--border-rad-tooltip);
+
+            box-shadow: var(--box-shadow);
+            background: var(--cor-fundo-card);
+        }
+    }
 }
 
 .Dashboard-Container {
@@ -148,6 +200,7 @@ header {
         width: 8.2%;
 
         padding: 60px 0 0 20px;
+        border-right: 2px solid var(--cor-destaque-wine);
 
         .Options {
             width: 80%;
@@ -211,6 +264,91 @@ header {
                     }
                 }
             }
+        }
+    }
+
+    main.imageOff {
+        --box-shadow: 2px 4px 4px 1px rgba(87, 87, 87, 0.4);
+
+        background-color: var(--cor-fundo-main);
+    }
+
+    main {
+        position: relative;
+        overflow: hidden;
+
+        width: 91.8%;
+
+        display: flex;
+        flex-direction: row;
+        background-color: #000;
+
+        section {
+            width: 100%;
+            height: 100%;
+        }
+
+        .section-content {
+            display: none;
+
+
+            .Cards-container {
+                height: 100%;
+
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 550px));
+                gap: 0px 128px;
+
+                align-items: center;
+                justify-content: center;
+
+                .Card {
+                    height: 223px;
+
+
+                    border-radius: var(--border-rad-common);
+
+                    box-shadow: var(--box-shadow);
+                    background: var(--cor-fundo-card);
+
+                    .Conteudo {
+                        img {
+                            width: 92.87px;
+                            height: 92.87px;
+                        }
+                    }
+                }
+            }
+        }
+
+        .active {
+            display: block;
+        }
+
+        &.imageOff::before {
+            display: none;
+        }
+
+        &.imageOn::before {
+            content: '';
+
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+
+            width: 100%;
+            height: 100%;
+
+            opacity: 0.25;
+            background-image: var(--image-fundo-body);
+            background-size: cover;
+            background-position: center;
+        }
+
+        &>* {
+            position: relative;
+            z-index: 1;
         }
     }
 }

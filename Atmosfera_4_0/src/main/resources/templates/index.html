@@ -6,15 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SENAI - Atmosfera 4.0</title>
 
-    <link rel="stylesheet" href="../static/css/index.css"/>
+    <link rel="shortcut icon" href="../static/images/Senai_Perfil.png" type="image/x-icon">
+    <link rel="stylesheet" href="../static/css/index.css" />
 </head>
 
-<body>
+<body class="light">
     <header>
         <navbar>
 
             <div class="Logo">
-                <img src="../static/images/Senai_Logo.png" alt="Senai_Logo" width="256" height="66"/>
+                <img src="../static/images/Senai_Logo.png" alt="Senai_Logo" width="256" height="66" />
             </div>
 
             <div class="Options">
@@ -36,12 +37,32 @@
 
                 <div class="Option">
                     <img src="../static/images/icons/cogwheel-icon.png" alt="Config_Icon" />
-                    <p>Configurações</p>
+                    <p onclick="toggleTooltipConfig()">Configurações</p>
                 </div>
 
             </div>
 
         </navbar>
+
+        <div class="Tooltip-Config">
+            <div class="Overlay" onclick="toggleTooltipConfig()"></div>
+
+            <div class="Tooltip-Conteudo">
+
+                <div class="Tema">
+                    <p id="Tooltip-P-Tema"></p>
+
+                    <button onclick="trocarTema()">Trocar</button>
+                </div>
+
+                <div class="Image">
+                    <p id="Tooltip-P-Image"></p>
+
+                    <button id="Tooltip-Btn-Image" onclick="toggleBackgroundImage()"></button>
+                </div>
+
+            </div>
+        </div>
     </header>
 
     <div class="Dashboard-Container">
@@ -74,12 +95,12 @@
 
         </aside>
 
-        <main>
+        <main class="imageOn">
 
             <section id="sec-inicio" class="section-content active">
 
                 <div class="Cards-container">
-                    
+
                     <div class="Card">
                         <div class="Temp">
                             <h1>Temperatura</h1>
@@ -87,7 +108,73 @@
                             <div class="Conteudo">
                                 <p id="renderizarTemp"></p>
 
-                                <img src="" alt="Temp_Icon" />
+                                <img src="../static/images/thermometer-light.png" alt="Temp_Icon" />
+                            </div>
+                        </div>
+
+                        <div class="Umidade">
+                            <h1>Umidade</h1>
+
+                            <div class="Conteudo">
+                                <p id="renderizarUmidade"></p>
+
+                                <img src="" alt="Umidade_Icon" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="Card">
+                        <div class="Temp">
+                            <h1>Temperatura</h1>
+
+                            <div class="Conteudo">
+                                <p id="renderizarTemp"></p>
+
+                                <img src="../static/images/thermometer-light.png" alt="Temp_Icon" />
+                            </div>
+                        </div>
+
+                        <div class="Umidade">
+                            <h1>Umidade</h1>
+
+                            <div class="Conteudo">
+                                <p id="renderizarUmidade"></p>
+
+                                <img src="" alt="Umidade_Icon" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="Card">
+                        <div class="Temp">
+                            <h1>Temperatura</h1>
+
+                            <div class="Conteudo">
+                                <p id="renderizarTemp"></p>
+
+                                <img src="../static/images/thermometer-light.png" alt="Temp_Icon" />
+                            </div>
+                        </div>
+
+                        <div class="Umidade">
+                            <h1>Umidade</h1>
+
+                            <div class="Conteudo">
+                                <p id="renderizarUmidade"></p>
+
+                                <img src="" alt="Umidade_Icon" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="Card">
+                        <div class="Temp">
+                            <h1>Temperatura</h1>
+
+                            <div class="Conteudo">
+                                <p id="renderizarTemp"></p>
+
+                                <img src="../static/images/thermometer-light.png" alt="Temp_Icon" />
                             </div>
                         </div>
 
