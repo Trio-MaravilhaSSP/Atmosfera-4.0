@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENAI - Atmosfera 4.0</title>
+
+    <link rel="stylesheet" href="../static/css/index.css"/>
+</head>
+
+<body>
+    <header>
+        <navbar>
+
+            <div class="Logo">
+                <img src="../static/images/Senai_Logo.png" alt="Senai_Logo" width="256" height="66"/>
+            </div>
+
+            <div class="Options">
+
+                <div class="Option">
+                    <img src="../static/images/icons/home-icon.png" alt="Home_Icon" />
+                    <p>Início</p>
+                </div>
+
+                <div class="Option">
+                    <img src="../static/images/icons/file-icon.png" alt="Relatorio_Icon" />
+                    <p>Relatórios</p>
+                </div>
+
+                <div class="Option">
+                    <img src="../static/images/icons/user-icon.png" alt="Perfil_Icon" />
+                    <p>Perfil</p>
+                </div>
+
+                <div class="Option">
+                    <img src="../static/images/icons/cogwheel-icon.png" alt="Config_Icon" />
+                    <p>Configurações</p>
+                </div>
+
+            </div>
+
+        </navbar>
+    </header>
+
+    <div class="Dashboard-Container">
+
+        <aside>
+
+            <div class="Options">
+
+                <div class="Option">
+                    <img src="../static/images/icons/thermometer-icon.png" alt="Temp_Icon" />
+                    <p>Temp</p>
+                </div>
+
+                <div class="Option">
+                    <img src="../static/images/icons/wifi-icon.png" alt="Wifi_Icon" />
+                    <p>Wifi</p>
+                </div>
+
+                <div class="Option">
+                    <img src="../static/images/icons/altitude-icon.png" alt="Altitude_Icon" />
+                    <p>Altitude</p>
+                </div>
+
+                <div class="Option">
+                    <img src="../static/images/icons/destination-icon.png" alt="Mapa_Icon" />
+                    <p>Mapa</p>
+                </div>
+
+            </div>
+
+        </aside>
+
+        <main>
+
+            <section id="sec-inicio" class="section-content active">
+
+                <div class="Cards-container">
+                    
+                    <div class="Card">
+                        <div class="Temp">
+                            <h1>Temperatura</h1>
+
+                            <div class="Conteudo">
+                                <p id="renderizarTemp"></p>
+
+                                <img src="" alt="Temp_Icon" />
+                            </div>
+                        </div>
+
+                        <div class="Umidade">
+                            <h1>Umidade</h1>
+
+                            <div class="Conteudo">
+                                <p id="renderizarUmidade"></p>
+
+                                <img src="" alt="Umidade_Icon" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+<script src="../static/js/index.js"></script>
+
+</html>
