@@ -1,0 +1,216 @@
+:root {
+    --border-rad: 15px;
+
+    --size-font-title: 32px;
+    --size-font-subtitle: 24px;
+
+    --cor-texto-option: #fff;
+    --cor-texto-comum-light: #575757;
+    --cor-texto-comum-dark: #ccc;
+
+    --cor-destaque-red: #DA000D;
+    --cor-destaque-wine: #590005;
+
+    --cor-fundo-card-light: #fff;
+    --cor-fundo-card-dark: #454545;
+
+    --cor-fundo-body-light: #d9d9d9;
+    --cor-fundo-body-dark: #000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--cor-fundo-body-light);
+}
+
+header {
+    width: 100%;
+    height: 97px;
+
+    navbar {
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 97px;
+
+        display: flex;
+        flex-direction: row;
+
+        justify-content: space-between;
+
+        background: var(--cor-destaque-red);
+
+        .Logo {
+            height: 100%;
+            width: max-content;
+
+            padding: 15px 0 0 20px;
+
+            align-self: flex-start;
+        }
+
+        .Options {
+            height: 100%;
+            width: max-content;
+
+            display: flex;
+            flex-direction: row;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 100px;
+            margin-right: 20px;
+
+            .Option {
+                height: 100%;
+                width: max-content;
+
+                display: flex;
+                flex-direction: row;
+
+                align-items: center;
+                justify-content: center;
+
+                gap: 9px;
+
+                font-size: var(--size-font-title);
+
+                img {
+                    width: 64px;
+                    height: 64px;
+                }
+
+                p {
+                    display: inline-block;
+                    position: relative;
+                    padding-bottom: 4px;
+
+                    color: var(--cor-texto-option);
+                    font-size: var(--size-font-subtitle);
+
+                    cursor: pointer;
+
+                    &::after {
+                        content: '';
+
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+
+                        width: 100%;
+                        height: 2px;
+
+                        background-color: var(--cor-texto-option);
+
+                        transform-origin: left;
+                        transform: scaleX(0);
+
+                        transition: transform 0.3s ease-in-out;
+                    }
+
+                    &:hover::after {
+                        transform: scaleX(1);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.Dashboard-Container {
+    display: flex;
+    flex-direction: row;
+
+    flex: 1;
+
+    width: 100%;
+    height: 100%;
+
+    aside {
+        width: 8.2%;
+
+        padding: 60px 0 0 20px;
+
+        .Options {
+            width: 80%;
+            height: 90%;
+
+            padding: 20px 0;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: space-between;
+
+            background: var(--cor-destaque-wine);
+            border-radius: var(--border-rad);
+
+            .Option {
+                display: flex;
+                flex-direction: column;
+
+                align-items: center;
+                justify-content: center;
+
+                gap: 9px;
+
+                img {
+                    width: 64px;
+                    height: 64px;
+                }
+
+                p {
+                    display: inline-block;
+                    position: relative;
+                    padding-bottom: 4px;
+
+                    color: var(--cor-texto-option);
+                    font-size: var(--size-font-subtitle);
+
+                    cursor: pointer;
+
+                    &::after {
+                        content: '';
+
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+
+                        width: 100%;
+                        height: 2px;
+
+                        background-color: var(--cor-texto-option);
+
+                        transform-origin: left;
+                        transform: scaleX(0);
+
+                        transition: transform 0.3s ease-in-out;
+                    }
+
+                    &:hover::after {
+                        transform: scaleX(1);
+                    }
+                }
+            }
+        }
+    }
+}
