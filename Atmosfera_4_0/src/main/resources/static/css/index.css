@@ -1,6 +1,7 @@
 :root {
     --border-rad-common: 15px;
     --border-rad-tooltip: 15px 0px 15px 15px;
+    --border-rad-tooltip-button: 10px;
 
     --box-shadow: 2px 4px 4px 1px rgba(255, 255, 255, 0.4);
 
@@ -8,9 +9,11 @@
 
     --size-font-title: 32px;
     --size-font-subtitle: 24px;
+    --size-font-subtitle2: 20px;
 
     --cor-texto-option: #fff;
     --cor-texto-comum: #575757;
+    --cor-texto-link: #0000ee;
 
     --cor-destaque-red: #DA000D;
     --cor-destaque-wine: #590005;
@@ -42,6 +45,7 @@ html {
 body.dark {
     --box-shadow: 2px 4px 4px 1px rgba(87, 87, 87, 0.4);
     --cor-texto-comum: #ccc;
+    --cor-texto-link: #6969e2;
     --cor-fundo-card: #454545;
     --cor-fundo-main: #1e1e1e;
     --cor-fundo-body: #000;
@@ -178,11 +182,70 @@ header {
 
             width: 500px;
             height: 174px;
+
+            padding: 20px;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: start;
+            gap: 20px;
             
             border-radius: var(--border-rad-tooltip);
+            color: var(--cor-texto-comum);
 
             box-shadow: var(--box-shadow);
             background: var(--cor-fundo-card);
+
+            button {
+                width: 107px;
+                height: 31px;
+
+                align-self: center;
+
+                background: var(--cor-fundo-card);
+                border: 2px solid var(--cor-texto-comum);
+                border-radius: var(--border-rad-tooltip-button);
+
+                font-size: var(--size-font-subtitle2);
+                color: var(--cor-texto-comum);
+            }
+
+            .Tema {
+                width: 100%;
+
+                display: flex;
+                flex-direction: row;
+
+                justify-content: space-between;
+
+                p {
+                    font-size: var(--size-font-title);
+                }
+            }
+
+            .Image {
+                width: 100%;
+
+                display: flex;
+                flex-direction: row;
+
+                justify-content: space-between;
+
+                p {
+                    font-size: var(--size-font-title);
+                }
+            }
+
+            a {
+                position: absolute;
+                bottom: 0;
+
+                text-decoration: none;
+                color: var(--cor-texto-link);
+                font-size: var(--size-font-subtitle2);
+            }
         }
     }
 }
@@ -215,7 +278,7 @@ header {
             justify-content: space-between;
 
             background: var(--cor-destaque-wine);
-            border-radius: var(--border-rad);
+            border-radius: var(--border-rad-common);
 
             .Option {
                 display: flex;

@@ -4,10 +4,10 @@ function textTooltip() {
     const btn = document.getElementById('Tooltip-Btn-Image');
 
     let temaAtual = localStorage.getItem('tema') === 'light' ? 'Claro' : 'Escuro';
-    pTema.textContent = `Tema: ${temaAtual}`;
+    pTema.innerHTML = `<b>Tema:</b> ${temaAtual}`;
 
     const imageStatus = localStorage.getItem('backgroundImage') === 'on' ? 'On' : 'Off';
-    pImage.textContent = `Imagem: ${imageStatus}`;
+    pImage.innerHTML = `<b>Imagem:</b> ${imageStatus}`;
     btn.textContent = imageStatus === 'On' ? 'Off' : 'On';
 }
 
