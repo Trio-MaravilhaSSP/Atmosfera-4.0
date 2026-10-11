@@ -20,24 +20,24 @@
 
             <div class="Options">
 
-                <div class="Option">
+                <div class="Option" onclick="changeWindow('inicio')">
                     <img src="../static/images/icons/home-icon.png" alt="Home_Icon" />
                     <p>Início</p>
                 </div>
 
-                <div class="Option">
+                <div class="Option" onclick="changeWindow('relatorio')">
                     <img src="../static/images/icons/file-icon.png" alt="Relatorio_Icon" />
                     <p>Relatórios</p>
                 </div>
 
-                <div class="Option">
+                <div class="Option" onclick="changeWindow('perfil')">
                     <img src="../static/images/icons/user-icon.png" alt="Perfil_Icon" />
                     <p>Perfil</p>
                 </div>
 
-                <div class="Option">
+                <div class="Option" onclick="toggleTooltipConfig()">
                     <img src="../static/images/icons/cogwheel-icon.png" alt="Config_Icon" />
-                    <p onclick="toggleTooltipConfig()">Configurações</p>
+                    <p>Configurações</p>
                 </div>
 
             </div>
@@ -61,6 +61,8 @@
                     <button id="Tooltip-Btn-Image" onclick="toggleBackgroundImage()"></button>
                 </div>
 
+                <a href="https://www.sp.senai.br/unidade/conectividade/" target="_blank">Mais Sobre Nós</a>
+
             </div>
         </div>
     </header>
@@ -71,23 +73,23 @@
 
             <div class="Options">
 
-                <div class="Option">
-                    <img src="../static/images/icons/thermometer-icon.png" alt="Temp_Icon" />
+                <div class="Option"  onclick="changeWindow('temperatura')">
+                    <img class="Aside-Temp" src="../static/images/icons/thermometer-icon-inactive.png" alt="Temp_Icon" />
                     <p>Temp</p>
                 </div>
 
-                <div class="Option">
-                    <img src="../static/images/icons/wifi-icon.png" alt="Wifi_Icon" />
+                <div class="Option"  onclick="changeWindow('wifi')">
+                    <img class="Aside-Wifi" src="../static/images/icons/wifi-icon-inactive.png" alt="Wifi_Icon" />
                     <p>Wifi</p>
                 </div>
 
-                <div class="Option">
-                    <img src="../static/images/icons/altitude-icon.png" alt="Altitude_Icon" />
+                <div class="Option" onclick="changeWindow('altitude')">
+                    <img class="Aside-Alti" src="../static/images/icons/altitude-icon-inactive.png" alt="Altitude_Icon" />
                     <p>Altitude</p>
                 </div>
 
-                <div class="Option">
-                    <img src="../static/images/icons/destination-icon.png" alt="Mapa_Icon" />
+                <div class="Option" onclick="changeWindow('mapa')">
+                    <img class="Aside-Mapa" src="../static/images/icons/destination-icon-inactive.png" alt="Mapa_Icon" />
                     <p>Mapa</p>
                 </div>
 
@@ -97,94 +99,70 @@
 
         <main class="imageOn">
 
-            <section id="sec-inicio" class="section-content active">
+            <section id="sec-inicio" class="section-content ">
 
                 <div class="Cards-container">
 
-                    <div class="Card">
-                        <div class="Temp">
+                    <div class="Card TempUmi">
+                        <div class="Temp preConteudo">
                             <h1>Temperatura</h1>
 
-                            <div class="Conteudo">
-                                <p id="renderizarTemp"></p>
+                            <div class="Conteudo Left">
+                                <p id="renderizarTemp">26.2 °C</p>
 
-                                <img src="../static/images/thermometer-light.png" alt="Temp_Icon" />
+                                <img class="Icon" src="../static/images/thermometer-light.png" alt="Temp_Icon" />
                             </div>
                         </div>
 
-                        <div class="Umidade">
+                        <div class="Umidade preConteudo">
                             <h1>Umidade</h1>
 
-                            <div class="Conteudo">
-                                <p id="renderizarUmidade"></p>
+                            <div class="Conteudo Right">
+                                <p id="renderizarUmidade">82%</p>
 
-                                <img src="" alt="Umidade_Icon" />
+                                <img class="Icon" src="../static/images/drop-light.png" alt="Umidade_Icon" />
                             </div>
                         </div>
                     </div>
 
                     <div class="Card">
-                        <div class="Temp">
-                            <h1>Temperatura</h1>
+                        <img class="Icon" src="../static/images/sinal-light.png" alt="Disp_Icon" />
 
-                            <div class="Conteudo">
-                                <p id="renderizarTemp"></p>
+                        <div class="Conteudo">
+                            <h1>Dispositivos</h1>
 
-                                <img src="../static/images/thermometer-light.png" alt="Temp_Icon" />
-                            </div>
-                        </div>
-
-                        <div class="Umidade">
-                            <h1>Umidade</h1>
-
-                            <div class="Conteudo">
-                                <p id="renderizarUmidade"></p>
-
-                                <img src="" alt="Umidade_Icon" />
+                            <div class="Text">
+                                <p id="renderizarDisp">24/24</p>
+                                <p id="statusDisp">Todos Online</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="Card">
-                        <div class="Temp">
-                            <h1>Temperatura</h1>
-
-                            <div class="Conteudo">
-                                <p id="renderizarTemp"></p>
-
-                                <img src="../static/images/thermometer-light.png" alt="Temp_Icon" />
-                            </div>
+                        <div class="Img-Atuador">
+                            <img class="Icon" src="../static/images/switch-light.png" alt="Atua_Icon" />
+                            <img class="Icon" id="inverso" src="../static/images/switch-light.png" alt="Atua_Icon" />
                         </div>
 
-                        <div class="Umidade">
-                            <h1>Umidade</h1>
+                        <div class="Conteudo">
+                            <h1>Atuadores Ativos</h1>
 
-                            <div class="Conteudo">
-                                <p id="renderizarUmidade"></p>
-
-                                <img src="" alt="Umidade_Icon" />
+                            <div class="Text">
+                                <p id="renderizarAtua">5/24</p>
+                                <p id="exemploAtua">Ar-Condicionado Lab 0: ATIVO</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="Card">
-                        <div class="Temp">
-                            <h1>Temperatura</h1>
+                        <img class="Icon" src="../static/images/warning-light.png" alt="Alert_Icon" />
 
-                            <div class="Conteudo">
-                                <p id="renderizarTemp"></p>
+                        <div class="Conteudo">
+                            <h1>Alertas Críticos</h1>
 
-                                <img src="../static/images/thermometer-light.png" alt="Temp_Icon" />
-                            </div>
-                        </div>
-
-                        <div class="Umidade">
-                            <h1>Umidade</h1>
-
-                            <div class="Conteudo">
-                                <p id="renderizarUmidade"></p>
-
-                                <img src="" alt="Umidade_Icon" />
+                            <div class="Text">
+                                <p id="renderizarAlert"><b>1 Pendente</b></p>
+                                <p>3 Avisos</p>
                             </div>
                         </div>
                     </div>
@@ -193,6 +171,157 @@
 
             </section>
 
+            <section id="sec-relatorio" class="section-content">
+                <div class="Relatorio">
+                    <img class="Icon" src="../static/images/file-light.png" alt="Relat_icon">
+
+                    <div class="Text">
+                        <p>Escolha o Local e o Tempo<br>em seguida gere seu PDF.</p>
+                    </div>
+                </div>
+
+                <div class="Options">
+                    <div class="Escolha">
+                        <button onclick="aindaNaoImplementado()">Escolher Local</button>
+                        <button onclick="aindaNaoImplementado()">Escolher Tempo</button>
+                    </div>
+
+                    <button onclick="aindaNaoImplementado()">Gerar Relatório</button>
+                </div>
+            </section>
+
+            <section id="sec-perfil" class="section-content">
+                <div class="Relatorio">
+                    <h1>Olá</h1>
+
+                    <div class="Conteudo">
+                        <img src="../static/images/Senai_Perfil.png" alt="Perfil_icon">
+
+                        <div class="Text">
+                            <p><b>Nome:</b> [nome_usuario]</p>
+                            <p><b>Email:</b> [email_usuario]</p>
+                            <p><b>Tipo de Conta:</b> [tipo_conta]</p>
+                            <p><b>Turma:</b> [turma_usuario]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="Options">
+                    <div class="Escolha">
+                        <button onclick="aindaNaoImplementado()">Escolher Local</button>
+                        <button onclick="aindaNaoImplementado()">Escolher Tempo</button>
+                    </div>
+
+                    <button onclick="aindaNaoImplementado()">Gerar Relatório</button>
+                </div>
+            </section>
+
+            <section id="sec-temperatura" class="section-content">
+
+                <select id="select-local" onchange="aindaNaoImplementado()">
+                    <option value="auto">Auto</option>
+                    <option value="lab0">Lab 0</option>
+                    <option value="lab1">Lab 1</option>
+                    <option value="lab2">Lab 2</option>
+                    <option value="lab3">Lab 3</option>
+                    <option value="lab4">Lab 4</option>
+                    <option value="lab5">Lab 5</option>
+                    <option value="lab6">Lab 6</option>
+                    <option value="lab7">Lab 7</option>
+                    <option value="lab8">Lab 8</option>
+                    <option value="lab9">Lab 9</option>
+                    <option value="lab10">Lab 10</option>
+                    <option value="lab11">Lab 11</option>
+                </select>
+
+                <div class="Grafico">
+                    <p>Aqui virá um gráfico tendências</p>
+                </div>
+
+                <div class="Legenda">
+                    <p>Aqui virá uma legenda para o gráfico de tendências</p>
+                </div>
+            </section>
+
+            <section id="sec-wifi" class="section-content">
+
+                <select id="select-local" onchange="aindaNaoImplementado()">
+                    <option value="auto">Auto</option>
+                    <option value="lab0">Lab 0</option>
+                    <option value="lab1">Lab 1</option>
+                    <option value="lab2">Lab 2</option>
+                    <option value="lab3">Lab 3</option>
+                    <option value="lab4">Lab 4</option>
+                    <option value="lab5">Lab 5</option>
+                    <option value="lab6">Lab 6</option>
+                    <option value="lab7">Lab 7</option>
+                    <option value="lab8">Lab 8</option>
+                    <option value="lab9">Lab 9</option>
+                    <option value="lab10">Lab 10</option>
+                    <option value="lab11">Lab 11</option>
+                </select>
+
+                <div class="Luminosidade">
+                    <div class="Grafico">
+                        <p>Aqui virá um gráfico de barras</p>
+                    </div>
+
+                    <div class="Legenda">
+                        <p>Aqui virá uma legenda para o gráfico de barras</p>
+                    </div>
+                </div>
+
+                <div class="Wifi">
+                    <div class="Grafico">
+                        <p>Aqui virá um gráfico de manômetro</p>
+                    </div>
+
+                    <div class="Legenda">
+                        <p>Aqui virá uma legenda para o gráfico de manômetro</p>
+                    </div>
+                </div>
+
+            </section>
+
+            <section id="sec-altitude" class="section-content">
+
+                <select id="select-local" onchange="aindaNaoImplementado()">
+                    <option value="auto">Auto</option>
+                    <option value="lab0">Lab 0</option>
+                    <option value="lab1">Lab 1</option>
+                    <option value="lab2">Lab 2</option>
+                    <option value="lab3">Lab 3</option>
+                    <option value="lab4">Lab 4</option>
+                    <option value="lab5">Lab 5</option>
+                    <option value="lab6">Lab 6</option>
+                    <option value="lab7">Lab 7</option>
+                    <option value="lab8">Lab 8</option>
+                    <option value="lab9">Lab 9</option>
+                    <option value="lab10">Lab 10</option>
+                    <option value="lab11">Lab 11</option>
+                </select>
+
+                <div class="Grafico">
+                    <p>Aqui virá um gráfico de barras duplas</p>
+                </div>
+
+                <div class="Legenda">
+                    <p>Aqui virá uma legenda para o gráfico de barras duplas</p>
+                </div>
+
+            </section>
+
+            <section id="sec-mapa" class="section-content active">
+                
+                <div class="Dados">
+                    <p>Aqui serão renderizados os dados selecionados do mapa</p>
+                </div>
+
+                <div class="Mapa">
+                    <p>Aqui terá um mapa 2D-3D interativo com pinos representando as salas</p>
+                </div>
+
+            </section>
         </main>
 
     </div>
