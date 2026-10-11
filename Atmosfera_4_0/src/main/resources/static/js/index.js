@@ -1,3 +1,7 @@
+function aindaNaoImplementado() {
+    alert("Função Ainda Não Implementada")
+}
+
 function textTooltip() {
     const pTema = document.getElementById('Tooltip-P-Tema');
     const pImage = document.getElementById('Tooltip-P-Image');
@@ -20,7 +24,7 @@ function toggleTooltipConfig() {
 
 function trocarTema() {
     const body = document.body;
-    
+
     body.classList.toggle('dark');
     body.classList.toggle('light');
 
@@ -50,7 +54,32 @@ function changeIcon(indicadorTema) {
     icons.forEach(img => {
         let srcAtual = img.src
 
-        if(indicadorTema == 'dark') img.src = srcAtual.replace('-light', '-dark')
+        if (indicadorTema == 'dark') img.src = srcAtual.replace('-light', '-dark')
         else img.src = srcAtual.replace('-dark', '-light')
     })
+}
+
+function changeWindow(secao) {
+    const secaoAtual = document.querySelector('section.active');
+    const proximaSecao = document.querySelector(`#sec-${secao}`);
+
+    // Se a seção clicada já for a atual, cancela a execução
+    if (secaoAtual === proximaSecao) return;
+
+    // ETAPA 1: Se existir uma seção ativa, faz o Fade-Out dela primeiro
+    if (secaoAtual) {
+        secaoAtual.classList.remove('fade-in');
+        secaoAtual.classList.add('fade-out');
+
+        // ETAPA 2: Espera a animação de saída terminar (300ms) para trocar o display
+        setTimeout(() => {
+            secaoAtual.classList.remove('active', 'fade-out');
+
+            // Exibe a nova seção e ativa o Fade-In
+            proximaSecao.classList.add('active', 'fade-in')
+        }, 300); // 300ms (deve ser o mesmo tempo do animation no CSS)
+    } else {
+        // Se nenhuma estava ativa ainda (carregamento inicial)
+        proximaSecao.classList.add('active', 'fade-in')
+    }
 }

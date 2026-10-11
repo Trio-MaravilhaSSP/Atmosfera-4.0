@@ -30,6 +30,32 @@
     src: url('../font/Inter.ttf') format('truetype');
 }
 
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    /* Leve encolhida ao sair */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -107,8 +133,10 @@ header {
             margin-right: 20px;
 
             .Option {
-                height: 100%;
+                height: 90%;
                 width: max-content;
+
+                padding: 0 5px;
 
                 display: flex;
                 flex-direction: row;
@@ -156,6 +184,13 @@ header {
                     &:hover::after {
                         transform: scaleX(1);
                     }
+                }
+
+                &:hover {
+                    background-color: #00000025;
+                    border-radius: var(--border-rad-common);
+                    cursor: pointer;
+                    transform: scale(1.05) translateX(10px);
                 }
             }
         }
@@ -371,7 +406,7 @@ header {
                     justify-content: space-between !important;
 
                     .Temp {
-                        border-right: 2px solid var(--cor-fundo-body);
+                        border-right: 2px solid var(--cor-texto-comum);
                     }
 
                     .preConteudo {
@@ -475,10 +510,20 @@ header {
             }
         }
 
+    
+
         .active {
-            display: block;
+            display: block !important;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s forwards ease-in-out;
+        }
+        .fade-out {
+            animation: fadeOut 0.3s forwards ease-in-out;
         }
 
+
+        
         &.imageOff::before {
             display: none;
         }

@@ -20,24 +20,24 @@
 
             <div class="Options">
 
-                <div class="Option">
+                <div class="Option" onclick="changeWindow('inicio')">
                     <img src="../static/images/icons/home-icon.png" alt="Home_Icon" />
                     <p>Início</p>
                 </div>
 
-                <div class="Option">
+                <div class="Option" onclick="changeWindow('relatorio')">
                     <img src="../static/images/icons/file-icon.png" alt="Relatorio_Icon" />
                     <p>Relatórios</p>
                 </div>
 
-                <div class="Option">
+                <div class="Option" onclick="changeWindow('perfil')">
                     <img src="../static/images/icons/user-icon.png" alt="Perfil_Icon" />
                     <p>Perfil</p>
                 </div>
 
-                <div class="Option">
+                <div class="Option" onclick="toggleTooltipConfig()">
                     <img src="../static/images/icons/cogwheel-icon.png" alt="Config_Icon" />
-                    <p onclick="toggleTooltipConfig()">Configurações</p>
+                    <p>Configurações</p>
                 </div>
 
             </div>
@@ -73,22 +73,22 @@
 
             <div class="Options">
 
-                <div class="Option">
+                <div class="Option" onclick="changeWindow('temperatura')">
                     <img src="../static/images/icons/thermometer-icon.png" alt="Temp_Icon" />
                     <p>Temp</p>
                 </div>
 
-                <div class="Option">
+                <div class="Option" onclick="changeWindow('wifi')">
                     <img src="../static/images/icons/wifi-icon.png" alt="Wifi_Icon" />
                     <p>Wifi</p>
                 </div>
 
-                <div class="Option">
+                <div class="Option" onclick="changeWindow('altitude')">
                     <img src="../static/images/icons/altitude-icon.png" alt="Altitude_Icon" />
                     <p>Altitude</p>
                 </div>
 
-                <div class="Option">
+                <div class="Option" onclick="changeWindow('mapa')">
                     <img src="../static/images/icons/destination-icon.png" alt="Mapa_Icon" />
                     <p>Mapa</p>
                 </div>
@@ -99,7 +99,7 @@
 
         <main class="imageOn">
 
-            <section id="sec-inicio" class="section-content active">
+            <section id="sec-inicio" class="section-content ">
 
                 <div class="Cards-container">
 
@@ -171,6 +171,44 @@
 
             </section>
 
+            <section id="sec-relatorio" class="section-content active">
+                <div class="Relatorio">
+                    <img class="Icon" src="../static/images/file-light.png" alt="Relat_icon">
+
+                    <div class="Text">
+                        <p>Escolha o Local e o Tempo<br>em seguida gere seu PDF.</p>
+                    </div>
+                </div>
+
+                <div class="Options">
+                    <div class="Escolha">
+                        <button onclick="aindaNaoImplementado()">Escolher Local</button>
+                        <button onclick="aindaNaoImplementado()">Escolher Tempo</button>
+                    </div>
+
+                    <button onclick="aindaNaoImplementado()">Gerar Relatório</button>
+                </div>
+            </section>
+
+            <section id="sec-perfil" class="section-content">
+                <h1>Perfil</h1>
+            </section>
+
+            <section id="sec-temperatura" class="section-content">
+                <h1>Temperatura</h1>
+            </section>
+
+            <section id="sec-wifi" class="section-content">
+                <h1>Wifi</h1>
+            </section>
+
+            <section id="sec-altitude" class="section-content">
+                <h1>Altitude</h1>
+            </section>
+
+            <section id="sec-mapa" class="section-content">
+                <h1>Mapa</h1>
+            </section>
         </main>
 
     </div>
