@@ -27,6 +27,7 @@ function trocarTema() {
     const temaAtual = body.classList.contains('dark') ? 'dark' : 'light';
 
     localStorage.setItem('tema', temaAtual);
+    changeIcon(temaAtual)
     textTooltip();
 }
 
@@ -41,4 +42,15 @@ function toggleBackgroundImage() {
     localStorage.setItem('backgroundImage', imageStatus);
 
     textTooltip();
+}
+
+function changeIcon(indicadorTema) {
+    const icons = document.querySelectorAll('.Icon')
+
+    icons.forEach(img => {
+        let srcAtual = img.src
+
+        if(indicadorTema == 'dark') img.src = srcAtual.replace('-light', '-dark')
+        else img.src = srcAtual.replace('-dark', '-light')
+    })
 }

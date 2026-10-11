@@ -103,90 +103,66 @@
 
                 <div class="Cards-container">
 
-                    <div class="Card">
-                        <div class="Temp">
+                    <div class="Card TempUmi">
+                        <div class="Temp preConteudo">
                             <h1>Temperatura</h1>
 
-                            <div class="Conteudo">
-                                <p id="renderizarTemp"></p>
+                            <div class="Conteudo Left">
+                                <p id="renderizarTemp">26.2 °C</p>
 
-                                <img src="../static/images/thermometer-light.png" alt="Temp_Icon" />
+                                <img class="Icon" src="../static/images/thermometer-light.png" alt="Temp_Icon" />
                             </div>
                         </div>
 
-                        <div class="Umidade">
+                        <div class="Umidade preConteudo">
                             <h1>Umidade</h1>
 
-                            <div class="Conteudo">
-                                <p id="renderizarUmidade"></p>
+                            <div class="Conteudo Right">
+                                <p id="renderizarUmidade">82%</p>
 
-                                <img src="" alt="Umidade_Icon" />
+                                <img class="Icon" src="../static/images/drop-light.png" alt="Umidade_Icon" />
                             </div>
                         </div>
                     </div>
 
                     <div class="Card">
-                        <div class="Temp">
-                            <h1>Temperatura</h1>
+                        <img class="Icon" src="../static/images/sinal-light.png" alt="Disp_Icon" />
 
-                            <div class="Conteudo">
-                                <p id="renderizarTemp"></p>
+                        <div class="Conteudo">
+                            <h1>Dispositivos</h1>
 
-                                <img src="../static/images/thermometer-light.png" alt="Temp_Icon" />
-                            </div>
-                        </div>
-
-                        <div class="Umidade">
-                            <h1>Umidade</h1>
-
-                            <div class="Conteudo">
-                                <p id="renderizarUmidade"></p>
-
-                                <img src="" alt="Umidade_Icon" />
+                            <div class="Text">
+                                <p id="renderizarDisp">24/24</p>
+                                <p id="statusDisp">Todos Online</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="Card">
-                        <div class="Temp">
-                            <h1>Temperatura</h1>
-
-                            <div class="Conteudo">
-                                <p id="renderizarTemp"></p>
-
-                                <img src="../static/images/thermometer-light.png" alt="Temp_Icon" />
-                            </div>
+                        <div class="Img-Atuador">
+                            <img class="Icon" src="../static/images/switch-light.png" alt="Atua_Icon" />
+                            <img class="Icon" id="inverso" src="../static/images/switch-light.png" alt="Atua_Icon" />
                         </div>
 
-                        <div class="Umidade">
-                            <h1>Umidade</h1>
+                        <div class="Conteudo">
+                            <h1>Atuadores Ativos</h1>
 
-                            <div class="Conteudo">
-                                <p id="renderizarUmidade"></p>
-
-                                <img src="" alt="Umidade_Icon" />
+                            <div class="Text">
+                                <p id="renderizarAtua">5/24</p>
+                                <p id="exemploAtua">Ar-Condicionado Lab 0: ATIVO</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="Card">
-                        <div class="Temp">
-                            <h1>Temperatura</h1>
+                        <img class="Icon" src="../static/images/warning-light.png" alt="Alert_Icon" />
 
-                            <div class="Conteudo">
-                                <p id="renderizarTemp"></p>
+                        <div class="Conteudo">
+                            <h1>Alertas Críticos</h1>
 
-                                <img src="../static/images/thermometer-light.png" alt="Temp_Icon" />
-                            </div>
-                        </div>
-
-                        <div class="Umidade">
-                            <h1>Umidade</h1>
-
-                            <div class="Conteudo">
-                                <p id="renderizarUmidade"></p>
-
-                                <img src="" alt="Umidade_Icon" />
+                            <div class="Text">
+                                <p id="renderizarAlert"><b>1 Pendente</b></p>
+                                <p>3 Avisos</p>
                             </div>
                         </div>
                     </div>
