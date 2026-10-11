@@ -319,6 +319,8 @@ header {
             border-radius: var(--border-rad-common);
 
             .Option {
+                width: 85%;
+
                 display: flex;
                 flex-direction: column;
 
@@ -362,6 +364,29 @@ header {
 
                     &:hover::after {
                         transform: scaleX(1);
+                    }
+                }
+
+                &:hover {
+                    padding: 5px;
+                    border-radius: var(--border-rad-common);
+                    background-color: #00000025;
+                    transform: scale(1.05) translateY(-10px);
+
+                    .Aside-Temp {
+                        content: url('../images/icons/thermometer-icon-active.png');
+                    }
+
+                    .Aside-Wifi {
+                        content: url('../images/icons/wifi-icon-active.png');
+                    }
+                    
+                    .Aside-Alti {
+                        content: url('../images/icons/altitude-icon-active.png');
+                    }
+                    
+                    .Aside-Mapa {
+                        content: url('../images/icons/destination-icon-active.png');
                     }
                 }
             }
@@ -523,7 +548,7 @@ header {
         }
 
 
-        
+
         &.imageOff::before {
             display: none;
         }
