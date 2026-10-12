@@ -14,6 +14,7 @@
     --cor-texto-option: #fff;
     --cor-texto-comum: #575757;
     --cor-texto-link: #0000ee;
+    --cor-texto-destaque: #da000d;
 
     --cor-destaque-red: #DA000D;
     --cor-destaque-wine: #590005;
@@ -100,6 +101,7 @@ html {
 
 body.dark {
     --box-shadow: 2px 4px 4px 1px rgba(87, 87, 87, 0.4);
+    --cor-texto-destaque: #ff828a;
     --cor-texto-comum: #ccc;
     --cor-texto-link: #6969e2;
     --cor-fundo-card: #454545;
