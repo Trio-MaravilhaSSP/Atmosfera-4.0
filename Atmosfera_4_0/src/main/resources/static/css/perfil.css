@@ -1,0 +1,150 @@
+/* :root {
+    --border-rad-common: 15px;
+    --border-rad-tooltip: 15px 0px 15px 15px;
+    --border-rad-tooltip-button: 10px;
+
+    --box-shadow: 2px 4px 4px 1px rgba(255, 255, 255, 0.4);
+
+    --escurecer-tela: rgba(0, 0, 0, 0.5);
+
+    --size-font-title: 32px;
+    --size-font-subtitle: 24px;
+    --size-font-subtitle2: 20px;
+
+    --cor-texto-option: #fff;
+    --cor-texto-comum: #575757;
+    --cor-texto-link: #0000ee;
+
+    --cor-destaque-red: #DA000D;
+    --cor-destaque-wine: #590005;
+
+    --cor-fundo-card: #fff;
+    --cor-fundo-main: #d9d9d9;
+
+    --cor-fundo-body: #d9d9d9;
+    --image-fundo-body: url('../images/Senai_Background.png');
+} 
+
+=== ROOT APENAS PARA EXEMPLO ===
+
+*/
+
+.Perfil {
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 15px;
+
+    .Card {
+        width: 1000px;
+        height: 450px;
+
+        padding: 20px;
+
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+        justify-content: start;
+
+        color: var(--cor-texto-comum);
+
+        border-radius: var(--border-rad-common);
+        background: var(--cor-fundo-card);
+
+        h1 {
+            font-size: var(--size-font-title) !important;
+
+            &:hover {
+                transform: scale(1.05) translateX(10px);
+            }
+            &::after {
+                background-color: var(--cor-texto-comum) !important;
+            }
+        }
+
+        .Conteudo {
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            flex-direction: row;
+
+            align-items: center;
+            justify-content: start;
+
+            .Moldura {
+                position: relative;
+
+                width: max-content;
+                height: max-content;
+
+                padding-right: 32px;
+
+                img {
+                    width: 248px;
+                    height: 248px;
+
+                    border: 2px solid var(--cor-texto-comum);
+                    border-radius: 50%;
+                }
+
+                &:hover {
+                    transform: scale(1.05) translateX(10px);
+
+                    img:hover {
+                        transform: scale(1.05) translateX(10px);
+                    }
+                }
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    right: 0;
+                    top: 12%;
+                    transform: translateY(0);
+
+                    width: 2px;
+                    height: 180px;
+                    background-color: var(--cor-texto-comum);
+                }
+            }
+
+            .Text {
+                width: max-content;
+
+                padding-left: 20px;
+
+                display: flex;
+                flex-direction: column;
+
+                gap: 40px;
+                text-align: start;
+
+                color: var(--cor-texto-comum);
+                font-size: var(--size-font-subtitle);
+
+                &:hover {
+                    transform: scale(1.05) translateX(10px);
+
+                    p:hover {
+                        transform: scale(1.05) translateX(10px);
+                    }
+                }
+
+                p {
+                    width: max-content;
+                }
+
+                p::after {
+                    background-color: var(--cor-texto-comum) !important;
+                }
+            }
+        }
+    }
+}

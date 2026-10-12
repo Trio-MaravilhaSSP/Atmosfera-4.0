@@ -7,7 +7,7 @@
     <title>SENAI - Atmosfera 4.0</title>
 
     <link rel="shortcut icon" href="../static/images/Senai_Perfil.png" type="image/x-icon">
-    <link rel="stylesheet" href="../static/css/index.css" />
+    <link rel="stylesheet" href="../static/css/01index.css" />
 </head>
 
 <body class="light">
@@ -22,22 +22,22 @@
 
                 <div class="Option" onclick="changeWindow('inicio')">
                     <img src="../static/images/icons/home-icon.png" alt="Home_Icon" />
-                    <p>Início</p>
+                    <p class="BeautyUnderline">Início</p>
                 </div>
 
                 <div class="Option" onclick="changeWindow('relatorio')">
                     <img src="../static/images/icons/file-icon.png" alt="Relatorio_Icon" />
-                    <p>Relatórios</p>
+                    <p class="BeautyUnderline">Relatórios</p>
                 </div>
 
                 <div class="Option" onclick="changeWindow('perfil')">
                     <img src="../static/images/icons/user-icon.png" alt="Perfil_Icon" />
-                    <p>Perfil</p>
+                    <p class="BeautyUnderline">Perfil</p>
                 </div>
 
                 <div class="Option" onclick="toggleTooltipConfig()">
                     <img src="../static/images/icons/cogwheel-icon.png" alt="Config_Icon" />
-                    <p>Configurações</p>
+                    <p class="BeautyUnderline">Configurações</p>
                 </div>
 
             </div>
@@ -61,7 +61,8 @@
                     <button id="Tooltip-Btn-Image" onclick="toggleBackgroundImage()"></button>
                 </div>
 
-                <a href="https://www.sp.senai.br/unidade/conectividade/" target="_blank">Mais Sobre Nós</a>
+                <a class="BeautyUnderline" href="https://www.sp.senai.br/unidade/conectividade/" target="_blank">Mais
+                    Sobre Nós</a>
 
             </div>
         </div>
@@ -73,24 +74,27 @@
 
             <div class="Options">
 
-                <div class="Option"  onclick="changeWindow('temperatura')">
-                    <img class="Aside-Temp" src="../static/images/icons/thermometer-icon-inactive.png" alt="Temp_Icon" />
-                    <p>Temp</p>
+                <div class="Option" onclick="changeWindow('temperatura')">
+                    <img class="Aside-Temp" src="../static/images/icons/thermometer-icon-inactive.png"
+                        alt="Temp_Icon" />
+                    <p class="BeautyUnderline">Temp</p>
                 </div>
 
-                <div class="Option"  onclick="changeWindow('wifi')">
+                <div class="Option" onclick="changeWindow('wifi')">
                     <img class="Aside-Wifi" src="../static/images/icons/wifi-icon-inactive.png" alt="Wifi_Icon" />
-                    <p>Wifi</p>
+                    <p class="BeautyUnderline">Wifi</p>
                 </div>
 
                 <div class="Option" onclick="changeWindow('altitude')">
-                    <img class="Aside-Alti" src="../static/images/icons/altitude-icon-inactive.png" alt="Altitude_Icon" />
-                    <p>Altitude</p>
+                    <img class="Aside-Alti" src="../static/images/icons/altitude-icon-inactive.png"
+                        alt="Altitude_Icon" />
+                    <p class="BeautyUnderline">Altitude</p>
                 </div>
 
                 <div class="Option" onclick="changeWindow('mapa')">
-                    <img class="Aside-Mapa" src="../static/images/icons/destination-icon-inactive.png" alt="Mapa_Icon" />
-                    <p>Mapa</p>
+                    <img class="Aside-Mapa" src="../static/images/icons/destination-icon-inactive.png"
+                        alt="Mapa_Icon" />
+                    <p class="BeautyUnderline">Mapa</p>
                 </div>
 
             </div>
@@ -101,7 +105,7 @@
 
             <section id="sec-inicio" class="section-content ">
 
-                <div class="Cards-container">
+                <div class="Inicio">
 
                     <div class="Card TempUmi">
                         <div class="Temp preConteudo">
@@ -172,74 +176,89 @@
             </section>
 
             <section id="sec-relatorio" class="section-content">
+
                 <div class="Relatorio">
-                    <img class="Icon" src="../static/images/file-light.png" alt="Relat_icon">
+                    <div class="Card">
+                        <div class="Moldura">
+                            <img class="Icon" src="../static/images/file-light.png" alt="Relat_icon">
+                        </div>
 
-                    <div class="Text">
-                        <p>Escolha o Local e o Tempo<br>em seguida gere seu PDF.</p>
+                        <div class="Text">
+                            <p class="BeautyUnderline">Escolha o Local e o Tempo<br>em seguida gere seu PDF.</p>
+                        </div>
+                    </div>
+
+                    <div class="Options">
+                        <div class="Escolha">
+                            <button onclick="aindaNaoImplementado()"><span class="BeautyUnderline">Escolher
+                                    Local</span></button>
+                            <button onclick="aindaNaoImplementado()"><span class="BeautyUnderline">Escolher
+                                    Tempo</span></button>
+                        </div>
+
+                        <button onclick="aindaNaoImplementado()"><span class="BeautyUnderline">Gerar
+                                Relatório</span></button>
                     </div>
                 </div>
 
-                <div class="Options">
-                    <div class="Escolha">
-                        <button onclick="aindaNaoImplementado()">Escolher Local</button>
-                        <button onclick="aindaNaoImplementado()">Escolher Tempo</button>
-                    </div>
-
-                    <button onclick="aindaNaoImplementado()">Gerar Relatório</button>
-                </div>
             </section>
 
             <section id="sec-perfil" class="section-content">
-                <div class="Relatorio">
-                    <h1>Olá</h1>
 
-                    <div class="Conteudo">
-                        <img src="../static/images/Senai_Perfil.png" alt="Perfil_icon">
+                <div class="Perfil">
+                    <div class="Card">
+                        <h1 class="BeautyUnderline">Olá!</h1>
 
-                        <div class="Text">
-                            <p><b>Nome:</b> [nome_usuario]</p>
-                            <p><b>Email:</b> [email_usuario]</p>
-                            <p><b>Tipo de Conta:</b> [tipo_conta]</p>
-                            <p><b>Turma:</b> [turma_usuario]</p>
+                        <div class="Conteudo">
+                            <div class="Moldura">
+                                <img src="../static/images/Senai_Perfil.png" alt="Perfil_icon">
+                            </div>
+
+                            <div class="Text">
+                                <p class="BeautyUnderline"><b>Nome:</b> [nome_usuario]</p>
+                                <p class="BeautyUnderline"><b>Email:</b> [email_usuario]</p>
+                                <p class="BeautyUnderline"><b>Tipo de Conta:</b> [tipo_conta]</p>
+                                <p class="BeautyUnderline"><b>Turma:</b> [turma_usuario]</p>
+                            </div>
                         </div>
                     </div>
+
                 </div>
 
-                <div class="Options">
-                    <div class="Escolha">
-                        <button onclick="aindaNaoImplementado()">Escolher Local</button>
-                        <button onclick="aindaNaoImplementado()">Escolher Tempo</button>
-                    </div>
-
-                    <button onclick="aindaNaoImplementado()">Gerar Relatório</button>
-                </div>
             </section>
 
-            <section id="sec-temperatura" class="section-content">
+            <section id="sec-temperatura" class="section-content active">
 
-                <select id="select-local" onchange="aindaNaoImplementado()">
-                    <option value="auto">Auto</option>
-                    <option value="lab0">Lab 0</option>
-                    <option value="lab1">Lab 1</option>
-                    <option value="lab2">Lab 2</option>
-                    <option value="lab3">Lab 3</option>
-                    <option value="lab4">Lab 4</option>
-                    <option value="lab5">Lab 5</option>
-                    <option value="lab6">Lab 6</option>
-                    <option value="lab7">Lab 7</option>
-                    <option value="lab8">Lab 8</option>
-                    <option value="lab9">Lab 9</option>
-                    <option value="lab10">Lab 10</option>
-                    <option value="lab11">Lab 11</option>
-                </select>
+                <div class="Select" id="select-local">
+                    <div class="dropdown-selected" onclick="toggleSelect()">
+                        <span id="selected-value">Auto</span>
+                    </div>
 
-                <div class="Grafico">
-                    <p>Aqui virá um gráfico tendências</p>
+                    <div class="dropdown-options">
+                        <div class="option" onclick="selectOption('auto', 'Auto')">Auto</div>
+                        <div class="option" onclick="selectOption('lab0', 'Laboratório 0')">Laboratório 0</div>
+                        <div class="option" onclick="selectOption('lab2', 'Laboratório 1')">Laboratório 1</div>
+                        <div class="option" onclick="selectOption('lab1', 'Laboratório 2')">Laboratório 2</div>
+                        <div class="option" onclick="selectOption('lab3', 'Laboratório 3')">Laboratório 3</div>
+                        <div class="option" onclick="selectOption('lab4', 'Laboratório 4')">Laboratório 4</div>
+                        <div class="option" onclick="selectOption('lab5', 'Laboratório 5')">Laboratório 5</div>
+                        <div class="option" onclick="selectOption('lab6', 'Laboratório 6')">Laboratório 6</div>
+                        <div class="option" onclick="selectOption('lab7', 'Laboratório 7')">Laboratório 7</div>
+                        <div class="option" onclick="selectOption('lab8', 'Laboratório 8')">Laboratório 8</div>
+                        <div class="option" onclick="selectOption('lab9', 'Laboratório 9')">Laboratório 9</div>
+                        <div class="option" onclick="selectOption('lab10', 'Laboratório10')">Laboratório 10</div>
+                        <div class="option" onclick="selectOption('lab11', 'Laboratório11')">Laboratório 11</div>
+                    </div>
                 </div>
 
-                <div class="Legenda">
-                    <p>Aqui virá uma legenda para o gráfico de tendências</p>
+                <div class="Dados">
+                    <div class="Grafico">
+                        <p>Aqui virá um gráfico tendências</p>
+                    </div>
+
+                    <div class="Legenda">
+                        <p>Aqui virá uma legenda para o gráfico de tendências</p>
+                    </div>
                 </div>
             </section>
 
@@ -311,8 +330,8 @@
 
             </section>
 
-            <section id="sec-mapa" class="section-content active">
-                
+            <section id="sec-mapa" class="section-content">
+
                 <div class="Dados">
                     <p>Aqui serão renderizados os dados selecionados do mapa</p>
                 </div>
