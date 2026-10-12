@@ -1,0 +1,27 @@
+:root {
+    --border-rad-common: 15px;
+    --border-rad-tooltip: 15px 0px 15px 15px;
+    --border-rad-tooltip-button: 10px;
+
+    --box-shadow: 2px 4px 4px 1px rgba(255, 255, 255, 0.4);
+
+    --escurecer-tela: rgba(0, 0, 0, 0.5);
+
+    --size-font-title: 32px;
+    --size-font-subtitle: 24px;
+    --size-font-subtitle2: 20px;
+
+    --cor-texto-option: #fff;
+    --cor-texto-comum: #575757;
+    --cor-texto-link: #0000ee;
+    --cor-texto-destaque: #da000d;
+
+    --cor-destaque-red: #DA000D;
+    --cor-destaque-wine: #590005;
+
+    --cor-fundo-card: #fff;
+    --cor-fundo-main: #d9d9d9;
+
+    --cor-fundo-body: #d9d9d9;
+    --image-fundo-body: url('../images/Senai_Background.png');
+}

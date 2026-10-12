@@ -1,0 +1,105 @@
+@import url('./00root.css');
+
+@import url('./02header.css');
+@import url('./03dashboard.css');
+
+@import url('./inicio.css');
+@import url('./relatorio.css');
+@import url('./perfil.css');
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../font/Inter.ttf') format('truetype');
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    /* Leve encolhida ao sair */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.BeautyUnderline {
+    display: inline-block;
+    position: relative;
+    padding-bottom: 1px;
+
+    cursor: default;
+
+    &::after {
+        content: '';
+
+        position: absolute;
+        bottom: 0;
+        left: 0;
+
+        width: 90%;
+        height: 2px;
+
+        background-color: var(--cor-texto-option);
+
+        transform-origin: left;
+        transform: scaleX(0);
+
+        transition: transform 0.3s ease-in-out;
+    }
+
+    &:hover::after {
+        transform: scaleX(1);
+    }
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+}
+
+
+body.dark {
+    --box-shadow: 2px 4px 4px 1px rgba(87, 87, 87, 0.4);
+    --cor-texto-destaque: #ff828a;
+    --cor-texto-comum: #ccc;
+    --cor-texto-link: #6969e2;
+    --cor-fundo-card: #454545;
+    --cor-fundo-main: #1e1e1e;
+    --cor-fundo-body: #000;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--cor-fundo-body);
+
+    * {
+        transition: all ease-in-out 0.3s;
+    }
+}
