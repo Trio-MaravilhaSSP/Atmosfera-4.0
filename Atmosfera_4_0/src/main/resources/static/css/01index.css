@@ -6,6 +6,7 @@
 @import url('./inicio.css');
 @import url('./relatorio.css');
 @import url('./perfil.css');
+@import url('./temperatura.css');
 
 @font-face {
     font-family: 'Inter';

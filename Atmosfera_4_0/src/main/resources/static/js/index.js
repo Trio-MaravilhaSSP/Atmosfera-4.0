@@ -83,3 +83,16 @@ function changeWindow(secao) {
         proximaSecao.classList.add('active', 'fade-in')
     }
 }
+
+function toggleSelect() {
+    const options = document.querySelector('.dropdown-options');
+    options.classList.toggle('active');
+}
+
+function selectOption(valor, exibir) {
+    document.querySelector('#selected-value').innerText = exibir;
+    document.querySelector('.dropdown-options').classList.remove('active');
+    
+    // Dispara a lógica de filtro ou evento do seu dashboard
+    console.log("Filtro selecionado:", valor);
+}
