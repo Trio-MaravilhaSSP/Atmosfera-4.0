@@ -1,0 +1,27 @@
+.Perfil {
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 15px;
+
+    .Card {
+        width: 1000px;
+        height: 450px;
+
+        padding: 73px;
+
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+        justify-content: start;
+
+        border-radius: var(--border-rad-common);
+        background: var(--cor-fundo-card);
+    }
+}
