@@ -91,6 +91,10 @@ header {
             height: 100%;
 
             background: var(--escurecer-tela);
+
+            &:hover {
+                cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ff4d4d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E") 12 12, pointer;
+            }
         }
 
         .Tooltip-Conteudo {
@@ -129,6 +133,16 @@ header {
 
                 font-size: var(--size-font-subtitle2);
                 color: var(--cor-texto-comum);
+
+                &:hover {
+                    cursor: pointer !important;
+                }
+            }
+
+            .Tema>*:hover,
+            .Image>*:hover {
+                transform: scale(1.05) translateX(10px);
+                cursor: default;
             }
 
             .Tema {
@@ -159,11 +173,19 @@ header {
 
             a {
                 position: absolute;
-                bottom: 0;
+                bottom: 2px;
 
                 text-decoration: none;
                 color: var(--cor-texto-link);
                 font-size: var(--size-font-subtitle2);
+
+                &:hover {
+                    transform: scale(1.05) translateX(10px);
+                    cursor: pointer;
+                }
+                &::after {
+                    background-color: var(--cor-texto-link);
+                }
             }
         }
     }
