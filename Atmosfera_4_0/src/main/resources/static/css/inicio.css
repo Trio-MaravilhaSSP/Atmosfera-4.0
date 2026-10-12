@@ -90,6 +90,10 @@
         box-shadow: var(--box-shadow);
         background: var(--cor-fundo-card);
 
+        &:hover {
+            transform: scale(1.05) translateX(10px);
+        }
+
         img {
             width: 92.87px;
             height: 92.87px;
