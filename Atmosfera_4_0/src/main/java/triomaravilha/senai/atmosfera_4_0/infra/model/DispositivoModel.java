@@ -9,13 +9,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(
         name ="Dispositivos"
 )
 public class DispositivoModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_dispositivo")
     private Long id_dispositivo;
 
@@ -28,14 +29,7 @@ public class DispositivoModel {
     @Column(nullable = false, length = 30)
     private String tipo_dispositivo;
 
-    @ManyToOne
-    @JoinColumn(name = "gateway_pai_fk")
-    private DispositivoModel gateway_pai_fk;
+    @Column(name = "gateway_pai_fk")
+    private Integer gateway_pai_fk;
 
-    public DispositivoModel(String nome_dispositivo, String localizacao, String tipo_dispositivo, DispositivoModel gateway_pai_fk) {
-        this.nome_dispositivo = nome_dispositivo;
-        this.localizacao = localizacao;
-        this.tipo_dispositivo = tipo_dispositivo;
-        this.gateway_pai_fk = gateway_pai_fk;
-    }
 }

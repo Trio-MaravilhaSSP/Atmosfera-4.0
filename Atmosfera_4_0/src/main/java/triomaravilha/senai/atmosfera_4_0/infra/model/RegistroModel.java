@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(
-        name = "Registros"
+        name = "registros"
 )
 @Getter
 @Setter
@@ -19,13 +19,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RegistroModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_registro")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_dispositivo_fk", nullable = false)
-    private DispositivoModel id_dispositivo_fk;
+    @Column(name = "id_dispositivo_fk", nullable = false)
+    private int id_dispositivo_fk;
 
     @Column
     private Timestamp timestamp;

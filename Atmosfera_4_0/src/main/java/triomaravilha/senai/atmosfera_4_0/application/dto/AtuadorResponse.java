@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public record AtuadorResponse (
         int id,
         String nomeAtuador,
-        DispositivoResponse dispositivo,
+        Integer dispositivo,
         boolean status,
         LocalDateTime ultimoComando
     )

@@ -8,9 +8,11 @@ import triomaravilha.senai.atmosfera_4_0.interface_.dto.RegistroRequest;
 public interface RegistroMapper {
 
     public static RegistroResponse mapper(RegistroModel model){
+        if (model == null) return null;
+
         return new RegistroResponse(
                 model.getId(),
-                DispositivoResponse.fromModel(model.getId_dispositivo_fk()),
+                model.getId_dispositivo_fk(),
                 model.getTimestamp(),
                 model.getData_hora(),
                 model.getTemperatura(),
@@ -27,7 +29,7 @@ public interface RegistroMapper {
     public static RegistroModel mapper(RegistroRequest request){
         return new RegistroModel(
                 null,
-                request.dispositivo().toModel(),
+                request.dispositivo(),
                 request.timestamp(),
                 request.dataHora(),
                 request.temperatura(),

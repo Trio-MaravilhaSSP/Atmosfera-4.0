@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public record RegistroResponse (
     Long id,
-    DispositivoResponse dispositivo,
+    int dispositivo,
     Timestamp timestamp,
     LocalDateTime dataHora,
     float temperatura,
