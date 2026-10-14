@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Manômetro com Ponteiro</title>
+
+    <script src="../static/js/chartWifiUrl.js"></script>
+    
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #0f172a;
+            /* Fundo escuro como na imagem */
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .box {
+            width: 380px;
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+        }
+
+        .texto-central {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            font-weight: bold;
+            color: #f8fafc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button onclick="atualizarValor()">Update</button>
+    <!-- <button onclick="atualizarValor()">-90</button>
+    <button onclick="atualizarValor()">-30</button> -->
+
+    <div class="box">
+        <h3 style="color: #cbd5e1; margin-top: 0;">Intensidade de Sinal</h3>
+        <canvas id="meuManometro"></canvas>
+        <div class="texto-central" id="valorTexto">-50 dBm</div>
+    </div>
+</body>
+<script src="../static/js/chartWifi.js"></script>
+
+</html>

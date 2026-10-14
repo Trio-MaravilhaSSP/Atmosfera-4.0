@@ -227,7 +227,7 @@
 
             </section>
 
-            <section id="sec-temperatura" class="section-content active">
+            <section id="sec-temperatura" class="section-content">
 
                 <div class="Select" id="select-local">
                     <div class="dropdown-selected" onclick="toggleSelect()">
@@ -262,41 +262,49 @@
                 </div>
             </section>
 
-            <section id="sec-wifi" class="section-content">
+            <section id="sec-wifi" class="section-content active">
 
-                <select id="select-local" onchange="aindaNaoImplementado()">
-                    <option value="auto">Auto</option>
-                    <option value="lab0">Lab 0</option>
-                    <option value="lab1">Lab 1</option>
-                    <option value="lab2">Lab 2</option>
-                    <option value="lab3">Lab 3</option>
-                    <option value="lab4">Lab 4</option>
-                    <option value="lab5">Lab 5</option>
-                    <option value="lab6">Lab 6</option>
-                    <option value="lab7">Lab 7</option>
-                    <option value="lab8">Lab 8</option>
-                    <option value="lab9">Lab 9</option>
-                    <option value="lab10">Lab 10</option>
-                    <option value="lab11">Lab 11</option>
-                </select>
-
-                <div class="Luminosidade">
-                    <div class="Grafico">
-                        <p>Aqui virá um gráfico de barras</p>
+                <div class="Select" id="select-local">
+                    <div class="dropdown-selected" onclick="toggleSelect()">
+                        <span id="selected-value">Auto</span>
                     </div>
 
-                    <div class="Legenda">
-                        <p>Aqui virá uma legenda para o gráfico de barras</p>
+                    <div class="dropdown-options">
+                        <div class="option" onclick="selectOption('auto', 'Auto')">Auto</div>
+                        <div class="option" onclick="selectOption('lab0', 'Laboratório 0')">Laboratório 0</div>
+                        <div class="option" onclick="selectOption('lab2', 'Laboratório 1')">Laboratório 1</div>
+                        <div class="option" onclick="selectOption('lab1', 'Laboratório 2')">Laboratório 2</div>
+                        <div class="option" onclick="selectOption('lab3', 'Laboratório 3')">Laboratório 3</div>
+                        <div class="option" onclick="selectOption('lab4', 'Laboratório 4')">Laboratório 4</div>
+                        <div class="option" onclick="selectOption('lab5', 'Laboratório 5')">Laboratório 5</div>
+                        <div class="option" onclick="selectOption('lab6', 'Laboratório 6')">Laboratório 6</div>
+                        <div class="option" onclick="selectOption('lab7', 'Laboratório 7')">Laboratório 7</div>
+                        <div class="option" onclick="selectOption('lab8', 'Laboratório 8')">Laboratório 8</div>
+                        <div class="option" onclick="selectOption('lab9', 'Laboratório 9')">Laboratório 9</div>
+                        <div class="option" onclick="selectOption('lab10', 'Laboratório10')">Laboratório 10</div>
+                        <div class="option" onclick="selectOption('lab11', 'Laboratório11')">Laboratório 11</div>
                     </div>
                 </div>
 
-                <div class="Wifi">
-                    <div class="Grafico">
-                        <p>Aqui virá um gráfico de manômetro</p>
+                <div class="Dados">
+                    <div class="Luminosidade">
+                        <div class="Grafico">
+                            <p>Aqui virá um gráfico de barras</p>
+                        </div>
+
+                        <div class="Legenda">
+                            <p>Aqui virá uma legenda para o gráfico de barras</p>
+                        </div>
                     </div>
 
-                    <div class="Legenda">
-                        <p>Aqui virá uma legenda para o gráfico de manômetro</p>
+                    <div class="Wifi">
+                        <div class="Grafico">
+                            <p>Aqui virá um gráfico de manômetro</p>
+                        </div>
+
+                        <div class="Legenda">
+                            <p>Aqui virá uma legenda para o gráfico de manômetro</p>
+                        </div>
                     </div>
                 </div>
 
@@ -304,21 +312,27 @@
 
             <section id="sec-altitude" class="section-content">
 
-                <select id="select-local" onchange="aindaNaoImplementado()">
-                    <option value="auto">Auto</option>
-                    <option value="lab0">Lab 0</option>
-                    <option value="lab1">Lab 1</option>
-                    <option value="lab2">Lab 2</option>
-                    <option value="lab3">Lab 3</option>
-                    <option value="lab4">Lab 4</option>
-                    <option value="lab5">Lab 5</option>
-                    <option value="lab6">Lab 6</option>
-                    <option value="lab7">Lab 7</option>
-                    <option value="lab8">Lab 8</option>
-                    <option value="lab9">Lab 9</option>
-                    <option value="lab10">Lab 10</option>
-                    <option value="lab11">Lab 11</option>
-                </select>
+                <div class="Select" id="select-local">
+                    <div class="dropdown-selected" onclick="toggleSelect()">
+                        <span id="selected-value">Auto</span>
+                    </div>
+
+                    <div class="dropdown-options">
+                        <div class="option" onclick="selectOption('auto', 'Auto')">Auto</div>
+                        <div class="option" onclick="selectOption('lab0', 'Laboratório 0')">Laboratório 0</div>
+                        <div class="option" onclick="selectOption('lab2', 'Laboratório 1')">Laboratório 1</div>
+                        <div class="option" onclick="selectOption('lab1', 'Laboratório 2')">Laboratório 2</div>
+                        <div class="option" onclick="selectOption('lab3', 'Laboratório 3')">Laboratório 3</div>
+                        <div class="option" onclick="selectOption('lab4', 'Laboratório 4')">Laboratório 4</div>
+                        <div class="option" onclick="selectOption('lab5', 'Laboratório 5')">Laboratório 5</div>
+                        <div class="option" onclick="selectOption('lab6', 'Laboratório 6')">Laboratório 6</div>
+                        <div class="option" onclick="selectOption('lab7', 'Laboratório 7')">Laboratório 7</div>
+                        <div class="option" onclick="selectOption('lab8', 'Laboratório 8')">Laboratório 8</div>
+                        <div class="option" onclick="selectOption('lab9', 'Laboratório 9')">Laboratório 9</div>
+                        <div class="option" onclick="selectOption('lab10', 'Laboratório10')">Laboratório 10</div>
+                        <div class="option" onclick="selectOption('lab11', 'Laboratório11')">Laboratório 11</div>
+                    </div>
+                </div>
 
                 <div class="Grafico">
                     <p>Aqui virá um gráfico de barras duplas</p>

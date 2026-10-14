@@ -94,5 +94,7 @@ function selectOption(valor, exibir) {
     document.querySelector('.dropdown-options').classList.remove('active');
     
     // Dispara a lógica de filtro ou evento do seu dashboard
-    console.log("Filtro selecionado:", valor);
+    // console.log("Filtro selecionado:", valor);
+
+    aindaNaoImplementado();
 }
