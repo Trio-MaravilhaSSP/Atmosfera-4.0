@@ -1,7 +1,7 @@
 package triomaravilha.senai.atmosfera_4_0.application.dto;
 
 import triomaravilha.senai.atmosfera_4_0.application.mappers.RegistroMapper;
-import triomaravilha.senai.atmosfera_4_0.infra.model.RegistroModel;
+import triomaravilha.senai.atmosfera_4_0.infra.persistence.model.RegistroModel;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;

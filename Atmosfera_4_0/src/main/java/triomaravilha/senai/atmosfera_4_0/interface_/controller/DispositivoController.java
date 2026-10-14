@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import triomaravilha.senai.atmosfera_4_0.application.dto.DispositivoResponse;
-import triomaravilha.senai.atmosfera_4_0.domain.entity.Dispositivo;
 import triomaravilha.senai.atmosfera_4_0.domain.repository.RepositoryDispositivo;
 import triomaravilha.senai.atmosfera_4_0.domain.repository.RepositoryRegistro;
 import triomaravilha.senai.atmosfera_4_0.interface_.dto.DispositivoRequest;

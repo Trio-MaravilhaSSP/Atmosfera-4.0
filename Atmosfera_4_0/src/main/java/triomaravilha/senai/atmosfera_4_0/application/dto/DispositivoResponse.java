@@ -1,7 +1,7 @@
 package triomaravilha.senai.atmosfera_4_0.application.dto;
 
 import triomaravilha.senai.atmosfera_4_0.application.mappers.DispositivoMapper;
-import triomaravilha.senai.atmosfera_4_0.infra.model.DispositivoModel;
+import triomaravilha.senai.atmosfera_4_0.infra.persistence.model.DispositivoModel;
 
 public record DispositivoResponse (
     Long id,

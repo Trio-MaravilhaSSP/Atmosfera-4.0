@@ -1,8 +1,7 @@
 package triomaravilha.senai.atmosfera_4_0.application.mappers;
 
-import triomaravilha.senai.atmosfera_4_0.application.dto.DispositivoResponse;
 import triomaravilha.senai.atmosfera_4_0.application.dto.RegistroResponse;
-import triomaravilha.senai.atmosfera_4_0.infra.model.RegistroModel;
+import triomaravilha.senai.atmosfera_4_0.infra.persistence.model.RegistroModel;
 import triomaravilha.senai.atmosfera_4_0.interface_.dto.RegistroRequest;
 
 public interface RegistroMapper {

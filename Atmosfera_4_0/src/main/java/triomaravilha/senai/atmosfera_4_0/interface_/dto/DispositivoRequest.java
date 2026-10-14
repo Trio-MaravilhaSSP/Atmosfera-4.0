@@ -1,12 +1,7 @@
 package triomaravilha.senai.atmosfera_4_0.interface_.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import triomaravilha.senai.atmosfera_4_0.application.dto.DispositivoResponse;
 import triomaravilha.senai.atmosfera_4_0.application.mappers.DispositivoMapper;
-import triomaravilha.senai.atmosfera_4_0.infra.model.DispositivoModel;
+import triomaravilha.senai.atmosfera_4_0.infra.persistence.model.DispositivoModel;
 
 
 public record DispositivoRequest (

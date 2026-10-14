@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import triomaravilha.senai.atmosfera_4_0.application.dto.RegistroResponse;
 import triomaravilha.senai.atmosfera_4_0.application.mappers.RegistroMapper;
 import triomaravilha.senai.atmosfera_4_0.domain.repository.RepositoryRegistro;
-import triomaravilha.senai.atmosfera_4_0.infra.jpa.RegistroJpa;
-import triomaravilha.senai.atmosfera_4_0.infra.model.RegistroModel;
+import triomaravilha.senai.atmosfera_4_0.infra.persistence.jpa.RegistroJpa;
+import triomaravilha.senai.atmosfera_4_0.infra.persistence.model.RegistroModel;
 import triomaravilha.senai.atmosfera_4_0.interface_.dto.RegistroRequest;
 
 import java.util.List;
