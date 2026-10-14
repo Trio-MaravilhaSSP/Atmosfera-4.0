@@ -1,5 +1,3 @@
-
-
 function dbmParaPorcentagem(dbm) {
     const minDbm = -90
     const maxDbm = -30
@@ -79,7 +77,7 @@ const manometroChart = new Chart(ctx, {
         }]
     },
     options: {
-        valorDbm: -50,
+        valorDbm: -60,
         rotation: -90,
         circumference: 180,
         cutout: '65%',
@@ -105,7 +103,7 @@ function atualizarValor() {
         novoValor = -30 
         cont = 0;
     }
-    
+
     manometroChart.options.valorDbm = novoValor;
     document.getElementById('valorTexto').innerText = `${novoValor} dBm`;
     manometroChart.update();

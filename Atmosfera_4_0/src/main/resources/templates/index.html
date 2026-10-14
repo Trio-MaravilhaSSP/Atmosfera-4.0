@@ -8,6 +8,8 @@
 
     <link rel="shortcut icon" href="../static/images/Senai_Perfil.png" type="image/x-icon">
     <link rel="stylesheet" href="../static/css/01index.css" />
+
+    <script src="../static/js/chartWifiUrl.js"></script>
 </head>
 
 <body class="light">
@@ -251,7 +253,7 @@
                     </div>
                 </div>
 
-                <div class="Dados">
+                <div class="Temperatura">
                     <div class="Grafico">
                         <p>Aqui virá um gráfico tendências</p>
                     </div>
@@ -264,29 +266,33 @@
 
             <section id="sec-wifi" class="section-content active">
 
-                <div class="Select" id="select-local">
-                    <div class="dropdown-selected" onclick="toggleSelect()">
-                        <span id="selected-value">Auto</span>
-                    </div>
+                <!-- <div class="Data-Options">
+                    <button onclick="atualizarValor()">Update</button> -->
 
-                    <div class="dropdown-options">
-                        <div class="option" onclick="selectOption('auto', 'Auto')">Auto</div>
-                        <div class="option" onclick="selectOption('lab0', 'Laboratório 0')">Laboratório 0</div>
-                        <div class="option" onclick="selectOption('lab2', 'Laboratório 1')">Laboratório 1</div>
-                        <div class="option" onclick="selectOption('lab1', 'Laboratório 2')">Laboratório 2</div>
-                        <div class="option" onclick="selectOption('lab3', 'Laboratório 3')">Laboratório 3</div>
-                        <div class="option" onclick="selectOption('lab4', 'Laboratório 4')">Laboratório 4</div>
-                        <div class="option" onclick="selectOption('lab5', 'Laboratório 5')">Laboratório 5</div>
-                        <div class="option" onclick="selectOption('lab6', 'Laboratório 6')">Laboratório 6</div>
-                        <div class="option" onclick="selectOption('lab7', 'Laboratório 7')">Laboratório 7</div>
-                        <div class="option" onclick="selectOption('lab8', 'Laboratório 8')">Laboratório 8</div>
-                        <div class="option" onclick="selectOption('lab9', 'Laboratório 9')">Laboratório 9</div>
-                        <div class="option" onclick="selectOption('lab10', 'Laboratório10')">Laboratório 10</div>
-                        <div class="option" onclick="selectOption('lab11', 'Laboratório11')">Laboratório 11</div>
-                    </div>
-                </div>
+                    <div class="Select" id="select-local">
+                        <div class="dropdown-selected" onclick="toggleSelect()">
+                            <span id="selected-value">Auto</span>
+                        </div>
 
-                <div class="Dados">
+                        <div class="dropdown-options">
+                            <div class="option" onclick="selectOption('auto', 'Auto')">Auto</div>
+                            <div class="option" onclick="selectOption('lab0', 'Laboratório 0')">Laboratório 0</div>
+                            <div class="option" onclick="selectOption('lab2', 'Laboratório 1')">Laboratório 1</div>
+                            <div class="option" onclick="selectOption('lab1', 'Laboratório 2')">Laboratório 2</div>
+                            <div class="option" onclick="selectOption('lab3', 'Laboratório 3')">Laboratório 3</div>
+                            <div class="option" onclick="selectOption('lab4', 'Laboratório 4')">Laboratório 4</div>
+                            <div class="option" onclick="selectOption('lab5', 'Laboratório 5')">Laboratório 5</div>
+                            <div class="option" onclick="selectOption('lab6', 'Laboratório 6')">Laboratório 6</div>
+                            <div class="option" onclick="selectOption('lab7', 'Laboratório 7')">Laboratório 7</div>
+                            <div class="option" onclick="selectOption('lab8', 'Laboratório 8')">Laboratório 8</div>
+                            <div class="option" onclick="selectOption('lab9', 'Laboratório 9')">Laboratório 9</div>
+                            <div class="option" onclick="selectOption('lab10', 'Laboratório10')">Laboratório 10</div>
+                            <div class="option" onclick="selectOption('lab11', 'Laboratório11')">Laboratório 11</div>
+                        </div>
+                    </div>
+                <!-- </div> -->
+
+                <div class="Wifi">
                     <div class="Luminosidade">
                         <div class="Grafico">
                             <p>Aqui virá um gráfico de barras</p>
@@ -297,9 +303,10 @@
                         </div>
                     </div>
 
-                    <div class="Wifi">
+                    <div class="Sinal">
                         <div class="Grafico">
-                            <p>Aqui virá um gráfico de manômetro</p>
+                            <canvas id="meuManometro"></canvas>
+                            <div class="texto-central" id="valorTexto">-50 dBm</div>
                         </div>
 
                         <div class="Legenda">
@@ -361,5 +368,6 @@
 
 </body>
 <script src="../static/js/index.js"></script>
+<script src="../static/js/chartWifi.js"></script>
 
 </html>

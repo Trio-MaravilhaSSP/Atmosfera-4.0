@@ -78,6 +78,12 @@ function changeWindow(secao) {
             // Exibe a nova seção e ativa o Fade-In
             proximaSecao.classList.add('active', 'fade-in')
         }, 300); // 300ms (deve ser o mesmo tempo do animation no CSS)
+
+        if (secao === 'wifi' && window.manometroChart) {
+            setTimeout(() => {
+                manometroChart.resize(); // Garante que o canvas se ajuste perfeitamente à tela
+            }, 100); // Aguarda o tempo da animação do fade
+        }
     } else {
         // Se nenhuma estava ativa ainda (carregamento inicial)
         proximaSecao.classList.add('active', 'fade-in')
@@ -92,7 +98,7 @@ function toggleSelect() {
 function selectOption(valor, exibir) {
     document.querySelector('#selected-value').innerText = exibir;
     document.querySelector('.dropdown-options').classList.remove('active');
-    
+
     // Dispara a lógica de filtro ou evento do seu dashboard
     // console.log("Filtro selecionado:", valor);
 
