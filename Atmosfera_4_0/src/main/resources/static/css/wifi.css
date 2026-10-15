@@ -80,8 +80,28 @@
         }
 
         .Grafico {
+            position: relative;
+
             width: 600px;
             height: 400px;
+
+            padding: 0 44px;
+
+            box-shadow: var(--box-shadow);
+
+            background: var(--cor-fundo-card);
+
+            .Texto-central {
+                position: absolute;
+                bottom: 1px;
+
+                font-size: var(--size-font-subtitle);
+                font-weight: bold;
+            }
+        }
+
+        .Legenda {
+            width: 644px !important;
         }
     }
 }

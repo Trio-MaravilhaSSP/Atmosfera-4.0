@@ -29,7 +29,7 @@ const gaugeNeedle = {
         const percentualInvertido = 100 - percentual;
         const anguloRad = Math.PI + (percentualInvertido / 100) * Math.PI;
 
-        const needleRadius = (height / 1.2);
+        const needleRadius = (height / 1.6);
 
         // Desenhar a Agulha
         ctx.translate(cx, cy);
@@ -53,7 +53,7 @@ const gaugeNeedle = {
 
         ctx.beginPath();
         ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = '#fff';
         ctx.fill();
 
         ctx.restore();
@@ -63,17 +63,16 @@ const gaugeNeedle = {
 const manometroChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
-        labels: ['Excelente', 'Bom', 'Ruim'],
         datasets: [{
             // 3 fatias iguais
             data: [1, 1, 1],
             backgroundColor: [
-                '#22c55e', // Verde
-                '#facc15', // Amarelo
-                '#ef4444', // Vermelho
+                '#28e66e', // Verde
+                '#ffe100', // Amarelo
+                '#ff0514', // Vermelho
             ],
-            borderWidth: 3,
-            borderColor: '#0f172a'
+            // borderWidth: 3,
+            borderColor: 'transparent'
         }]
     },
     options: {
@@ -81,7 +80,7 @@ const manometroChart = new Chart(ctx, {
         rotation: -90,
         circumference: 180,
         cutout: '65%',
-        aspectRatio: 1.6,
+        aspectRatio: 1.4,
         plugins: {
             tooltip: { enabled: false }
         }
@@ -101,6 +100,9 @@ function atualizarValor() {
         cont++;
     } else if (cont == 2) { 
         novoValor = -30 
+        cont = 3;
+    } else if (cont == 3) { 
+        novoValor = -80 
         cont = 0;
     }
 

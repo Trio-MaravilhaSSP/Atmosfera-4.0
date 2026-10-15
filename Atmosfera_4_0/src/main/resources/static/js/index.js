@@ -90,14 +90,22 @@ function changeWindow(secao) {
     }
 }
 
-function toggleSelect() {
-    const options = document.querySelector('.dropdown-options');
-    options.classList.toggle('active');
+function toggleSelect(id) {
+    const options = document.querySelectorAll('.dropdown-options');
+
+    options.forEach(opt => {
+        // Se for o ID clicado, faz o toggle. Se for outro dropdown aberto, fecha ele!
+        if (opt.dataset.id == id) {
+            opt.classList.toggle('Select-active');
+        } else {
+            opt.classList.remove('Select-active'); // Fecha os outros menus abertos
+        }
+    });
 }
 
 function selectOption(valor, exibir) {
     document.querySelector('#selected-value').innerText = exibir;
-    document.querySelector('.dropdown-options').classList.remove('active');
+    document.querySelector('.dropdown-options').classList.remove('Select-active');
 
     // Dispara a lógica de filtro ou evento do seu dashboard
     // console.log("Filtro selecionado:", valor);

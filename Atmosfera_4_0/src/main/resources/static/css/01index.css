@@ -72,83 +72,117 @@
         transform: scaleX(1);
     }
 }
-.Select {
+
+.Data-Options {
     position: absolute;
     top: 20px;
     right: 20px;
 
-    width: 180px;
+    width: max-content;
     height: 50px;
 
-    .dropdown-selected {
-        width: inherit;
-        height: inherit;
+    display: flex;
+    flex-direction: row;
 
-        display: flex;
+    align-items: center;
+    justify-content: center;
 
-        justify-content: center;
-        align-items: center;
+    gap: 9px;
 
-        text-align: center;
+    .Botao-Atualizar {
+        position: relative;
 
-        cursor: pointer;
+        width: 60px;
+        height: 50px;
 
         background: var(--cor-fundo-select);
-        color: var(--cor-texto-option);
-        font-size: var(--size-font-subtitle);
-
-        border: 1px solid var(--cor-texto-comum);
-        border-radius: var(--border-rad-tooltip-button);
-    }
-
-    /* O Menu Suspenso (Dropdown) com Estilo de Modal/Tooltip */
-    .dropdown-options {
-        position: absolute;
-        top: calc(100% + 6px);
-        left: 0;
-        z-index: 999;
-
-        width: 100%;
-        max-height: 400px;
-
-        overflow-y: scroll;
-        display: none;
-        opacity: 0;
-
-        text-align: center;
-
-        background: var(--cor-fundo-card);
-        box-shadow: var(--box-shadow);
-
-        font-size: var(--size-font-subtitle2);
-
-        border: 1px solid var(--cor-texto-comum);
+        border: none;
         border-radius: var(--border-rad-tooltip-button);
 
-        .option {
-            padding: 10px 16px;
-            color: var(--cor-texto-comum);
-            cursor: pointer;
-            transition: background 0.2s ease, color 0.2s ease;
-
-            &:hover {
-                background: var(--cor-fundo-main);
-                color: var(--cor-texto-destaque);
-            }
+        &:hover {
+            transform: scale(1.05);
         }
     }
 
-    /* Classe ativada via JS com a animação que você já usa no projeto */
-    .dropdown-options.active {
-        display: block;
-        animation: fadeIn 0.2s forwards ease-in-out;
-    }
+    .Select {
+        position: relative;
+        z-index: 999;
 
-    &:hover {
-        cursor: pointer;
-        transform: scale(1.05);
+        width: 180px;
+        height: 50px;
+
+        .dropdown-selected {
+            width: inherit;
+            height: inherit;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+
+            cursor: pointer;
+
+            background: var(--cor-fundo-select);
+            color: var(--cor-texto-option);
+            font-size: var(--size-font-subtitle);
+
+            border: 1px solid var(--cor-texto-comum);
+            border-radius: var(--border-rad-tooltip-button);
+        }
+
+        /* O Menu Suspenso (Dropdown) com Estilo de Modal/Tooltip */
+        .dropdown-options {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+
+            width: 100%;
+            max-height: 400px;
+
+            overflow-y: scroll;
+            scrollbar-color: var(--cor-texto-destaque) var(--cor-fundo-main, #1e1e1e);
+
+            display: none;
+            opacity: 0;
+
+            text-align: center;
+
+            background: var(--cor-fundo-card);
+            box-shadow: var(--box-shadow);
+
+            font-size: var(--size-font-subtitle2);
+
+            border: 1px solid var(--cor-texto-comum);
+            border-radius: var(--border-rad-tooltip-button);
+
+            .option {
+                padding: 10px 16px;
+                color: var(--cor-texto-comum);
+                cursor: pointer;
+                transition: background 0.2s ease, color 0.2s ease;
+
+                &:hover {
+                    background: var(--cor-fundo-main);
+                    color: var(--cor-texto-destaque);
+                }
+            }
+
+            &.Select-active {
+                display: block !important;
+                opacity: 1 !important;
+                animation: fadeIn 0.2s forwards ease-in-out;
+            }
+        }
+
+        &:hover {
+            cursor: pointer;
+            transform: scale(1.05);
+        }
     }
 }
+
 
 * {
     margin: 0;
