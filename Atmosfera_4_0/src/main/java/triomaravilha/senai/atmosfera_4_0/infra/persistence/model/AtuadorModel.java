@@ -1,4 +1,4 @@
-package triomaravilha.senai.atmosfera_4_0.infra.model;
+package triomaravilha.senai.atmosfera_4_0.infra.persistence.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
