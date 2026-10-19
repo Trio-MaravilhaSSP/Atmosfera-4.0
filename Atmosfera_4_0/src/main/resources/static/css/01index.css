@@ -95,6 +95,11 @@
         width: 60px;
         height: 50px;
 
+        display: flex;
+        
+        align-items: center;
+        justify-content: center;
+
         background: var(--cor-fundo-select);
         border: none;
         border-radius: var(--border-rad-tooltip-button);
