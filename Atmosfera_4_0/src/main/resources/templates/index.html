@@ -9,7 +9,9 @@
     <link rel="shortcut icon" href="../static/images/Senai_Perfil.png" type="image/x-icon">
     <link rel="stylesheet" href="../static/css/01index.css" />
 
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="../static/js/chartWifiUrl.js"></script>
+    <script src="../static/js/mapaInterativoConfig.js"></script>
 </head>
 
 <body class="light">
@@ -335,7 +337,7 @@
 
             </section>
 
-            <section id="sec-altitude" class="section-content active">
+            <section id="sec-altitude" class="section-content">
 
                 <div class="Data-Options">
                     <button class="Botao-Atualizar" onclick="atualizarValor()">
@@ -382,14 +384,108 @@
 
             </section>
 
-            <section id="sec-mapa" class="section-content">
+            <section id="sec-mapa" class="section-content active">
 
-                <div class="Dados">
-                    <p>Aqui serão renderizados os dados selecionados do mapa</p>
-                </div>
+                <div class="max-w-7xl mx-auto flex flex-col gap-6 no-select">
 
-                <div class="Mapa">
-                    <p>Aqui terá um mapa 2D-3D interativo com pinos representando as salas</p>
+                    <!-- Layout Grid do Mapa e Painel Lateral -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                        <!-- Container do Mapa 3D (Ocupa 2 Colunas no Desktop) -->
+                        <div class="lg:col-span-2 relative bg-brand-card rounded-xl border border-brand-border shadow-2xl h-[520px] map-viewport flex items-center justify-center relative overflow-hidden"
+                            id="viewport">
+
+                            <!-- Dica Flutuante de Instrução -->
+                            <div
+                                class="absolute top-4 left-4 z-20 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-md border border-slate-700 text-xs text-slate-300 flex items-center gap-2 pointer-events-none">
+                                <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122">
+                                    </path>
+                                </svg>
+                                <span>Clique e arraste para rotacionar em 3D</span>
+                            </div>
+
+                            <!-- O PLANO DO MAPA 3D (Gira com as interações do JS) -->
+                            <div id="mapPlane"
+                                class="map-plane relative w-[540px] h-[380px] bg-slate-900/90 border-2 border-slate-700 rounded-2xl p-4 shadow-2xl flex flex-col justify-between">
+
+                                <!-- Grade de Fundo (Grid de Piso) -->
+                                <div
+                                    class="absolute inset-0 opacity-15 bg-[radial-gradient(#ff828a_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none rounded-2xl">
+                                </div>
+
+                                <!-- Layout das Salas (Sistemas de Blocos 2D/3D) -->
+                                <div id="Jojo" class="relative w-full h-full grid grid-cols-3 grid-rows-2 gap-4 z-10">
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Card de Detalhes da Sala Selecionada -->
+                        <div
+                            class="bg-brand-card rounded-xl border border-brand-border p-6 shadow-xl flex flex-col justify-between">
+                            <div>
+                                <!-- Badge e Titulo -->
+                                <div class="flex items-center justify-between pb-4 border-b border-brand-border">
+                                    <div>
+                                        <span
+                                            class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Ambiente
+                                            Selecionado</span>
+                                        <h2 id="salaNome" class="text-xl font-bold text-white mt-0.5">Laboratório IoT 01
+                                        </h2>
+                                    </div>
+
+                                    <span id="salaBadge"
+                                        class="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400 border border-green-500/30">Excelente</span>
+                                </div>
+
+                                <!-- Métricas IoT -->
+                                <div class="grid grid-cols-2 gap-4 my-6">
+                                    <!-- Card dBm -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Sinal Wi-Fi (dBm)</span>
+                                        <span id="salaDbm" class="text-2xl font-bold text-brand-accent font-mono">-48
+                                            dBm</span>
+                                    </div>
+
+                                    <!-- Card Temperatura -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Temperatura</span>
+                                        <span id="salaTemp"
+                                            class="text-2xl font-bold text-blue-400 font-mono">24.2ºC</span>
+                                    </div>
+
+                                    <!-- Card Umidade -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Umidade</span>
+                                        <span id="salaUmid"
+                                            class="text-xl font-bold text-slate-200 font-mono">62%</span>
+                                    </div>
+
+                                    <!-- Status da Rede -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Conexão ESP32</span>
+                                        <span
+                                            class="text-xs font-semibold text-green-400 flex items-center gap-1.5 mt-1">
+                                            <span
+                                                class="w-2 h-2 rounded-full bg-green-500 inline-block animate-ping"></span>
+                                            Online (100ms)
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ações do Card -->
+                            <div class="pt-4 border-t border-brand-border flex gap-3">
+                                <button
+                                    class="flex-1 py-2.5 bg-brand-accent hover:bg-brand-accentHover text-slate-900 font-bold rounded-lg text-xs transition shadow-lg"
+                                    onclick="simularRecarregamento()">Sincronizar Dados</button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
             </section>
@@ -400,5 +496,6 @@
 </body>
 <script src="../static/js/index.js"></script>
 <script src="../static/js/chartWifi.js"></script>
+<script src="../static/js/mapaInterativo.js"></script>
 
 </html>
