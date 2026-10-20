@@ -78,21 +78,37 @@ function changeWindow(secao) {
             // Exibe a nova seção e ativa o Fade-In
             proximaSecao.classList.add('active', 'fade-in')
         }, 300); // 300ms (deve ser o mesmo tempo do animation no CSS)
+
+        if (secao === 'wifi' && window.manometroChart) {
+            setTimeout(() => {
+                manometroChart.resize(); // Garante que o canvas se ajuste perfeitamente à tela
+            }, 100); // Aguarda o tempo da animação do fade
+        }
     } else {
         // Se nenhuma estava ativa ainda (carregamento inicial)
         proximaSecao.classList.add('active', 'fade-in')
     }
 }
 
-function toggleSelect() {
-    const options = document.querySelector('.dropdown-options');
-    options.classList.toggle('active');
+function toggleSelect(id) {
+    const options = document.querySelectorAll('.dropdown-options');
+
+    options.forEach(opt => {
+        // Se for o ID clicado, faz o toggle. Se for outro dropdown aberto, fecha ele!
+        if (opt.dataset.id == id) {
+            opt.classList.toggle('Select-active');
+        } else {
+            opt.classList.remove('Select-active'); // Fecha os outros menus abertos
+        }
+    });
 }
 
 function selectOption(valor, exibir) {
     document.querySelector('#selected-value').innerText = exibir;
-    document.querySelector('.dropdown-options').classList.remove('active');
-    
+    document.querySelector('.dropdown-options').classList.remove('Select-active');
+
     // Dispara a lógica de filtro ou evento do seu dashboard
-    console.log("Filtro selecionado:", valor);
+    // console.log("Filtro selecionado:", valor);
+
+    aindaNaoImplementado();
 }

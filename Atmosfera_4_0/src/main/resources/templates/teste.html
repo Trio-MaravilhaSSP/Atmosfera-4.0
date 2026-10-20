@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa 3D Interativo IoT - SENAI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            card: '#1e293b',
+                            border: '#334155',
+                            accent: '#ff828a',
+                            accentHover: '#e06870',
+                            blue: '#3b82f6',
+                            green: '#22c55e',
+                            yellow: '#eab308'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Desabilita seleção de texto durante o drag no canvas/mapa */
+        .no-select {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Viewport 3D para o Mapa */
+        .map-viewport {
+            perspective: 1200px;
+            cursor: grab;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        .map-viewport:active {
+            cursor: grabbing;
+        }
+
+        /* O plano do Mapa inclinado */
+        .map-plane {
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: transform 0.05s linear;
+        }
+
+        /* Estilização dos blocos e paredes 3D */
+        .room-block {
+            transform-style: preserve-3d;
+            transition: all 0.25s ease;
+        }
+
+        .room-block:hover {
+            transform: translateZ(12px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        /* Pins dos Marcadores (Billboarded - Sempre na vertical em relação ao observador) */
+        .pin-wrapper {
+            position: absolute;
+            transform-style: preserve-3d;
+            pointer-events: auto;
+        }
+
+        .pin-billboard {
+            /* Desfaz a inclinação do mapa para o elemento ficar virado pra tela */
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Estilização da scrollbar da barra lateral */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #ff828a;
+        }
+    </style>
+</head>
+<body class="bg-brand-dark text-slate-200 font-sans min-h-screen p-4 sm:p-6 no-select">
+
+    <div class="max-w-7xl mx-auto flex flex-col gap-6">
+        
+        <!-- Header Principal -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-brand-card p-4 rounded-xl border border-brand-border shadow-lg gap-4">
+            <div>
+                <h1 class="text-xl font-bold text-white flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-brand-accent inline-block animate-pulse"></span>
+                    Mapeamento 3D de Laboratórios IoT
+                </h1>
+                <p class="text-xs text-slate-400 mt-1">Arraste com o mouse para girar o mapa em 3D. Clique em uma sala ou pin para ver os dados.</p>
+            </div>
+
+            <!-- Controles de Câmera -->
+            <div class="flex items-center gap-2 bg-slate-900/60 p-1.5 rounded-lg border border-brand-border text-xs">
+                <button id="btnZoomIn" class="px-3 py-1.5 bg-brand-card hover:bg-slate-700 rounded transition font-semibold" title="Aumentar Zoom">+ Zoom</button>
+                <button id="btnZoomOut" class="px-3 py-1.5 bg-brand-card hover:bg-slate-700 rounded transition font-semibold" title="Diminuir Zoom">- Zoom</button>
+                <button id="btnResetView" class="px-3 py-1.5 bg-brand-accent hover:bg-brand-accentHover text-slate-900 font-bold rounded transition" title="Resetar Ângulo">Resetar Ângulo</button>
+            </div>
+        </header>
+
+        <!-- Layout Grid do Mapa e Painel Lateral -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Container do Mapa 3D (Ocupa 2 Colunas no Desktop) -->
+            <div class="lg:col-span-2 relative bg-brand-card rounded-xl border border-brand-border shadow-2xl h-[520px] map-viewport flex items-center justify-center relative overflow-hidden" id="viewport">
+                
+                <!-- Dica Flutuante de Instrução -->
+                <div class="absolute top-4 left-4 z-20 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-md border border-slate-700 text-xs text-slate-300 flex items-center gap-2 pointer-events-none">
+                    <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                    <span>Clique e arraste para rotacionar em 3D</span>
+                </div>
+
+                <!-- O PLANO DO MAPA 3D (Gira com as interações do JS) -->
+                <div id="mapPlane" class="map-plane relative w-[540px] h-[380px] bg-slate-900/90 border-2 border-slate-700 rounded-2xl p-4 shadow-2xl flex flex-col justify-between">
+                    
+                    <!-- Grade de Fundo (Grid de Piso) -->
+                    <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#ff828a_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none rounded-2xl"></div>
+
+                    <!-- Layout das Salas (Sistemas de Blocos 2D/3D) -->
+                    <div id="Jojo" class="relative w-full h-full grid grid-cols-3 grid-rows-2 gap-4 z-10">
+                        
+                        <!-- Sala 1: Lab IoT -->
+                        <div class="room-block bg-slate-800/80 border border-slate-600 rounded-lg p-3 flex flex-col justify-between cursor-pointer hover:border-brand-accent" onclick="selecionarSala('lab1', 'Laboratório IoT', -48, '24.2ºC', '62%', 'Excelente', 'bg-green-500')">
+                            <span class="text-xs font-bold text-slate-300">Lab IoT 01</span>
+                            <div class="flex justify-between items-end">
+                                <span class="text-[10px] text-green-400 font-mono">-48 dBm</span>
+                                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                            </div>
+                        </div>
+
+                        <!-- Sala 2: Lab Redes -->
+                        <div class="room-block bg-slate-800/80 border border-slate-600 rounded-lg p-3 flex flex-col justify-between cursor-pointer hover:border-brand-accent" onclick="selecionarSala('lab2', 'Laboratório Redes', -72, '26.8ºC', '55%', 'Atenção', 'bg-yellow-500')">
+                            <span class="text-xs font-bold text-slate-300">Lab Redes</span>
+                            <div class="flex justify-between items-end">
+                                <span class="text-[10px] text-yellow-400 font-mono">-72 dBm</span>
+                                <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+                            </div>
+                        </div>
+
+                        <!-- Sala 3: Servidores -->
+                        <div class="room-block bg-slate-800/80 border border-slate-600 rounded-lg p-3 flex flex-col justify-between cursor-pointer hover:border-brand-accent" onclick="selecionarSala('lab3', 'Sala de Servidores', -35, '19.5ºC', '40%', 'Ótimo', 'bg-green-500')">
+                            <span class="text-xs font-bold text-slate-300">Data Center</span>
+                            <div class="flex justify-between items-end">
+                                <span class="text-[10px] text-green-400 font-mono">-35 dBm</span>
+                                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                            </div>
+                        </div>
+
+                        <!-- Sala 4: Robótica -->
+                        <div class="room-block bg-slate-800/80 border border-slate-600 rounded-lg p-3 flex flex-col justify-between cursor-pointer hover:border-brand-accent" onclick="selecionarSala('lab4', 'Lab. Robótica', -88, '28.1ºC', '68%', 'Sinal Fraco', 'bg-red-500')">
+                            <span class="text-xs font-bold text-slate-300">Robótica</span>
+                            <div class="flex justify-between items-end">
+                                <span class="text-[10px] text-red-400 font-mono">-88 dBm</span>
+                                <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                            </div>
+                        </div>
+
+                        <!-- Corredor Central (Área Livre) -->
+                        <div class="col-span-2 bg-slate-950/60 border border-slate-800 rounded-lg p-2 flex items-center justify-center">
+                            <span class="text-[10px] text-slate-500 tracking-widest uppercase">Corredor Principal / Acesso</span>
+                        </div>
+
+                    </div>
+
+                    <!-- PINS INTERATIVOS (Sempre virados de frente pra tela via JS) -->
+                    
+                    <!-- Pin 1 -->
+                    <div class="pin-wrapper" style="top: 22%; left: 18%;">
+                        <div class="pin-billboard cursor-pointer" onclick="selecionarSala('lab1', 'Laboratório IoT', -48, '24.2ºC', '62%', 'Excelente', 'bg-green-500')">
+                            <div class="bg-slate-900 border border-green-500 text-green-400 text-xs px-2 py-1 rounded-md shadow-xl flex items-center gap-1.5 hover:scale-110 transition-transform">
+                                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                <span class="font-bold">IoT 01</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pin 2 -->
+                    <div class="pin-wrapper" style="top: 22%; left: 52%;">
+                        <div class="pin-billboard cursor-pointer" onclick="selecionarSala('lab2', 'Laboratório Redes', -72, '26.8ºC', '55%', 'Atenção', 'bg-yellow-500')">
+                            <div class="bg-slate-900 border border-yellow-500 text-yellow-400 text-xs px-2 py-1 rounded-md shadow-xl flex items-center gap-1.5 hover:scale-110 transition-transform">
+                                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                <span class="font-bold">Redes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pin 3 -->
+                    <div class="pin-wrapper" style="top: 22%; left: 82%;">
+                        <div class="pin-billboard cursor-pointer" onclick="selecionarSala('lab3', 'Sala de Servidores', -35, '19.5ºC', '40%', 'Ótimo', 'bg-green-500')">
+                            <div class="bg-slate-900 border border-brand-accent text-brand-accent text-xs px-2 py-1 rounded-md shadow-xl flex items-center gap-1.5 hover:scale-110 transition-transform">
+                                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                <span class="font-bold">Servidores</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pin 4 -->
+                    <div class="pin-wrapper" style="top: 72%; left: 18%;">
+                        <div class="pin-billboard cursor-pointer" onclick="selecionarSala('lab4', 'Lab. Robótica', -88, '28.1ºC', '68%', 'Sinal Fraco', 'bg-red-500')">
+                            <div class="bg-slate-900 border border-red-500 text-red-400 text-xs px-2 py-1 rounded-md shadow-xl flex items-center gap-1.5 hover:scale-110 transition-transform">
+                                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                <span class="font-bold">Robótica</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Card de Detalhes da Sala Selecionada -->
+            <div class="bg-brand-card rounded-xl border border-brand-border p-6 shadow-xl flex flex-col justify-between">
+                <div>
+                    <!-- Badge e Titulo -->
+                    <div class="flex items-center justify-between pb-4 border-b border-brand-border">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Ambiente Selecionado</span>
+                            <h2 id="salaNome" class="text-xl font-bold text-white mt-0.5">Laboratório IoT 01</h2>
+                        </div>
+                        <span id="salaBadge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400 border border-green-500/30">
+                            Excelente
+                        </span>
+                    </div>
+
+                    <!-- Métricas IoT -->
+                    <div class="grid grid-cols-2 gap-4 my-6">
+                        <!-- Card dBm -->
+                        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                            <span class="text-xs text-slate-400 block mb-1">Sinal Wi-Fi (dBm)</span>
+                            <span id="salaDbm" class="text-2xl font-bold text-brand-accent font-mono">-48 dBm</span>
+                        </div>
+
+                        <!-- Card Temperatura -->
+                        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                            <span class="text-xs text-slate-400 block mb-1">Temperatura</span>
+                            <span id="salaTemp" class="text-2xl font-bold text-blue-400 font-mono">24.2ºC</span>
+                        </div>
+
+                        <!-- Card Umidade -->
+                        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                            <span class="text-xs text-slate-400 block mb-1">Umidade</span>
+                            <span id="salaUmid" class="text-xl font-bold text-slate-200 font-mono">62%</span>
+                        </div>
+
+                        <!-- Status da Rede -->
+                        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                            <span class="text-xs text-slate-400 block mb-1">Conexão ESP32</span>
+                            <span class="text-xs font-semibold text-green-400 flex items-center gap-1.5 mt-1">
+                                <span class="w-2 h-2 rounded-full bg-green-500 inline-block animate-ping"></span>
+                                Online (100ms)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações do Card -->
+                <div class="pt-4 border-t border-brand-border flex gap-3">
+                    <button class="flex-1 py-2.5 bg-brand-accent hover:bg-brand-accentHover text-slate-900 font-bold rounded-lg text-xs transition shadow-lg" onclick="simularRecarregamento()">
+                        Sincronizar Dados
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPT DE ROTAÇÃO E INTERAÇÃO 3D -->
+    <script>
+        // Configurações e Estado do Mapa 3D
+        const state = {
+            rotateX: 55,   // Ângulo de inclinação padrão (graus)
+            rotateZ: -35,  // Ângulo de rotação horizontal padrão (graus)
+            scale: 1,      // Fator de Zoom
+            isDragging: false,
+            startX: 0,
+            startY: 0
+        };
+
+        const viewport = document.getElementById('viewport');
+        const mapPlane = document.getElementById('mapPlane');
+
+        // Atualiza a transformação no plano do mapa e compensa nos pins
+        function renderTransform() {
+            // Aplica a rotação e o zoom no container do mapa
+            mapPlane.style.transform = `rotateX(${state.rotateX}deg) rotateZ(${state.rotateZ}deg) scale(${state.scale})`;
+
+            // Atualiza todos os pins para compensar a rotação e ficarem virados para a câmera (Billboard effect)
+            const pins = document.querySelectorAll('.pin-billboard');
+            pins.forEach(pin => {
+                pin.style.transform = `rotateZ(${-state.rotateZ}deg) rotateX(${-state.rotateX}deg)`;
+            });
+        }
+
+        // --- Eventos de Mouse Dragging (Clique e Arraste) ---
+
+        viewport.addEventListener('mousedown', (e) => {
+            state.isDragging = true;
+            state.startX = e.clientX;
+            state.startY = e.clientY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!state.isDragging) return;
+
+            const deltaX = e.clientX - state.startX;
+            const deltaY = e.clientY - state.startY;
+
+            // Ajusta a sensibilidade do movimento
+            state.rotateZ += deltaX * 0.4;
+            state.rotateX -= deltaY * 0.4;
+
+            // Clampa/Limita a rotação X para evitar inversão da câmera
+            state.rotateX = Math.max(15, Math.min(80, state.rotateX));
+
+            state.startX = e.clientX;
+            state.startY = e.clientY;
+
+            renderTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+            state.isDragging = false;
+        });
+
+        // Suporte a Touch / Mobile
+        viewport.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                state.isDragging = true;
+                state.startX = e.touches[0].clientX;
+                state.startY = e.touches[0].clientY;
+            }
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!state.isDragging || e.touches.length !== 1) return;
+
+            const deltaX = e.touches[0].clientX - state.startX;
+            const deltaY = e.touches[0].clientY - state.startY;
+
+            state.rotateZ += deltaX * 0.4;
+            state.rotateX -= deltaY * 0.4;
+            state.rotateX = Math.max(15, Math.min(80, state.rotateX));
+
+            state.startX = e.touches[0].clientX;
+            state.startY = e.touches[0].clientY;
+
+            renderTransform();
+        });
+
+        window.addEventListener('touchend', () => {
+            state.isDragging = false;
+        });
+
+        // Controles de Zoom
+        document.getElementById('btnZoomIn').addEventListener('click', () => {
+            state.scale = Math.min(state.scale + 0.15, 1.6);
+            renderTransform();
+        });
+
+        document.getElementById('btnZoomOut').addEventListener('click', () => {
+            state.scale = Math.max(state.scale - 0.15, 0.65);
+            renderTransform();
+        });
+
+        // Resetar Visão
+        document.getElementById('btnResetView').addEventListener('click', () => {
+            state.rotateX = 55;
+            state.rotateZ = -35;
+            state.scale = 1;
+            renderTransform();
+        });
+
+        // --- Lógica de Seleção de Sala ---
+        function selecionarSala(id, nome, dbm, temp, umid, status, statusColorClass) {
+            document.getElementById('salaNome').innerText = nome;
+            document.getElementById('salaDbm').innerText = `${dbm} dBm`;
+            document.getElementById('salaTemp').innerText = temp;
+            document.getElementById('salaUmid').innerText = umid;
+            
+            const badge = document.getElementById('salaBadge');
+            badge.innerText = status;
+            badge.className = `px-2.5 py-1 rounded-full text-xs font-semibold ${statusColorClass}/20 text-slate-200 border border-${statusColorClass}/40`;
+        }
+
+        function simularRecarregamento() {
+            const btn = event.target;
+            btn.innerText = "Sincronizando...";
+            setTimeout(() => {
+                btn.innerText = "Sincronizar Dados";
+            }, 800);
+        }
+
+        // Inicializa as transformações na montagem da tela
+        renderTransform();
+    </script>
+</body>
+</html>
