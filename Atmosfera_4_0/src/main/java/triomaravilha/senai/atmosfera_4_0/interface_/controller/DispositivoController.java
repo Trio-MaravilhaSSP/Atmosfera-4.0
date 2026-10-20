@@ -5,8 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import triomaravilha.senai.atmosfera_4_0.application.dto.DispositivoResponse;
-import triomaravilha.senai.atmosfera_4_0.domain.repository.RepositoryDispositivo;
-import triomaravilha.senai.atmosfera_4_0.domain.repository.RepositoryRegistro;
+import triomaravilha.senai.atmosfera_4_0.domain.gateway.DispositivoGateway;
 import triomaravilha.senai.atmosfera_4_0.interface_.dto.DispositivoRequest;
 
 import java.net.URI;
@@ -16,12 +15,12 @@ import java.util.List;
 @RequestMapping("/dispositivo")
 @RequiredArgsConstructor
 public class DispositivoController {
-    private final RepositoryDispositivo dispositivo;
+
+    private final DispositivoGateway dispositivo;
 
     @GetMapping
     public ResponseEntity<List<DispositivoResponse>> findAll(){
         return ResponseEntity.ok(dispositivo.findAll());
-
     }
 
     @GetMapping("/{id}")
@@ -37,6 +36,11 @@ public class DispositivoController {
         return ResponseEntity.created(
                 URI.create("/dispositivo" + dispositivoRequest)
         ).body(dispositivoResponse);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DispositivoResponse> update(@PathVariable int id, @RequestBody DispositivoRequest dispositivoRequest){
+        return ResponseEntity.ok(dispositivo.update(id, dispositivoRequest));
     }
 
     @DeleteMapping("/{id}")

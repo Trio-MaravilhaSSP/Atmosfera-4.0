@@ -3,8 +3,8 @@ package triomaravilha.senai.atmosfera_4_0.application.service.adapter;
 import org.springframework.stereotype.Service;
 import triomaravilha.senai.atmosfera_4_0.application.dto.DispositivoResponse;
 import triomaravilha.senai.atmosfera_4_0.domain.repository.RepositoryDispositivo;
-import triomaravilha.senai.atmosfera_4_0.infra.persistence.jpa.DispositivoJpa;
-import triomaravilha.senai.atmosfera_4_0.infra.persistence.model.DispositivoModel;
+import triomaravilha.senai.atmosfera_4_0.infra.jpa.DispositivoJpa;
+import triomaravilha.senai.atmosfera_4_0.infra.model.DispositivoModel;
 import triomaravilha.senai.atmosfera_4_0.interface_.dto.DispositivoRequest;
 
 import java.util.List;
