@@ -3,14 +3,12 @@ package triomaravilha.senai.atmosfera_4_0.infra.persistence.jpa.registro;
 import org.springframework.stereotype.Component;
 import triomaravilha.senai.atmosfera_4_0.application.dto.RegistroResponse;
 import triomaravilha.senai.atmosfera_4_0.application.mappers.RegistroMapper;
-import triomaravilha.senai.atmosfera_4_0.domain.entity.Registro;
 import triomaravilha.senai.atmosfera_4_0.domain.gateway.RegistroGateway;
 import triomaravilha.senai.atmosfera_4_0.infra.persistence.exceptions.NoIntegridadeReferencial;
 import triomaravilha.senai.atmosfera_4_0.infra.persistence.jpa.dispositivo.DispositivoRespository;
 import triomaravilha.senai.atmosfera_4_0.infra.persistence.model.RegistroModel;
 import triomaravilha.senai.atmosfera_4_0.interface_.dto.RegistroRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;

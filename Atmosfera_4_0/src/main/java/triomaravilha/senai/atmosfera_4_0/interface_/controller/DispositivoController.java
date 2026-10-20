@@ -34,7 +34,7 @@ public class DispositivoController {
         DispositivoResponse dispositivoResponse = dispositivo.save(dispositivoRequest);
 
         return ResponseEntity.created(
-                URI.create("/dispositivo" + dispositivoRequest)
+                URI.create("/dispositivo" + dispositivoResponse.id())
         ).body(dispositivoResponse);
     }
 

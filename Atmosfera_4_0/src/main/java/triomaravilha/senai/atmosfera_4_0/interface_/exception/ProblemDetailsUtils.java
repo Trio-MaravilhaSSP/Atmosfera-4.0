@@ -2,7 +2,6 @@ package triomaravilha.senai.atmosfera_4_0.interface_.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.http.server.reactive.HttpHandler;
 
 import java.net.URI;
 import java.time.LocalDateTime;

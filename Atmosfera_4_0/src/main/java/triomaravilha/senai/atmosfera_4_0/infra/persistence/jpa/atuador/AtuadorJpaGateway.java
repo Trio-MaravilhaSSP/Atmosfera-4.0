@@ -3,8 +3,6 @@ package triomaravilha.senai.atmosfera_4_0.infra.persistence.jpa.atuador;
 import org.springframework.stereotype.Component;
 import triomaravilha.senai.atmosfera_4_0.application.dto.AtuadorResponse;
 import triomaravilha.senai.atmosfera_4_0.application.mappers.AtuadorMapper;
-import triomaravilha.senai.atmosfera_4_0.application.service.adapter.DispositivoAdapter;
-import triomaravilha.senai.atmosfera_4_0.domain.entity.Atuador;
 import triomaravilha.senai.atmosfera_4_0.domain.gateway.AtuadorGateway;
 import triomaravilha.senai.atmosfera_4_0.infra.persistence.exceptions.NoIntegridadeReferencial;
 import triomaravilha.senai.atmosfera_4_0.infra.persistence.jpa.dispositivo.DispositivoRespository;

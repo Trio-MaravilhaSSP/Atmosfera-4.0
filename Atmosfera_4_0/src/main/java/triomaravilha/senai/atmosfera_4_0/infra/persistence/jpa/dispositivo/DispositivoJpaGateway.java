@@ -3,7 +3,6 @@ package triomaravilha.senai.atmosfera_4_0.infra.persistence.jpa.dispositivo;
 import org.springframework.stereotype.Component;
 import triomaravilha.senai.atmosfera_4_0.application.dto.DispositivoResponse;
 import triomaravilha.senai.atmosfera_4_0.application.mappers.DispositivoMapper;
-import triomaravilha.senai.atmosfera_4_0.domain.entity.Dispositivo;
 import triomaravilha.senai.atmosfera_4_0.domain.gateway.DispositivoGateway;
 import triomaravilha.senai.atmosfera_4_0.infra.persistence.exceptions.NoIntegridadeReferencial;
 import triomaravilha.senai.atmosfera_4_0.infra.persistence.model.DispositivoModel;
