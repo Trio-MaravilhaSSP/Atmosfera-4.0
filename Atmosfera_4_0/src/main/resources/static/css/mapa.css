@@ -6,7 +6,7 @@
 
 /* Viewport 3D para o Mapa */
 .map-viewport {
-    perspective: min(1200px);
+    perspective: 1400px;
     cursor: grab;
     overflow: hidden;
     background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
@@ -68,4 +68,14 @@
 
 .custom-scroll::-webkit-scrollbar-thumb:hover {
     background: #ff828a;
+}
+
+#Jojo {
+    display: grid;
+    /* Faz as colunas esticarem (1fr) ocupando todo o espaço disponível, respeitando o mínimo de 180px */
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem; /* Espaçamento entre os cards */
+    width: 100%;
+    height: 100%;
+    align-items: stretch;
 }
