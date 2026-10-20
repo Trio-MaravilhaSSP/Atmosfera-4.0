@@ -41,9 +41,9 @@
     position: absolute;
     transform-style: preserve-3d;
     pointer-events: auto;
-    z-index: 997;
+    z-index: 1;
 
-    transform: translateZ(40px);
+    transform: translateZ(20px);
 }
 
 .pin-billboard {

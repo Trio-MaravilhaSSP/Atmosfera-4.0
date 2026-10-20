@@ -58,16 +58,6 @@ const bancoDeDados = [
         "altitude": 780,
         "luminosidade": 450,
         "pressao": 0.94,
-    },
-    {
-        "id": 7,
-        "sala": "Laboratorio 7",
-        "temperatura": 28,
-        "umidade": 100,
-        "sinal": -30,
-        "altitude": 780,
-        "luminosidade": 460,
-        "pressao": 0.94,
     }
 ]
 
@@ -166,17 +156,20 @@ function loadCards() {
     planilha.innerHTML = '';
 
     dados.forEach(item => {
+        let [badgeColor, , ] = verifyColor(item.sinal)
+        let [, badgeBg, ] = verifyColor(item.sinal)
+
         planilha.innerHTML += `
-            <div class="room-block bg-slate-800/80 border border-slate-600 rounded-lg p-3 flex flex-col justify-between cursor-pointer hover:border-brand-accent" onclick="selecionarSala('lab${item.id}', 'Laboratório IoT', ${item.sinal}, '${item.temperatura}', '${item.umidade}')">
+            <div style="height: 150px;" class="room-block bg-slate-800/80 border ${badgeBg} border-slate-600 rounded-lg p-3 flex flex-col justify-between cursor-pointer hover:border-brand-accent" onclick="selecionarSala('lab${item.id}', 'Laboratório IoT', ${item.sinal}, '${item.temperatura}', '${item.umidade}')">
                 <span class="text-xs font-bold text-slate-300">${item.sala}</span>
                 <div class="flex justify-between items-end">
-                    <span class="text-[10px] text-green-400 font-mono">${item.sinal} dBm</span>
-                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    <span class="text-[10px] ${badgeColor} font-mono">${item.sinal} dBm</span>
+                    <span class="w-2 h-2 rounded-full ${badgeBg}"></span>
                 </div>
                 
                 <div class="pin-wrapper" style="top: 0; right: -10px;">
                     <div class="pin-billboard cursor-pointer" onclick="selecionarSala('lab${item.id}', 'Laboratório IoT', ${item.sinal}, '${item.temperatura}', '${item.umidade}')">
-                        <div class="bg-slate-900 border border-green-500 text-green-400 text-xs px-2 py-1 rounded-md shadow-xl flex items-center gap-1.5 hover:scale-110 transition-transform">
+                        <div class="bg-slate-900 border ${badgeBg} ${badgeColor} text-xs px-2 py-1 rounded-md shadow-xl flex items-center gap-1.5 hover:scale-110 transition-transform">
                             <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
                             <span class="font-bold">IoT ${item.id}</span>
                         </div>
@@ -188,26 +181,37 @@ function loadCards() {
 }
 loadCards()
 
+function verifyColor(dbm) {
+    let status = 'Fraco'
+    let badgeColor = 'text-rose-400';
+    let badgeBg = 'bg-rose-500/20 border-rose-500/40'
+
+    if (dbm >= -55) {
+        status = 'Excelente'
+        badgeColor = 'text-emerald-400';
+        badgeBg = 'bg-emerald-500/20 border-emerald-500/40';
+    } else if (dbm >= -72) {
+        status = 'Atenção'
+        badgeColor = 'text-amber-400';
+        badgeBg = 'bg-amber-500/20 border-amber-500/40';
+    }
+
+    return [badgeColor, badgeBg, status];
+}
+
 function selecionarSala(id, nome, dbm, temp, umid) {
     document.getElementById('salaNome').innerText = nome;
     document.getElementById('salaDbm').innerText = `${dbm} dBm`;
     document.getElementById('salaTemp').innerText = temp;
     document.getElementById('salaUmid').innerText = umid;
 
-    let status = 'Fraco';
-    let badgeClasses = 'bg-rose-500/20 text-rose-400 border-rose-500/40';
-
-    if (dbm >= -55) {
-        status = 'Excelente';
-        badgeClasses = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40';
-    } else if (dbm >= -72) {
-        status = 'Atenção';
-        badgeClasses = 'bg-amber-500/20 text-amber-400 border-amber-500/40';
-    }
+    let [, , status] = verifyColor(dbm);
+    let [badgeColor, ,] = verifyColor(dbm)
+    let [, badgeBg, ] = verifyColor(dbm)
 
     const badge = document.getElementById('salaBadge');
     badge.innerText = status;
-    badge.className = `px-2.5 py-1 rounded-full text-xs font-semibold ${badgeClasses} text-slate-200 border border-${badgeClasses}`;
+    badge.className = `px-2.5 py-1 rounded-full text-xs font-semibold ${badgeColor} text-slate-200 border ${badgeBg}`;
 }
 
 function simularRecarregamento() {
