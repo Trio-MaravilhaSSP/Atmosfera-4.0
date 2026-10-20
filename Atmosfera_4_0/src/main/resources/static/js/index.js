@@ -27,6 +27,7 @@ function trocarTema() {
 
     body.classList.toggle('dark');
     body.classList.toggle('light');
+    document.querySelector('main').classList.toggle('imageOnDark')
 
     const temaAtual = body.classList.contains('dark') ? 'dark' : 'light';
 

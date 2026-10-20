@@ -141,6 +141,9 @@
             background-size: cover;
             background-position: center;
         }
+        &.imageOnDark::before {
+            opacity: 0.25;
+        }
 
         &>* {
             position: relative;

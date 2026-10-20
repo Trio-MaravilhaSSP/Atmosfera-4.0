@@ -86,6 +86,28 @@ const bancoDeDados = [
         "altitude": 776,
         "luminosidade": 60000,
         "pressao": 0.93,
+    },
+    {
+        "id": 9,
+        "sala": "Laboratório 0",
+        "andar": 2,
+        "temperatura": 23,
+        "umidade": 60,
+        "sinal": -44,
+        "altitude": 784,
+        "luminosidade": 300,
+        "pressao": 0.94,
+    },
+    {
+        "id": 10,
+        "sala": "Laboratório 14",
+        "andar": -1,
+        "temperatura": 22,
+        "umidade": 70,
+        "sinal": -38,
+        "altitude": 772,
+        "luminosidade": 320,
+        "pressao": 0.93,
     }
 ]
 
