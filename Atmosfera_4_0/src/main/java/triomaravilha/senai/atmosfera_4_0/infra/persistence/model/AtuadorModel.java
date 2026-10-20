@@ -1,6 +1,8 @@
 package triomaravilha.senai.atmosfera_4_0.infra.persistence.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,9 +22,12 @@ public class AtuadorModel {
     private int id_atuador;
 
     @Column(name = "id_dispositivo_fk", nullable = false)
+    @NotNull(message = "Dispositivo é obrigatório.")
     private Integer id_dispositivo_fk;
 
     @Column(nullable = false, length = 30)
+    @NotNull(message = "É obrigatório o nome do atuador")
+    @Size(max = 30, message = "O tamanho máximo do nome do atuador deve ser de 30 caracteres")
     private String nome_atuador;
 
     @Column(nullable = true)

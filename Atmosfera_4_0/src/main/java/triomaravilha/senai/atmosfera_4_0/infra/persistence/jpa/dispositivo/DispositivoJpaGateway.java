@@ -3,7 +3,9 @@ package triomaravilha.senai.atmosfera_4_0.infra.persistence.jpa.dispositivo;
 import org.springframework.stereotype.Component;
 import triomaravilha.senai.atmosfera_4_0.application.dto.DispositivoResponse;
 import triomaravilha.senai.atmosfera_4_0.application.mappers.DispositivoMapper;
+import triomaravilha.senai.atmosfera_4_0.domain.entity.Dispositivo;
 import triomaravilha.senai.atmosfera_4_0.domain.gateway.DispositivoGateway;
+import triomaravilha.senai.atmosfera_4_0.infra.persistence.exceptions.NoIntegridadeReferencial;
 import triomaravilha.senai.atmosfera_4_0.infra.persistence.model.DispositivoModel;
 import triomaravilha.senai.atmosfera_4_0.interface_.dto.DispositivoRequest;
 import java.util.List;
@@ -22,6 +24,9 @@ public class DispositivoJpaGateway implements DispositivoGateway {
 
     @Override
     public DispositivoResponse save(DispositivoRequest dispositivo) {
+        if (dispositivo.toModel().getGateway_pai_fk() != null && respository.findById(dispositivo.toModel().getGateway_pai_fk()).isPresent()) {
+            throw new NoIntegridadeReferencial("Conexão do Dispositivo com Gateway");
+        }
         return DispositivoMapper.mapper(respository.save(dispositivo.toModel()));
     }
 
@@ -41,15 +46,21 @@ public class DispositivoJpaGateway implements DispositivoGateway {
 
     @Override
     public DispositivoResponse update(int id, DispositivoRequest dispositivo) {
-        DispositivoModel dispositivoModel = dispositivo.toModel();
+        DispositivoModel dispositivoModel = respository.findById(id).get();
 
-        dispositivoModel.setId_dispositivo((long)id);
+        dispositivoModel.setNome_dispositivo(dispositivoModel.getNome_dispositivo());
+        dispositivoModel.setLocalizacao(dispositivoModel.getLocalizacao());
+        dispositivoModel.setTipo_dispositivo(dispositivoModel.getTipo_dispositivo());
+        dispositivoModel.setGateway_pai_fk(dispositivo.toModel().getGateway_pai_fk());
+
 
         return DispositivoMapper.mapper(respository.save(dispositivoModel));
     }
 
     @Override
     public void deleteById(int id) {
-        respository.deleteById(id);
+        DispositivoModel dispositivoModel = respository.findById(id).get();
+
+        respository.delete(dispositivoModel);
     }
 }
