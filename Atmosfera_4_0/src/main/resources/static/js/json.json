@@ -22,7 +22,7 @@
     },
     {
         "id": 2,
-        "sala": 2,
+        "sala": 2, 
         "data": "2026-10-22 08:00:00",
         "temperatura": 22,
         "umidade": 88,
@@ -32,7 +32,7 @@
         "pressao": 0.94
     },
     {
-        "id": 2,
+        "id": 3,
         "sala": 2,
         "data": "2026-10-22 08:05:00",
         "temperatura": 24,
@@ -41,6 +41,17 @@
         "altitude": 780,
         "luminosidade": 450,
         "pressao": 0.94
+    },
+    {
+        "id": 4,
+        "sala": 2,
+        "data": "2026-10-23 08:03:00",
+        "temperatura": 30,
+        "umidade": 80,
+        "sinal": -40,
+        "altitude": 780,
+        "luminosidade": 457,
+        "pressao": 0.93
     },
     {
         "id": 3,
