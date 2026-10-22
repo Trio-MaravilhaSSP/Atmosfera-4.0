@@ -1,7 +1,18 @@
 [
+
+    {
+        "id": 0,
+        "sala": 0,
+        "temperatura": 22,
+        "umidade": 88,
+        "sinal": -48,
+        "altitude": 780,
+        "luminosidade": 450,
+        "pressao": 0.94
+    },
     {
         "id": 1,
-        "sala": "Laboratorio 1",
+        "sala": 1,
         "temperatura": 22,
         "umidade": 88,
         "sinal": -48,
@@ -11,7 +22,7 @@
     },
     {
         "id": 2,
-        "sala": "Laboratorio 2",
+        "sala": 2,
         "data": "2026-10-22 08:00:00",
         "temperatura": 22,
         "umidade": 88,
@@ -22,7 +33,7 @@
     },
     {
         "id": 2,
-        "sala": "Laboratorio 2",
+        "sala": 2,
         "data": "2026-10-22 08:05:00",
         "temperatura": 24,
         "umidade": 90,
@@ -33,7 +44,7 @@
     },
     {
         "id": 3,
-        "sala": "Laboratorio 3",
+        "sala": 3,
         "temperatura": 22,
         "umidade": 88,
         "sinal": -48,
@@ -43,7 +54,7 @@
     },
     {
         "id": 4,
-        "sala": "Laboratorio 4",
+        "sala": 4,
         "temperatura": 22,
         "umidade": 88,
         "sinal": -88,
@@ -53,7 +64,7 @@
     },
     {
         "id": 5,
-        "sala": "Laboratorio 5",
+        "sala": 5,
         "temperatura": 22,
         "umidade": 88,
         "sinal": -80,
@@ -63,7 +74,7 @@
     },
     {
         "id": 6,
-        "sala": "Laboratorio 6",
+        "sala": 6,
         "temperatura": 22,
         "umidade": 88,
         "sinal": -67,
@@ -73,7 +84,7 @@
     },
     {
         "id": 7,
-        "sala": "Refeitório",
+        "sala": 7,
         "temperatura": 18,
         "umidade": 70,
         "sinal": -70,
@@ -83,7 +94,7 @@
     },
     {
         "id": 8,
-        "sala": "Pátio",
+        "sala": 8,
         "temperatura": 16,
         "umidade": 89,
         "sinal": -88,
@@ -93,7 +104,7 @@
     },
     {
         "id": 9,
-        "sala": "Laboratório 0",
+        "sala": 9,
         "temperatura": 23,
         "umidade": 60,
         "sinal": -44,
@@ -103,8 +114,78 @@
     },
     {
         "id": 10,
-        "sala": "Laboratório 14",
+        "sala": 10,
     
+        "temperatura": 22,
+        "umidade": 70,
+        "sinal": -38,
+        "altitude": 772,
+        "luminosidade": 320,
+        "pressao": 0.93
+    },
+    {
+        "id": 10,
+        "sala": 10,
+        "temperatura": 22,
+        "umidade": 70,
+        "sinal": -38,
+        "altitude": 772,
+        "luminosidade": 320,
+        "pressao": 0.93
+    },
+    {
+        "id": 11,
+        "sala": 11,
+        "temperatura": 22,
+        "umidade": 70,
+        "sinal": -38,
+        "altitude": 772,
+        "luminosidade": 320,
+        "pressao": 0.93
+    },
+    {
+        "id": 12,
+        "sala": 12,
+        "temperatura": 22,
+        "umidade": 70,
+        "sinal": -38,
+        "altitude": 772,
+        "luminosidade": 320,
+        "pressao": 0.93
+    },
+    {
+        "id": 13,
+        "sala": 13,
+        "temperatura": 22,
+        "umidade": 70,
+        "sinal": -38,
+        "altitude": 772,
+        "luminosidade": 320,
+        "pressao": 0.93
+    },
+    {
+        "id": 14,
+        "sala": 14,
+        "temperatura": 22,
+        "umidade": 70,
+        "sinal": -38,
+        "altitude": 772,
+        "luminosidade": 320,
+        "pressao": 0.93
+    },
+    {
+        "id": 15,
+        "sala": 15,
+        "temperatura": 22,
+        "umidade": 70,
+        "sinal": -38,
+        "altitude": 772,
+        "luminosidade": 320,
+        "pressao": 0.93
+    },
+    {
+        "id": 16,
+        "sala": 16,
         "temperatura": 22,
         "umidade": 70,
         "sinal": -38,
