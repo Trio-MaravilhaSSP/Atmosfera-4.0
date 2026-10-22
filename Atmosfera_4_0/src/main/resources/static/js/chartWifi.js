@@ -121,6 +121,4 @@ function atualizarValor() {
     manometroChart.update();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    initManometro();
-})
+initManometro();

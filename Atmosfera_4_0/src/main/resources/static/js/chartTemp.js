@@ -2,12 +2,17 @@
 var graficoTendencia = null;
 
 // Inicializa o gráfico zerado ao carregar a página
-async function initGraficoTendencia(andarId) {
+async function initGraficoTendencia(salaId) {
     try {
         const [salasResp, dadosResp] = await Promise.all([
             fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/bancoDeSalas.json"),
             fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json.json")
         ])
+
+        const bancoDeSalas = await salasResp.json()
+        const bancoDeDados = await dadosResp.json()
+
+        const sala = bancoDeSalas.filter(s => s.id == salaId)
 
         const ctxTemp = document.getElementById('graficoTempUmi');
         if (!ctxTemp) return;
@@ -16,9 +21,12 @@ async function initGraficoTendencia(andarId) {
             graficoTendencia.destroy()
         }
 
+
+
         // const salaLabels = dados.map(item => item.sala)
         const listaTemp = dadosResp.map(item => item.temperatura)
         const listaUmid = dadosResp.map(item => item.umidade)
+
 
         graficoTendencia = new Chart(ctxTemp, {
             type: 'line',
