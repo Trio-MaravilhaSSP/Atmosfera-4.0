@@ -8,10 +8,10 @@ function dbmParaPorcentagem(dbm) {
     return ((dbm - minDbm) / (maxDbm - minDbm)) * 100;
 }
 
-const ctx = document.getElementById('meuManometro').getContext('2d');
+var manometroChart = null;
 
 // 1. Plugin customizado para desenhar a Agulha (Ponteiro)
-const gaugeNeedle = {
+var gaugeNeedle = {
     id: 'gaugeNeedle',
     afterDatasetDraw(chart, args, options) {
         const { ctx, config, chartArea: { top, bottom, left, right, width, height } } = chart;
@@ -60,49 +60,59 @@ const gaugeNeedle = {
     }
 };
 
-const manometroChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-        datasets: [{
-            // 3 fatias iguais
-            data: [1, 1, 1],
-            backgroundColor: [
-                '#28e66e', // Verde
-                '#ffe100', // Amarelo
-                '#ff0514', // Vermelho
-            ],
-            // borderWidth: 3,
-            borderColor: 'transparent'
-        }]
-    },
-    options: {
-        valorDbm: -60,
-        rotation: -90,
-        circumference: 180,
-        cutout: '65%',
-        aspectRatio: 1.4,
-        plugins: {
-            tooltip: { enabled: false }
-        }
-    },
-    plugins: [gaugeNeedle] // Injeta o plugin da agulha
-});
+function initManometro() {
+    const elementoCanvas = document.getElementById('meuManometro')
+
+    if (!elementoCanvas) return
+
+    const ctxCanvas = elementoCanvas.getContext('2d')
+
+    if (manometroChart) manometroChart.destroy()
+
+    manometroChart = new Chart(ctxCanvas, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                // 3 fatias iguais
+                data: [1, 1, 1],
+                backgroundColor: [
+                    '#28e66e', // Verde
+                    '#ffe100', // Amarelo
+                    '#ff0514', // Vermelho
+                ],
+                // borderWidth: 3,
+                borderColor: 'transparent'
+            }]
+        },
+        options: {
+            valorDbm: -60,
+            rotation: -90,
+            circumference: 180,
+            cutout: '65%',
+            aspectRatio: 1.4,
+            plugins: {
+                tooltip: { enabled: false }
+            }
+        },
+        plugins: [gaugeNeedle] // Injeta o plugin da agulha
+    });
+}
 
 // Função para atualizar dinamicamente o valor do ponteiro
-let cont = 0;
+var cont = 0;
 function atualizarValor() {
     let novoValor = -30
-    if (cont == 0) { 
-        novoValor = -50 
+    if (cont == 0) {
+        novoValor = -50
         cont++;
-    } else if (cont == 1) { 
-        novoValor = -70 
+    } else if (cont == 1) {
+        novoValor = -70
         cont++;
-    } else if (cont == 2) { 
-        novoValor = -30 
+    } else if (cont == 2) {
+        novoValor = -30
         cont = 3;
-    } else if (cont == 3) { 
-        novoValor = -80 
+    } else if (cont == 3) {
+        novoValor = -80
         cont = 0;
     }
 
@@ -110,3 +120,7 @@ function atualizarValor() {
     document.getElementById('valorTexto').innerText = `${novoValor} dBm`;
     manometroChart.update();
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    initManometro();
+})

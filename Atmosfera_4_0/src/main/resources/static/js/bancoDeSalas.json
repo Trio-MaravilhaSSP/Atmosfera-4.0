@@ -1,0 +1,87 @@
+[
+    {
+        "id": 1,
+        "sala": "Laboratorio 1",
+        "andar": 1
+    },
+    {
+        "id": 1,
+        "sala": "Laboratorio 2",
+        "andar": 1
+    },
+    {
+        "id": 1,
+        "sala": "Laboratorio 3",
+        "andar": 1
+    },
+    {
+        "id": 1,
+        "sala": "Laboratorio 4",
+        "andar": 1
+    },
+    {
+        "id": 1,
+        "sala": "Laboratorio 5",
+        "andar": 1
+    },
+    {
+        "id": 1,
+        "sala": "Laboratorio 6",
+        "andar": 1
+    },
+    {
+        "id": 1,
+        "sala": "Laboratorio 7",
+        "andar": 1
+    },
+    {
+        "id": 1,
+        "sala": "Laboratorio 8",
+        "andar": 1
+    },
+    {
+        "id": 1,
+        "sala": "Laboratorio 9",
+        "andar": 1
+    },
+    {
+        "id": 1,
+        "sala": "Laboratorio 10",
+        "andar": 1
+    },
+    {
+        "id": 1,
+        "sala": "Laboratorio 11",
+        "andar": 1
+    },
+    {
+        "id": 12,
+        "sala": "Laboratorio 0",
+        "andar": 2
+    },
+    {
+        "id": 13,
+        "sala": "Laboratorio 14",
+        "andar": -1
+    },
+    {
+        "id": 14,
+        "sala": "Biblioteca",
+        "andar": 0
+    },
+    {
+        "id": 15,
+        "sala": "Entrada",
+        "andar": 0
+    },
+    {
+        "id": 16,
+        "sala": "Refeitório",
+        "andar": 0
+    },
+    {
+        "id": 17,
+        "sala": "Pátio",
+        "andar": 0
+    }
+]

@@ -1,0 +1,115 @@
+[
+    {
+        "id": 1,
+        "sala": "Laboratorio 1",
+        "temperatura": 22,
+        "umidade": 88,
+        "sinal": -48,
+        "altitude": 780,
+        "luminosidade": 450,
+        "pressao": 0.94
+    },
+    {
+        "id": 2,
+        "sala": "Laboratorio 2",
+        "data": "2026-10-22 08:00:00",
+        "temperatura": 22,
+        "umidade": 88,
+        "sinal": -48,
+        "altitude": 780,
+        "luminosidade": 450,
+        "pressao": 0.94
+    },
+    {
+        "id": 2,
+        "sala": "Laboratorio 2",
+        "data": "2026-10-22 08:05:00",
+        "temperatura": 24,
+        "umidade": 90,
+        "sinal": -48,
+        "altitude": 780,
+        "luminosidade": 450,
+        "pressao": 0.94
+    },
+    {
+        "id": 3,
+        "sala": "Laboratorio 3",
+        "temperatura": 22,
+        "umidade": 88,
+        "sinal": -48,
+        "altitude": 780,
+        "luminosidade": 450,
+        "pressao": 0.94
+    },
+    {
+        "id": 4,
+        "sala": "Laboratorio 4",
+        "temperatura": 22,
+        "umidade": 88,
+        "sinal": -88,
+        "altitude": 780,
+        "luminosidade": 450,
+        "pressao": 0.94
+    },
+    {
+        "id": 5,
+        "sala": "Laboratorio 5",
+        "temperatura": 22,
+        "umidade": 88,
+        "sinal": -80,
+        "altitude": 780,
+        "luminosidade": 450,
+        "pressao": 0.94
+    },
+    {
+        "id": 6,
+        "sala": "Laboratorio 6",
+        "temperatura": 22,
+        "umidade": 88,
+        "sinal": -67,
+        "altitude": 780,
+        "luminosidade": 450,
+        "pressao": 0.94
+    },
+    {
+        "id": 7,
+        "sala": "Refeitório",
+        "temperatura": 18,
+        "umidade": 70,
+        "sinal": -70,
+        "altitude": 778,
+        "luminosidade": 480,
+        "pressao": 0.93
+    },
+    {
+        "id": 8,
+        "sala": "Pátio",
+        "temperatura": 16,
+        "umidade": 89,
+        "sinal": -88,
+        "altitude": 776,
+        "luminosidade": 60000,
+        "pressao": 0.93
+    },
+    {
+        "id": 9,
+        "sala": "Laboratório 0",
+        "temperatura": 23,
+        "umidade": 60,
+        "sinal": -44,
+        "altitude": 784,
+        "luminosidade": 300,
+        "pressao": 0.94
+    },
+    {
+        "id": 10,
+        "sala": "Laboratório 14",
+    
+        "temperatura": 22,
+        "umidade": 70,
+        "sinal": -38,
+        "altitude": 772,
+        "luminosidade": 320,
+        "pressao": 0.93
+    }
+]

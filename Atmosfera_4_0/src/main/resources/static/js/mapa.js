@@ -1,124 +1,22 @@
-const bancoDeDados = [
-    {
-        "id": 1,
-        "sala": "Laboratorio 1",
-        "andar": 1,
-        "temperatura": 22,
-        "umidade": 88,
-        "sinal": -48,
-        "altitude": 780,
-        "luminosidade": 450,
-        "pressao": 0.94,
-    },
-    {
-        "id": 2,
-        "sala": "Laboratorio 2",
-        "andar": 1,
-        "temperatura": 22,
-        "umidade": 88,
-        "sinal": -48,
-        "altitude": 780,
-        "luminosidade": 450,
-        "pressao": 0.94,
-    },
-    {
-        "id": 3,
-        "sala": "Laboratorio 3",
-        "andar": 1,
-        "temperatura": 22,
-        "umidade": 88,
-        "sinal": -48,
-        "altitude": 780,
-        "luminosidade": 450,
-        "pressao": 0.94,
-    },
-    {
-        "id": 4,
-        "sala": "Laboratorio 4",
-        "andar": 1,
-        "temperatura": 22,
-        "umidade": 88,
-        "sinal": -88,
-        "altitude": 780,
-        "luminosidade": 450,
-        "pressao": 0.94,
-    },
-    {
-        "id": 5,
-        "sala": "Laboratorio 5",
-        "andar": 1,
-        "temperatura": 22,
-        "umidade": 88,
-        "sinal": -80,
-        "altitude": 780,
-        "luminosidade": 450,
-        "pressao": 0.94,
-    },
-    {
-        "id": 6,
-        "sala": "Laboratorio 6",
-        "andar": 1,
-        "temperatura": 22,
-        "umidade": 88,
-        "sinal": -67,
-        "altitude": 780,
-        "luminosidade": 450,
-        "pressao": 0.94,
-    },
-    {
-        "id": 7,
-        "sala": "Refeitório",
-        "andar": 0,
-        "temperatura": 18,
-        "umidade": 70,
-        "sinal": -70,
-        "altitude": 778,
-        "luminosidade": 480,
-        "pressao": 0.93,
-    },
-    {
-        "id": 8,
-        "sala": "Pátio",
-        "andar": 0,
-        "temperatura": 16,
-        "umidade": 89,
-        "sinal": -88,
-        "altitude": 776,
-        "luminosidade": 60000,
-        "pressao": 0.93,
-    },
-    {
-        "id": 9,
-        "sala": "Laboratório 0",
-        "andar": 2,
-        "temperatura": 23,
-        "umidade": 60,
-        "sinal": -44,
-        "altitude": 784,
-        "luminosidade": 300,
-        "pressao": 0.94,
-    },
-    {
-        "id": 10,
-        "sala": "Laboratório 14",
-        "andar": -1,
-        "temperatura": 22,
-        "umidade": 70,
-        "sinal": -38,
-        "altitude": 772,
-        "luminosidade": 320,
-        "pressao": 0.93,
-    }
-]
+async function loadCards(andarId) {
+    // const resp = await fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json.json")
+    // const bancoDeDados = await resp.json()
 
-function loadCards(andarId) {
+    const bancoDeSalas = await fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/bancoDeSalas.json") 
+    const dadosSalas = await bancoDeSalas.json()
+
+    if (bancoDeDados.erro) {
+        console.error("Erro ao sincronizar os dados: ", erro)
+        alert("Deu ruim mano!")
+    }
+
     const dados = bancoDeDados.filter(i => i.andar === andarId);
     const planilha = document.getElementById('Jojo')
 
     planilha.innerHTML = '';
 
     dados.forEach(item => {
-        let [badgeColor, badgeBg, ] = verifyColor(item.sinal)
+        let [badgeColor, badgeBg,] = verifyColor(item.sinal)
 
         planilha.innerHTML += `
             <div class="h-full room-block bg-slate-800/80 border ${badgeBg} border-slate-600 rounded-lg p-3 flex flex-col justify-between cursor-pointer hover:border-brand-accent" onclick="selecionarSala('lab${item.id}', '${item.sala}', ${item.sinal}, '${item.temperatura}', '${item.umidade}')">
@@ -160,7 +58,7 @@ function verifyColor(dbm) {
     return [badgeColor, badgeBg, status];
 }
 
-function selecionarSala(id, nome, dbm, temp, umid) {
+window.selecionarSala = function (id, nome, dbm, temp, umid) {
     document.getElementById('salaNome').innerText = nome;
     document.getElementById('salaDbm').innerText = `${dbm} dBm`;
     document.getElementById('salaTemp').innerText = temp;

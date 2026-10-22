@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../static/css/01index.css" />
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="../static/js/chartWifiUrl.js"></script>
+    <script src="../static/js/chartUrl.js"></script>
     <script src="../static/js/mapaInterativoConfig.js"></script>
 </head>
 
@@ -79,25 +79,22 @@
             <div class="Options">
 
                 <div class="Option" onclick="changeWindow('temperatura')">
-                    <img class="Aside-Temp" src="../static/images/icons/thermometer-icon-inactive.png"
-                        alt="Temp_Icon" />
+                    <img class="Aside-Temp" src="../static/images/icons/thermometer-icon-inactive.png" alt="Temp_Icon"/>
                     <p class="BeautyUnderline">Temp</p>
                 </div>
 
                 <div class="Option" onclick="changeWindow('wifi')">
-                    <img class="Aside-Wifi" src="../static/images/icons/wifi-icon-inactive.png" alt="Wifi_Icon" />
+                    <img class="Aside-Wifi" src="../static/images/icons/wifi-icon-inactive.png" alt="Wifi_Icon"/>
                     <p class="BeautyUnderline">Wifi</p>
                 </div>
 
                 <div class="Option" onclick="changeWindow('altitude')">
-                    <img class="Aside-Alti" src="../static/images/icons/altitude-icon-inactive.png"
-                        alt="Altitude_Icon" />
+                    <img class="Aside-Alti" src="../static/images/icons/altitude-icon-inactive.png" alt="Altitude_Icon"/>
                     <p class="BeautyUnderline">Altitude</p>
                 </div>
 
                 <div class="Option" onclick="changeWindow('mapa')">
-                    <img class="Aside-Mapa" src="../static/images/icons/destination-icon-inactive.png"
-                        alt="Mapa_Icon" />
+                    <img class="Aside-Mapa" src="../static/images/icons/destination-icon-inactive.png" alt="Mapa_Icon"/>
                     <p class="BeautyUnderline">Mapa</p>
                 </div>
 
@@ -232,7 +229,7 @@
 
             </section>
 
-            <section id="sec-temperatura" class="section-content">
+            <section id="sec-temperatura" class="section-content active">
 
                 <div class="Data-Options">
                     <button class="Botao-Atualizar" onclick="atualizarValor()">
@@ -269,7 +266,7 @@
 
                 <div class="Temperatura">
                     <div class="Grafico">
-                        <p>Aqui virá um gráfico tendências</p>
+                        <canvas id="graficoTempUmi"></canvas>
                     </div>
 
                     <div class="Legenda">
@@ -385,7 +382,7 @@
 
             </section>
 
-            <section id="sec-mapa" class="section-content active">
+            <section id="sec-mapa" class="section-content">
 
                 <div class="max-w-7xl mx-auto flex flex-col gap-6 no-select">
 
@@ -419,6 +416,7 @@
 
                                 <!-- Layout das Salas (Sistemas de Blocos 2D/3D) -->
                                 <div id="Jojo" class="relative w-full h-full grid grid-cols-3 grid-rows-2 gap-4 z-10">
+                                    
                                 </div>
 
                             </div>
@@ -502,6 +500,7 @@
 </body>
 <script src="../static/js/index.js"></script>
 <script src="../static/js/chartWifi.js"></script>
+<script src="../static/js/chartTemp.js"></script>
 <script src="../static/js/mapaInterativo.js"></script>
 <script src="../static/js/mapa.js"></script>
 
