@@ -222,7 +222,7 @@ async function atualizarGraficoWifi(salaIdOuObjeto, modoAuto = false) {
         }
 
         // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
-        const nomeExibicao = sala.sala || sala.nome || `Laboratório ${sala.id}`;
+        const nomeExibicao = sala.sala || `Laboratório ${sala.id}`;
 
         // Atualiza a interface com o seletor genérico por atributo ou id
         const elementoSeletor = document.querySelector('[data-seVa-1]');

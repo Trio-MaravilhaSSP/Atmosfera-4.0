@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="../static/css/01index.css" />
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="../static/js/chartUrl.js"></script>
-    <script src="../static/js/mapaInterativoConfig.js"></script>
+    <script src="../static/js/config/chartUrl.js"></script>
+    <script src="../static/js/config/mapaInterativoConfig.js"></script>
 </head>
 
 <body class="light">
@@ -279,7 +279,7 @@
                 </div>
             </section>
 
-            <section id="sec-wifi" class="section-content active">
+            <section id="sec-wifi" class="section-content ">
 
                 <div class="Data-Options">
                     <button class="Botao-Atualizar" onclick="atualizarGraficoWifi(13, false)">
@@ -332,10 +332,10 @@
 
             </section>
 
-            <section id="sec-altitude" class="section-content">
+            <section id="sec-altitude" class="section-content active">
 
                 <div class="Data-Options">
-                    <button class="Botao-Atualizar" onclick="atualizarGraficoAlt(13, false)">
+                    <button class="Botao-Atualizar" onclick="atualizarGraficoAltPress(13, false)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="icon-reload">
@@ -363,14 +363,14 @@
                             <div class="option" onclick="initGraficoAlt(9, 'Laboratório 9')">Laboratório 9</div>
                             <div class="option" onclick="initGraficoAlt(10, 'Laboratório10')">Laboratório 10</div>
                             <div class="option" onclick="initGraficoAlt(11, 'Laboratório11')">Laboratório 11</div>
-                            <div class="option" onclick="initGraficoAlt(0, 'Pátio')">Pátio</div>
+                            <div class="option" onclick="initGraficoAlt(16, 'Pátio')">Pátio</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="Altitude">
                     <div class="Grafico">
-                        <p>Aqui virá um gráfico de barras duplas</p>
+                        <canvas id="graficoAltitude"></canvas>
                     </div>
                 </div>
 
@@ -496,9 +496,10 @@
 
 </body>
 <script src="../static/js/index.js"></script>
-<script src="../static/js/chartWifi.js"></script>
 <script src="../static/js/chartTemp.js"></script>
-<script src="../static/js/mapaInterativo.js"></script>
+<script src="../static/js/chartWifi.js"></script>
+<script src="../static/js/chartAlti.js"></script>
+<script src="../static/js/config/mapaInterativo.js"></script>
 <script src="../static/js/mapa.js"></script>
 
 </html>

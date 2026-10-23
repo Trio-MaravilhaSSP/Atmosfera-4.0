@@ -76,7 +76,7 @@ async function atualizarGraficoTemp(salaIdOuObjeto, modoAuto = false) {
         }
 
         // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
-        const nomeExibicao = sala.sala || sala.nome || `Laboratório ${sala.id}`;
+        const nomeExibicao = sala.sala || `Laboratório ${sala.id}`;
 
         const elementoSeletor = document.querySelector('[data-seVa-0]');
         if (elementoSeletor) {
