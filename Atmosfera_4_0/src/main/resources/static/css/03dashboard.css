@@ -108,7 +108,7 @@
 
 
         .active {
-            display: block !important;
+            display: flex !important;
         }
 
         .fade-in {
@@ -136,10 +136,13 @@
             width: 100%;
             height: 100%;
 
-            opacity: 0.25;
+            opacity: 0.50;
             background-image: var(--image-fundo-body);
             background-size: cover;
             background-position: center;
+        }
+        &.imageOnDark::before {
+            opacity: 0.25;
         }
 
         &>* {

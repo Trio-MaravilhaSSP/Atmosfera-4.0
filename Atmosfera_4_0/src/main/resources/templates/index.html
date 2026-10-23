@@ -9,7 +9,9 @@
     <link rel="shortcut icon" href="../static/images/Senai_Perfil.png" type="image/x-icon">
     <link rel="stylesheet" href="../static/css/01index.css" />
 
-    <script src="../static/js/chartWifiUrl.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../static/js/config/chartUrl.js"></script>
+    <script src="../static/js/config/mapaInterativoConfig.js"></script>
 </head>
 
 <body class="light">
@@ -72,7 +74,10 @@
 
     <div class="Dashboard-Container">
 
-        <aside>
+        <aside class="relative">
+
+            <p onclick="window.location='./dashboard.html'"
+                class="absolute top-[0] left-[15%] text-[#606060] cursor-pointer">Mais detalhes</p>
 
             <div class="Options">
 
@@ -105,7 +110,7 @@
 
         <main class="imageOn">
 
-            <section id="sec-inicio" class="section-content ">
+            <section id="sec-inicio" class="section-content active">
 
                 <div class="Inicio">
 
@@ -167,8 +172,8 @@
                             <h1>Alertas Críticos</h1>
 
                             <div class="Text">
-                                <p id="renderizarAlert"><b>1 Pendente</b></p>
-                                <p>3 Avisos</p>
+                                <p id="renderizarAlert"><b>0 Pendente</b></p>
+                                <p id="statusAviso">0 Avisos</p>
                             </div>
                         </div>
                     </div>
@@ -208,6 +213,7 @@
             <section id="sec-perfil" class="section-content">
 
                 <div class="Perfil">
+
                     <div class="Card">
                         <h1 class="BeautyUnderline">Olá!</h1>
 
@@ -232,7 +238,7 @@
             <section id="sec-temperatura" class="section-content">
 
                 <div class="Data-Options">
-                    <button class="Botao-Atualizar" onclick="atualizarValor()">
+                    <button class="Botao-Atualizar" onclick="atualizarGraficoTemp('16', false)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="icon-reload">
@@ -241,44 +247,41 @@
                         </svg>
                     </button>
 
-                    <div class="Select" id="select-local">
+                    <div class="Select" id="select-temp">
                         <div class="dropdown-selected" onclick="toggleSelect(0)">
-                            <span id="selected-value">Auto</span>
+                            <span id="selected-value" data-seVa-0="">Auto</span>
                         </div>
 
                         <div class="dropdown-options" data-id="0">
-                            <div class="option" onclick="selectOption('auto', 'Auto')">Auto</div>
-                            <div class="option" onclick="selectOption('lab0', 'Laboratório 0')">Laboratório 0</div>
-                            <div class="option" onclick="selectOption('lab2', 'Laboratório 1')">Laboratório 1</div>
-                            <div class="option" onclick="selectOption('lab1', 'Laboratório 2')">Laboratório 2</div>
-                            <div class="option" onclick="selectOption('lab3', 'Laboratório 3')">Laboratório 3</div>
-                            <div class="option" onclick="selectOption('lab4', 'Laboratório 4')">Laboratório 4</div>
-                            <div class="option" onclick="selectOption('lab5', 'Laboratório 5')">Laboratório 5</div>
-                            <div class="option" onclick="selectOption('lab6', 'Laboratório 6')">Laboratório 6</div>
-                            <div class="option" onclick="selectOption('lab7', 'Laboratório 7')">Laboratório 7</div>
-                            <div class="option" onclick="selectOption('lab8', 'Laboratório 8')">Laboratório 8</div>
-                            <div class="option" onclick="selectOption('lab9', 'Laboratório 9')">Laboratório 9</div>
-                            <div class="option" onclick="selectOption('lab10', 'Laboratório10')">Laboratório 10</div>
-                            <div class="option" onclick="selectOption('lab11', 'Laboratório11')">Laboratório 11</div>
+                            <div class="option" onclick="initGraficoTemp('auto', 'Auto')">Auto</div>
+                            <div class="option" onclick="initGraficoTemp('0', 'Laboratório 0')">Laboratório 0</div>
+                            <div class="option" onclick="initGraficoTemp('1', 'Laboratório 1')">Laboratório 1</div>
+                            <div class="option" onclick="initGraficoTemp('2', 'Laboratório 2')">Laboratório 2</div>
+                            <div class="option" onclick="initGraficoTemp('3', 'Laboratório 3')">Laboratório 3</div>
+                            <div class="option" onclick="initGraficoTemp('4', 'Laboratório 4')">Laboratório 4</div>
+                            <div class="option" onclick="initGraficoTemp('5', 'Laboratório 5')">Laboratório 5</div>
+                            <div class="option" onclick="initGraficoTemp('6', 'Laboratório 6')">Laboratório 6</div>
+                            <div class="option" onclick="initGraficoTemp('7', 'Laboratório 7')">Laboratório 7</div>
+                            <div class="option" onclick="initGraficoTemp('8', 'Laboratório 8')">Laboratório 8</div>
+                            <div class="option" onclick="initGraficoTemp('9', 'Laboratório 9')">Laboratório 9</div>
+                            <div class="option" onclick="initGraficoTemp('10', 'Laboratório 10')">Laboratório 10</div>
+                            <div class="option" onclick="initGraficoTemp('11', 'Laboratório 11')">Laboratório 11</div>
+                            <div class="option" onclick="initGraficoTemp('16', 'Pátio')">Pátio</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="Temperatura">
                     <div class="Grafico">
-                        <p>Aqui virá um gráfico tendências</p>
-                    </div>
-
-                    <div class="Legenda">
-                        <p>Aqui virá uma legenda para o gráfico de tendências</p>
+                        <canvas id="graficoTempUmi"></canvas>
                     </div>
                 </div>
             </section>
 
-            <section id="sec-wifi" class="section-content">
+            <section id="sec-wifi" class="section-content ">
 
                 <div class="Data-Options">
-                    <button class="Botao-Atualizar" onclick="atualizarValor()">
+                    <button class="Botao-Atualizar" onclick="atualizarGraficoWifi(13, false)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="icon-reload">
@@ -287,25 +290,26 @@
                         </svg>
                     </button>
 
-                    <div class="Select" id="select-local">
+                    <div class="Select" id="select-wifi">
                         <div class="dropdown-selected" onclick="toggleSelect(1)">
-                            <span id="selected-value">Auto</span>
+                            <span id="selected-value" data-seVa-1="">Auto</span>
                         </div>
 
                         <div class="dropdown-options" data-id="1">
-                            <div class="option" onclick="selectOption('auto', 'Auto')">Auto</div>
-                            <div class="option" onclick="selectOption('lab0', 'Laboratório 0')">Laboratório 0</div>
-                            <div class="option" onclick="selectOption('lab2', 'Laboratório 1')">Laboratório 1</div>
-                            <div class="option" onclick="selectOption('lab1', 'Laboratório 2')">Laboratório 2</div>
-                            <div class="option" onclick="selectOption('lab3', 'Laboratório 3')">Laboratório 3</div>
-                            <div class="option" onclick="selectOption('lab4', 'Laboratório 4')">Laboratório 4</div>
-                            <div class="option" onclick="selectOption('lab5', 'Laboratório 5')">Laboratório 5</div>
-                            <div class="option" onclick="selectOption('lab6', 'Laboratório 6')">Laboratório 6</div>
-                            <div class="option" onclick="selectOption('lab7', 'Laboratório 7')">Laboratório 7</div>
-                            <div class="option" onclick="selectOption('lab8', 'Laboratório 8')">Laboratório 8</div>
-                            <div class="option" onclick="selectOption('lab9', 'Laboratório 9')">Laboratório 9</div>
-                            <div class="option" onclick="selectOption('lab10', 'Laboratório10')">Laboratório 10</div>
-                            <div class="option" onclick="selectOption('lab11', 'Laboratório11')">Laboratório 11</div>
+                            <div class="option" onclick="initGraficoWifi('auto', 'Auto')">Auto</div>
+                            <div class="option" onclick="initGraficoWifi('0', 'Laboratório 0')">Laboratório 0</div>
+                            <div class="option" onclick="initGraficoWifi('1', 'Laboratório 1')">Laboratório 1</div>
+                            <div class="option" onclick="initGraficoWifi('2', 'Laboratório 2')">Laboratório 2</div>
+                            <div class="option" onclick="initGraficoWifi('3', 'Laboratório 3')">Laboratório 3</div>
+                            <div class="option" onclick="initGraficoWifi('4', 'Laboratório 4')">Laboratório 4</div>
+                            <div class="option" onclick="initGraficoWifi('5', 'Laboratório 5')">Laboratório 5</div>
+                            <div class="option" onclick="initGraficoWifi('6', 'Laboratório 6')">Laboratório 6</div>
+                            <div class="option" onclick="initGraficoWifi('7', 'Laboratório 7')">Laboratório 7</div>
+                            <div class="option" onclick="initGraficoWifi('8', 'Laboratório 8')">Laboratório 8</div>
+                            <div class="option" onclick="initGraficoWifi('9', 'Laboratório 9')">Laboratório 9</div>
+                            <div class="option" onclick="initGraficoWifi('10', 'Laboratório 10')">Laboratório 10</div>
+                            <div class="option" onclick="initGraficoWifi('11', 'Laboratório 11')">Laboratório 11</div>
+                            <div class="option" onclick="initGraficoWifi('16', 'Pátio')">Pátio</div>
                         </div>
                     </div>
                 </div>
@@ -313,32 +317,24 @@
                 <div class="Wifi">
                     <div class="Luminosidade">
                         <div class="Grafico">
-                            <p>Aqui virá um gráfico de barras</p>
-                        </div>
-
-                        <div class="Legenda">
-                            <p>Aqui virá uma legenda para o gráfico de barras</p>
+                            <canvas id="graficoLuminosidade"></canvas>
                         </div>
                     </div>
 
                     <div class="Sinal">
                         <div class="Grafico">
-                            <canvas id="meuManometro"></canvas>
+                            <canvas id="graficoSinal"></canvas>
                             <div class="Texto-central" id="valorTexto">-50 dBm</div>
-                        </div>
-
-                        <div class="Legenda">
-                            <p>Aqui virá uma legenda para o gráfico de manômetro</p>
                         </div>
                     </div>
                 </div>
 
             </section>
 
-            <section id="sec-altitude" class="section-content active">
+            <section id="sec-altitude" class="section-content">
 
                 <div class="Data-Options">
-                    <button class="Botao-Atualizar" onclick="atualizarValor()">
+                    <button class="Botao-Atualizar" onclick="atualizarGraficoAltPress('13', false)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="icon-reload">
@@ -347,36 +343,33 @@
                         </svg>
                     </button>
 
-                    <div class="Select" id="select-local">
+                    <div class="Select" id="select-alti">
                         <div class="dropdown-selected" onclick="toggleSelect(2)">
-                            <span id="selected-value">Auto</span>
+                            <span id="selected-value" data-seVa-2="">Auto</span>
                         </div>
 
                         <div class="dropdown-options" data-id="2">
-                            <div class="option" onclick="selectOption('auto', 'Auto')">Auto</div>
-                            <div class="option" onclick="selectOption('lab0', 'Laboratório 0')">Laboratório 0</div>
-                            <div class="option" onclick="selectOption('lab2', 'Laboratório 1')">Laboratório 1</div>
-                            <div class="option" onclick="selectOption('lab1', 'Laboratório 2')">Laboratório 2</div>
-                            <div class="option" onclick="selectOption('lab3', 'Laboratório 3')">Laboratório 3</div>
-                            <div class="option" onclick="selectOption('lab4', 'Laboratório 4')">Laboratório 4</div>
-                            <div class="option" onclick="selectOption('lab5', 'Laboratório 5')">Laboratório 5</div>
-                            <div class="option" onclick="selectOption('lab6', 'Laboratório 6')">Laboratório 6</div>
-                            <div class="option" onclick="selectOption('lab7', 'Laboratório 7')">Laboratório 7</div>
-                            <div class="option" onclick="selectOption('lab8', 'Laboratório 8')">Laboratório 8</div>
-                            <div class="option" onclick="selectOption('lab9', 'Laboratório 9')">Laboratório 9</div>
-                            <div class="option" onclick="selectOption('lab10', 'Laboratório10')">Laboratório 10</div>
-                            <div class="option" onclick="selectOption('lab11', 'Laboratório11')">Laboratório 11</div>
+                            <div class="option" onclick="initGraficoAlt('auto', 'Auto')">Auto</div>
+                            <div class="option" onclick="initGraficoAlt('0', 'Laboratório 0')">Laboratório 0</div>
+                            <div class="option" onclick="initGraficoAlt('1', 'Laboratório 1')">Laboratório 1</div>
+                            <div class="option" onclick="initGraficoAlt('2', 'Laboratório 2')">Laboratório 2</div>
+                            <div class="option" onclick="initGraficoAlt('3', 'Laboratório 3')">Laboratório 3</div>
+                            <div class="option" onclick="initGraficoAlt('4', 'Laboratório 4')">Laboratório 4</div>
+                            <div class="option" onclick="initGraficoAlt('5', 'Laboratório 5')">Laboratório 5</div>
+                            <div class="option" onclick="initGraficoAlt('6', 'Laboratório 6')">Laboratório 6</div>
+                            <div class="option" onclick="initGraficoAlt('7', 'Laboratório 7')">Laboratório 7</div>
+                            <div class="option" onclick="initGraficoAlt('8', 'Laboratório 8')">Laboratório 8</div>
+                            <div class="option" onclick="initGraficoAlt('9', 'Laboratório 9')">Laboratório 9</div>
+                            <div class="option" onclick="initGraficoAlt('10', 'Laboratório10')">Laboratório 10</div>
+                            <div class="option" onclick="initGraficoAlt('11', 'Laboratório11')">Laboratório 11</div>
+                            <div class="option" onclick="initGraficoAlt('16', 'Pátio')">Pátio</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="Altitude">
                     <div class="Grafico">
-                        <p>Aqui virá um gráfico de barras duplas</p>
-                    </div>
-
-                    <div class="Legenda">
-                        <p>Aqui virá uma legenda para o gráfico de barras duplas</p>
+                        <canvas id="graficoAltitude"></canvas>
                     </div>
                 </div>
 
@@ -384,12 +377,152 @@
 
             <section id="sec-mapa" class="section-content">
 
-                <div class="Dados">
-                    <p>Aqui serão renderizados os dados selecionados do mapa</p>
-                </div>
+                <div class="max-w-7xl mx-auto flex flex-col gap-6 no-select">
 
-                <div class="Mapa">
-                    <p>Aqui terá um mapa 2D-3D interativo com pinos representando as salas</p>
+                    <!-- Layout Grid do Mapa e Painel Lateral -->
+                    <div class="grid w-[1200px] grid-cols-1 lg:grid-cols-3 gap-6">
+
+                        <!-- Container do Mapa 3D (Ocupa 2 Colunas no Desktop) -->
+                        <div class="lg:col-span-2 relative bg-brand-card rounded-l-xl border border-brand-border shadow-2xl h-[590px] map-viewport flex items-center justify-center relative overflow-hidden"
+                            id="viewport">
+
+                            <!-- Dica Flutuante de Instrução -->
+                            <div
+                                class="absolute top-4 left-4 z-20 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-md border border-slate-700 text-xs text-slate-300 flex items-center gap-2 pointer-events-none">
+                                <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122">
+                                    </path>
+                                </svg>
+                                <span>Clique e arraste para rotacionar em 3D</span>
+                            </div>
+
+                            <!-- O PLANO DO MAPA 3D (Gira com as interações do JS) -->
+                            <div id="mapPlane"
+                                class="map-plane relative w-[540px] h-[380px] bg-slate-900/90 border-2 border-slate-700 rounded-2xl p-4 shadow-2xl flex flex-col justify-between">
+
+                                <!-- Grade de Fundo (Grid de Piso) -->
+                                <div
+                                    class="absolute inset-0 opacity-15 bg-[radial-gradient(#ff828a_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none rounded-2xl">
+                                </div>
+
+                                <!-- Layout das Salas (Sistemas de Blocos 2D/3D) -->
+                                <div id="Jojo" class="relative w-full h-full grid grid-cols-3 grid-rows-2 gap-4 z-10">
+
+                                </div>
+
+                            </div>
+
+                            <div
+                                class="bg-slate-500/50 w-max rounded-md absolute bottom-4 right-4 flex justify-between gap-4 items-center px-4 text-white">
+                                <button class="bR" onclick="loadCards(0)">Acesso Geral</button>
+                                <button class="bR" onclick="loadCards(1)">1º Andar</button>
+                                <button class="bR" onclick="loadCards(2)">2º Andar</button>
+                                <button onclick="loadCards(-1)">Subsolo</button>
+                            </div>
+                        </div>
+
+                        <!-- Card de Detalhes da Sala Selecionada -->
+                        <div id="viewportDetail"
+                            class="bg-brand-card rounded-r-xl border border-brand-border p-6 shadow-xl flex flex-col justify-between">
+                            <div>
+                                <!-- Badge e Titulo -->
+                                <div class="flex items-center justify-between pb-4 border-b border-brand-border">
+                                    <div>
+                                        <span
+                                            class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Ambiente
+                                            Selecionado</span>
+                                        <h2 id="salaNome" class="text-xl font-bold text-white mt-0.5">Nenhum ainda
+                                        </h2>
+                                    </div>
+
+                                    <span id="salaBadge"
+                                        class="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400 border border-green-500/30">.
+                                        . .</span>
+                                </div>
+
+                                <!-- Métricas IoT -->
+                                <div class="grid grid-cols-2 gap-4 my-6">
+                                    <!-- Card dBm -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Sinal Wi-Fi (dBm)</span>
+                                        <span id="salaDbm"
+                                            class="text-2xl font-bold text-brand-accent font-mono">Nenhum</span>
+                                    </div>
+
+                                    <!-- Card Temperatura -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Temperatura</span>
+                                        <span id="salaTemp"
+                                            class="text-2xl font-bold text-blue-400 font-mono">Nenhum</span>
+                                    </div>
+
+                                    <!-- Card Umidade -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Umidade</span>
+                                        <span id="salaUmid"
+                                            class="text-xl font-bold text-slate-200 font-mono">Nenhum</span>
+                                    </div>
+
+                                    <!-- Card Umidade -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Pressão</span>
+                                        <span id="salaPress"
+                                            class="text-xl font-bold text-slate-200 font-mono">Nenhum</span>
+                                    </div>
+
+                                    <!-- Card Umidade -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Altitude</span>
+                                        <span id="salaAlti"
+                                            class="text-xl font-bold text-slate-200 font-mono">Nenhum</span>
+                                    </div>
+
+                                    <!-- Card Umidade -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Luminosidade</span>
+                                        <span id="salaLux"
+                                            class="text-xl font-bold text-slate-200 font-mono">Nenhum</span>
+                                    </div>
+
+                                    <!-- Card Velocidade -->
+                                    <div id="containerVento"
+                                        class="hidden bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Velocidade do Vento</span>
+                                        <span id="salaVelo"
+                                            class="text-xl font-bold text-slate-200 font-mono">Nenhum</span>
+                                    </div>
+
+                                    <!-- Card Direção -->
+                                    <div id="containerVento"
+                                        class="hidden bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Direção do Vento</span>
+                                        <span id="salaDire"
+                                            class="text-xl font-bold text-slate-200 font-mono">Nenhum</span>
+                                    </div>
+
+                                    <!-- Status da Rede -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Conexão ESP32</span>
+                                        <span id="salaConexao"
+                                            class="text-xs font-semibold text-green-400 flex items-center gap-1.5 mt-1">
+
+                                            . . .
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ações do Card -->
+                            <div class="pt-4 border-t border-brand-border flex gap-3">
+                                <button
+                                    class="flex-1 py-2.5 bg-brand-accent hover:bg-brand-accentHover text-slate-900 font-bold rounded-lg text-xs transition shadow-lg"
+                                    onclick="simularRecarregamento()">Sincronizar Dados</button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
             </section>
@@ -399,6 +532,12 @@
 
 </body>
 <script src="../static/js/index.js"></script>
-<script src="../static/js/chartWifi.js"></script>
+<script src="../static/js/chartAll.js" type="module"></script>
+<script src="../static/js/chartInicio.js" type="module"></script>
+<script src="../static/js/chartTemp.js" type="module"></script>
+<script src="../static/js/chartWifi.js" type="module"></script>
+<script src="../static/js/chartAlti.js" type="module"></script>
+<script src="../static/js/config/mapaInterativo.js"></script>
+<script src="../static/js/mapa.js" type="module"></script>
 
 </html>
