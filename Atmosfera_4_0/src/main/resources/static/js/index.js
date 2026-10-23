@@ -104,12 +104,7 @@ function toggleSelect(id) {
     });
 }
 
-function selectOption(valor, exibir) {
+function selectOption(exibir) {
     document.querySelector('#selected-value').innerText = exibir;
     document.querySelector('.dropdown-options').classList.remove('Select-active');
-
-    // Dispara a lógica de filtro ou evento do seu dashboard
-    // console.log("Filtro selecionado:", valor);
-
-    aindaNaoImplementado();
 }

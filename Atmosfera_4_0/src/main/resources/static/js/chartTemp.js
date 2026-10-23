@@ -1,240 +1,174 @@
-// Variável global para guardar a instância do gráfico
-var graficoTendencia = null;
+// Instância global do gráfico
+let graficoTendencia = null;
 
-// // Inicializa o gráfico zerado ao carregar a página
-// async function initGraficoTendencia(salaId) {
-//     try {
-//         const [salasResp, dadosResp] = await Promise.all([
-//             fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/bancoDeSalas.json"),
-//             fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json.json")
-//         ])
+function arredondarMinutos(date, minutos = 5) {
+    const ms = 1000 * 60 * minutos;
+    return new Date(Math.round(date.getTime() / ms) * ms);
+}
 
-//         const bancoDeSalas = await salasResp.json()
-//         const bancoDeDados = await dadosResp.json()
+function formatarHoraMinuto(date) {
+    const horas = String(date.getHours()).padStart(2, '0');
+    const mins = String(date.getMinutes()).padStart(2, '0');
+    return `${horas}:${mins}`;
+}
 
-//         const sala = bancoDeSalas.filter(s => s.id == salaId)
-//         const dados = bancoDeDados.filter(i => i.id == sala[0]["id"]) || []
+/**
+ * Converte string 'YYYY-MM-DD HH:mm:ss' em objeto Date no fuso local
+ */
+function parseDataJson(dataStr) {
+    if (!dataStr) return null;
+    const partes = dataStr.split(/[- :]/);
+    return new Date(
+        partes[0],
+        partes[1] - 1,
+        partes[2],
+        partes[3] || 0,
+        partes[4] || 0,
+        partes[5] || 0
+    );
+}
 
-//         console.log(sala)
-//         console.log(dados)
-
-//         const ctxTemp = document.getElementById('graficoTempUmi');
-//         if (!ctxTemp) return;
-
-//         if (graficoTendencia) {
-//             graficoTendencia.destroy()
-//         }
-
-//         let listaTemp = [];
-//         let listaUmid = [];
-
-//         let tempoPadrao = "08:00:00"
-//         if (tempoPadrao == dados[0]["data"]) {
-//             dados.forEach((e) => {
-//                 listaTemp.push(e["temperatura"])
-//                 listaUmid.push(e["umidade"])
-
-//                 console.log(listaUmid, listaTemp)
-//             })
-//         } else {
-//             console.log("Não apareceu")
-//         }
-
-//         // console.log(listaTemp)
-        
-//         graficoTendencia = new Chart(ctxTemp, {
-//             type: 'line',
-//             data: {
-//                 // labels: [salaLabels],
-//                 datasets: [
-//                     {
-//                         label: 'Temperatura (°C)',
-//                         data: [listaTemp],
-//                         borderColor: '#ff828a', // Cor de destaque
-//                         backgroundColor: 'rgba(255, 130, 138, 0.1)',
-//                         yAxisID: 'yTemp',
-//                         tension: 0.4,
-//                         fill: true
-//                     },
-//                     {
-//                         label: 'Umidade (%)',
-//                         data: [listaUmid],
-//                         borderColor: '#38bdf8', // Azul Tailwind
-//                         backgroundColor: 'rgba(56, 189, 248, 0.1)',
-//                         yAxisID: 'yUmid',
-//                         tension: 0.4,
-//                         fill: true
-//                     }
-//                 ]
-//             },
-//             options: {
-//                 responsive: true,
-//                 maintainAspectRatio: false,
-//                 plugins: {
-//                     legend: {
-//                         labels: { color: '#cbd5e1' }
-//                     }
-//                 },
-//                 scales: {
-//                     x: {
-//                         ticks: { color: '#94a3b8' },
-//                         grid: { color: 'rgba(255, 255, 255, 0.05)' }
-//                     },
-//                     yTemp: {
-//                         type: 'linear',
-//                         position: 'left',
-//                         title: { display: true, text: 'Temp (°C)', color: '#ff828a' },
-//                         ticks: { color: '#ff828a' },
-//                         grid: { color: 'rgba(255, 255, 255, 0.05)' }
-//                     },
-//                     yUmid: {
-//                         type: 'linear',
-//                         position: 'right',
-//                         title: { display: true, text: 'Umidade (%)', color: '#38bdf8' },
-//                         ticks: { color: '#38bdf8' },
-//                         grid: { drawOnChartArea: false }
-//                     }
-//                 }
-//             }
-//         });
-//     } catch (erro) {
-//         console.error("Erro ao sincronizar os dados: ", erro)
-//         alert("Deu ruim mano!")
-//         return [];
-//     }
-// }
-
-// // Função para atualizar o gráfico com as métricas da sala selecionada
-// function atualizarGrafico(nomeSala, temp, umid) {
-//     if (!graficoTendencia) return;
-
-//     const label = document.getElementById('labelSalaGrafico');
-//     if (label) label.innerText = nomeSala;
-
-//     let t = parseFloat(temp);
-//     let u = parseFloat(umid);
-
-//     // Gera o histórico proporcional com base no dado atual
-//     graficoTendencia.data.datasets[0].data = [t - 2, t - 1, t - 0.5, t + 1, t - 0.2, t];
-//     graficoTendencia.data.datasets[1].data = [u + 4, u + 2, u - 1, u - 3, u + 1, u];
-
-//     graficoTendencia.update();
-// }
-
-
-
-
-
-
-
-
-// o que a IA falou:
-
-
-async function initGraficoTendencia(salaId, dataAlvo = null) {
+async function initGraficoTendencia(salaId) {
     try {
         const [salasResp, dadosResp] = await Promise.all([
             fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/bancoDeSalas.json"),
             fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json.json")
         ]);
-        
+
         const bancoDeSalas = await salasResp.json();
         const bancoDeDados = await dadosResp.json();
-        
+
         const sala = bancoDeSalas.find(s => s.id == salaId);
         if (!sala) return console.error("Sala não encontrada");
 
-        // 1. DEFINIR O DIA COMPLETO (00:00 até 23:59)
-        // Se dataAlvo não for passada, usa a data atual do sistema (Ex: '2026-10-22')
-        const hojeStr = dataAlvo || new Date().toISOString().split('T')[0]; 
-        const inicioDia = `${hojeStr}T00:00:00`;
-        const fimDia = `${hojeStr}T23:59:59`;
+        // 1. FILTRAR DADOS VÁLIDOS DA SALA E ENCONTRAR O REGISTRO MAIS RECENTE
+        const dadosDaSala = bancoDeDados.filter(item => item.sala == sala.id && item.data);
 
-        console.log("1")
+        if (dadosDaSala.length === 0) {
+            console.warn("Nenhum dado encontrado para esta sala.");
+            return;
+        }
 
-        // 2. FILTRAR OS DADOS: Apenas da sala correta E que pertençam ao dia alvo
-        const dadosFiltrados = bancoDeDados.filter(item => {
-            return item.sala == sala.id && item.data && item.data.startsWith(hojeStr);
+        // Descobre a data/hora do registro mais recente
+        let dataMaisRecente = null;
+        dadosDaSala.forEach(item => {
+            const d = parseDataJson(item.data);
+            if (!dataMaisRecente || d > dataMaisRecente) {
+                dataMaisRecente = d;
+            }
         });
 
-        console.log("2")
+        // 2. DEFINIR A JANELA DE 24 HORAS (Do momento mais recente até 24h atrás)
+        const fimCiclo = arredondarMinutos(dataMaisRecente, 5);
+        const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
 
-        // 3. FORMATAR OS DADOS PARA O CHART.JS (Eixo X de tempo exige objeto {x, y})
-        let dadosTemperatura = [];
-        let dadosUmidade = [];
+        // 3. GERAR TODOS OS SLOTS DE 5 EM 5 MINUTOS (Linha do tempo)
+        const timelineMap = new Map();
+        let ponteiroTempo = new Date(inicioCiclo);
 
-        dadosFiltrados.forEach(e => {
-            // Substitui o espaço por 'T' para garantir compatibilidade ISO padrão no JS
-            const timestampIso = e.data.replace(" ", "T"); 
-            
-            dadosTemperatura.push({ x: timestampIso, y: e.temperatura });
-            dadosUmidade.push({ x: timestampIso, y: e.umidade });
+        while (ponteiroTempo <= fimCiclo) {
+            const labelHora = formatarHoraMinuto(ponteiroTempo);
+            // Armazena a label acompanhada do timestamp para evitar conflitos de horários repetidos
+            timelineMap.set(ponteiroTempo.getTime(), {
+                horaFormatada: labelHora,
+                temperatura: null,
+                umidade: null
+            });
+            ponteiroTempo.setMinutes(ponteiroTempo.getMinutes() + 5);
+        }
+
+        // 4. PREENCHER OS SLOTS COM OS DADOS DENTRO DESSAS 24H
+        dadosDaSala.forEach(item => {
+            const dataMedicao = parseDataJson(item.data);
+
+            if (dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
+                const dataArredondada = arredondarMinutos(dataMedicao, 5);
+                const chaveMs = dataArredondada.getTime();
+
+                if (timelineMap.has(chaveMs)) {
+                    timelineMap.get(chaveMs).temperatura = item.temperatura;
+                    timelineMap.get(chaveMs).umidade = item.umidade;
+                }
+            }
         });
 
-        console.log("3")
+        // 5. PREPARAR DADOS PARA O CHART.JS
+        const slots = Array.from(timelineMap.values());
+        const labels = slots.map(s => s.horaFormatada);
+        const dadosTemperatura = slots.map(s => s.temperatura);
+        const dadosUmidade = slots.map(s => s.umidade);
 
+        // 6. RENDERIZAR O GRÁFICO
         const ctxTemp = document.getElementById('graficoTempUmi');
         if (!ctxTemp) return;
-        
+
         if (graficoTendencia) {
             graficoTendencia.destroy();
-        } 
+        }
 
-        console.log("4")
-
-        // 4. CONFIGURAÇÃO DO GRÁFICO
         graficoTendencia = new Chart(ctxTemp, {
             type: 'line',
             data: {
+                labels: labels,
                 datasets: [
                     {
                         label: 'Temperatura (°C)',
-                        data: dadosTemperatura, // Sem os colchetes por volta!
+                        data: dadosTemperatura,
                         borderColor: '#ff828a',
-                        backgroundColor: 'rgba(255, 130, 138, 0.1)',
+                        backgroundColor: 'rgba(255, 130, 138, 0.15)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true,
                         yAxisID: 'yTemp',
-                        tension: 0.4,
-                        fill: true
+                        spanGaps: true
                     },
                     {
                         label: 'Umidade (%)',
                         data: dadosUmidade,
                         borderColor: '#42a5f5',
-                        backgroundColor: 'rgba(66, 165, 245, 0.1)',
-                        yAxisID: 'yUmid', // Adicionado caso queira eixo duplo depois
-                        tension: 0.4,
-                        fill: true
+                        backgroundColor: 'rgba(66, 165, 245, 0.15)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true,
+                        yAxisID: 'yUmid',
+                        spanGaps: true
                     }
                 ]
             },
             options: {
                 responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
                 scales: {
                     x: {
-                        type: 'time', // Ativa o modo de tempo
-                        time: {
-                            parser: 'yyyy-MM-dd HH:mm:ss', // Formato de entrada do seu JSON
-                            unit: 'hour',                  // Força a divisão por horas
-                            displayFormats: {
-                                hour: 'HH:mm'              // Formato de exibição no eixo X
+                        grid: { display: false },
+                        ticks: {
+                            maxRotation: 0,
+                            // Exibe a legenda de 1 em 1 hora (12 intervalos de 5 minutos)
+                            callback: function (val, index) {
+                                return index % 12 === 0 ? this.getLabelForValue(val) : '';
                             }
                         },
-                        min: inicioDia, // Força o gráfico a começar às 00:00 daquele dia
-                        max: fimDia,    // Força o gráfico a terminar às 23:59 daquele dia
                         title: {
                             display: true,
-                            text: `Dados do dia ${hojeStr.split('-').reverse().join('/')}`
+                            text: `Últimas 24 Horas (${inicioCiclo.toLocaleDateString('pt-BR')} ${formatarHoraMinuto(inicioCiclo)} até ${fimCiclo.toLocaleDateString('pt-BR')} ${formatarHoraMinuto(fimCiclo)})`
                         }
                     },
                     yTemp: {
                         type: 'linear',
                         position: 'left',
+                        min: 0,
+                        max: 50,
                         title: { display: true, text: 'Temperatura (°C)' }
                     },
                     yUmid: {
                         type: 'linear',
                         position: 'right',
-                        grid: { drawOnChartArea: false }, // Evita linhas duplicadas no fundo
+                        min: 0,
+                        max: 100,
+                        grid: { drawOnChartArea: false },
                         title: { display: true, text: 'Umidade (%)' }
                     }
                 }
@@ -242,10 +176,8 @@ async function initGraficoTendencia(salaId, dataAlvo = null) {
         });
 
     } catch (error) {
-        console.error("Erro ao inicializar o gráfico:", error);
-        alert("Deu ruim mano")
-        return [];
+        console.error("Erro ao carregar o gráfico de tendência:", error);
     }
 }
 
-initGraficoTendencia(2)
+initGraficoTendencia(2);
