@@ -1,7 +1,3 @@
-function aindaNaoImplementado() {
-    alert("Função Ainda Não Implementada")
-}
-
 function textTooltip() {
     const pTema = document.getElementById('Tooltip-P-Tema');
     const pImage = document.getElementById('Tooltip-P-Image');
@@ -79,27 +75,8 @@ function changeWindow(secao) {
             // Exibe a nova seção e ativa o Fade-In
             proximaSecao.classList.add('active', 'fade-in')
         }, 300); // 300ms (deve ser o mesmo tempo do animation no CSS)
-
-        if (secao === 'wifi' && window.manometroChart) {
-            setTimeout(() => {
-                manometroChart.resize(); // Garante que o canvas se ajuste perfeitamente à tela
-            }, 100); // Aguarda o tempo da animação do fade
-        }
     } else {
         // Se nenhuma estava ativa ainda (carregamento inicial)
         proximaSecao.classList.add('active', 'fade-in')
     }
-}
-
-function toggleSelect(id) {
-    const options = document.querySelectorAll('.dropdown-options');
-
-    options.forEach(opt => {
-        // Se for o ID clicado, faz o toggle. Se for outro dropdown aberto, fecha ele!
-        if (opt.dataset.id == id) {
-            opt.classList.toggle('Select-active');
-        } else {
-            opt.classList.remove('Select-active'); // Fecha os outros menus abertos
-        }
-    });
 }
