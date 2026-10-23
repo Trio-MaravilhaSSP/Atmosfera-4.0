@@ -19,7 +19,7 @@ async function loadCards(andarId) {
         salasDoAndar.forEach(sala => {
             // Busca a última medição correspondente à sala (compara ID numérico ou nome)
             const medicoes = bancoDeDados.filter(d =>
-                d.sala_id === sala.id || d.sala === sala.id || d.sala === sala.sala
+                d.sala === sala.id
             );
 
             // Pega o registro mais recente (último do array)
@@ -116,8 +116,8 @@ function simularRecarregamento(event) {
     const btn = event.target;
     btn.innerText = "Sincronizando...";
 
-    // Atualiza os dados reais do andar 1
-    loadCards(1).then(() => {
+    // Atualiza os dados reais do andar 0
+    loadCards(0).then(() => {
         setTimeout(() => {
             btn.innerText = "Sincronizar Dados";
         }, 800);
@@ -125,4 +125,4 @@ function simularRecarregamento(event) {
 }
 
 // Inicialização
-loadCards(1);
+loadCards(0);

@@ -33,10 +33,6 @@
                     <img src="../static/images/icons/file-icon.png" alt="Relatorio_Icon" />
                     <p class="BeautyUnderline">Relatórios</p>
                 </div>
-                <div class="Option" onclick="changeWindow('relatorio')">
-                    <img src="../static/images/icons/file-icon.png" alt="Relatorio_Icon" />
-                    <p class="BeautyUnderline">Relatórios</p>
-                </div>
 
                 <div class="Option" onclick="changeWindow('perfil')">
                     <img src="../static/images/icons/user-icon.png" alt="Perfil_Icon" />
@@ -78,7 +74,10 @@
 
     <div class="Dashboard-Container">
 
-        <aside>
+        <aside class="relative">
+
+            <p onclick="window.location='./dashboard.html'" class="absolute top-[0] left-[15%] text-[#606060] cursor-pointer">Mais
+                detalhes</p>
 
             <div class="Options">
 
@@ -111,7 +110,7 @@
 
         <main class="imageOn">
 
-            <section id="sec-inicio" class="section-content ">
+            <section id="sec-inicio" class="section-content active">
 
                 <div class="Inicio">
 
@@ -332,7 +331,7 @@
 
             </section>
 
-            <section id="sec-altitude" class="section-content active">
+            <section id="sec-altitude" class="section-content">
 
                 <div class="Data-Options">
                     <button class="Botao-Atualizar" onclick="atualizarGraficoAltPress(13, false)">

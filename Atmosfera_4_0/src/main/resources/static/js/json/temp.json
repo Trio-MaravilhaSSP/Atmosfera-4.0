@@ -1,63 +1,63 @@
 [
     {
         "id": 0,
-        "sala": 16,
+        "dispositivo": 16,
         "data": "2026-10-23 08:00:00",
         "temperatura": 22,
         "umidade": 88
     },
     {
         "id": 1,
-        "sala": 16,
+        "dispositivo": 16,
         "data": "2026-10-23 16:00:00",
         "temperatura": 22,
         "umidade": 88
     },
     {
         "id": 2,
-        "sala": 16,
+        "dispositivo": 16,
         "data": "2026-10-23 22:00:00",
         "temperatura": 22,
         "umidade": 88
     },
     {
         "id": 3,
-        "sala": 16,
+        "dispositivo": 16,
         "data": "2026-10-24 04:00:00",
         "temperatura": 22,
         "umidade": 88
     },
     {
         "id": 4,
-        "sala": 16,
+        "dispositivo": 16,
         "data": "2026-10-24 07:50:00",
         "temperatura": 22,
         "umidade": 88
     },
     {
         "id": 5,
-        "sala": 0,
+        "dispositivo": 0,
         "data": "2026-10-23 08:00:00",
         "temperatura": 22,
         "umidade": 88
     },
     {
         "id": 6,
-        "sala": 1,
+        "dispositivo": 1,
         "data": "2026-10-23 16:00:00",
         "temperatura": 22,
         "umidade": 88
     },
     {
         "id": 7,
-        "sala": 2,
+        "dispositivo": 2,
         "data": "2026-10-23 22:00:00",
         "temperatura": 22,
         "umidade": 88
     },
     {
         "id": 8,
-        "sala": 3,
+        "dispositivo": 3,
         "data": "2026-10-24 04:00:00",
         "temperatura": 22,
         "umidade": 88
@@ -92,35 +92,35 @@
     },
     {
         "id": 13,
-        "sala": 8,
+        "dispositivo": 8,
         "data": "2026-10-24 04:00:00",
         "temperatura": 22,
         "umidade": 88
     },
     {
         "id": 14,
-        "sala": 9,
+        "dispositivo": 9,
         "data": "2026-10-24 07:50:00",
         "temperatura": 22,
         "umidade": 88
     },
     {
         "id": 15,
-        "sala": 10,
+        "dispositivo": 10,
         "data": "2026-10-23 08:00:00",
         "temperatura": 22,
         "umidade": 88
     },
     {
         "id": 16,
-        "sala": 11,
+        "dispositivo": 11,
         "data": "2026-10-23 16:00:00",
         "temperatura": 22,
         "umidade": 88
     },
     {
         "id": 17,
-        "sala": 13,
+        "dispositivo": 13,
         "data": "2026-10-23 08:00:00",
         "temperatura": 26,
         "umidade": 70

@@ -14,23 +14,21 @@ var cacheDados = null;
 // =============================================================
 // FUNÇÕES UTILITÁRIAS DE DATA E FORMATOS
 // =============================================================
-function arredondarMinutos(date, minutos = 5) {
-    const ms = 1000 * 60 * minutos;
+function arredondarHoras(date) {
+    const ms = 1000 * 60 * 60;
     return new Date(Math.round(date.getTime() / ms) * ms);
 }
 
 function formatarHoraMinuto(date) {
     const horas = String(date.getHours()).padStart(2, '0');
-    const mins = String(date.getMinutes()).padStart(2, '0');
-    return `${horas}:${mins}`;
+    return `${horas}:00`;
 }
 
 function formatarDataHoraCompleta(date) {
     const dia = String(date.getDate()).padStart(2, '0');
     const mes = String(date.getMonth() + 1).padStart(2, '0');
     const horas = String(date.getHours()).padStart(2, '0');
-    const mins = String(date.getMinutes()).padStart(2, '0');
-    return `${dia}/${mes} ${horas}:${mins}`;
+    return `${dia}/${mes} ${horas}:00`;
 }
 
 function parseDataJson(dataStr) {
@@ -171,26 +169,26 @@ function renderizarGraficoLuminosidade(historicoLuminosidade) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Luminosidade (Lux)',
+                label: 'Luminosidade Média (Lux)',
                 data: valores,
                 backgroundColor: 'rgba(255, 206, 86, 0.6)',
                 borderColor: 'rgba(255, 206, 86, 1)',
                 borderWidth: 1,
-                borderRadius: 4,
-                barPercentage: 1.0,
-                categoryPercentage: 1.0
+                borderRadius: 2,
+                barPercentage: 0.8,
+                categoryPercentage: 0.9
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 x: {
                     grid: { display: false },
                     ticks: {
                         maxRotation: 0,
-                        callback: function (val, index) {
-                            return index % 12 === 0 ? this.getLabelForValue(val) : '';
-                        }
+                        autoSkip: true,
+                        maxTicksLimit: 24
                     }
                 },
                 y: {
@@ -224,15 +222,9 @@ async function atualizarGraficoWifi(salaIdOuObjeto, modoAuto = false) {
         // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
         const nomeExibicao = sala.sala || `Laboratório ${sala.id}`;
 
-        // Atualiza a interface com o seletor genérico por atributo ou id
         const elementoSeletor = document.querySelector('[data-seVa-1]');
         if (elementoSeletor) {
             elementoSeletor.innerText = modoAuto ? `Auto (${nomeExibicao})` : nomeExibicao;
-        }
-
-        const indicadorTitulo = document.querySelector('#indicadorSala') || document.querySelector('.titulo-sala');
-        if (indicadorTitulo) {
-            indicadorTitulo.innerText = nomeExibicao;
         }
 
         const dadosDaSala = bancoDeDados.filter(item => item.sala == sala.id && item.data);
@@ -242,26 +234,14 @@ async function atualizarGraficoWifi(salaIdOuObjeto, modoAuto = false) {
             return;
         }
 
-        // --- 2. Atualizar Manômetro (Sinal dBm) ---
-        const ultimoRegistro = dadosDaSala[dadosDaSala.length - 1];
-        const sinalAtual = ultimoRegistro?.sinal ?? -90;
-
-        renderizarManometro(sinalAtual);
-
-        // --- 3. Atualizar Indicadores Numéricos ---
-        const elLumi = document.querySelector('#valorLuminosidade');
-        if (elLumi && ultimoRegistro.luminosidade !== undefined) {
-            elLumi.innerText = `${ultimoRegistro.luminosidade} Lux`;
-        }
-
-        // --- 4. Métrica de Tempo (Janela de 24h) ---
+        // --- 2. DETERMINAR JANELA DE TEMPO (ÚLTIMAS 24 HORAS) ---
         let dataMaisRecente = null;
         dadosDaSala.forEach(item => {
             const d = parseDataJson(item.data);
             if (!dataMaisRecente || d > dataMaisRecente) dataMaisRecente = d;
         });
 
-        const fimCiclo = arredondarMinutos(dataMaisRecente, 5);
+        const fimCiclo = arredondarHoras(dataMaisRecente);
         const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
 
         const metrica24h = `${formatarDataHoraCompleta(inicioCiclo)} até ${formatarDataHoraCompleta(fimCiclo)}`;
@@ -270,7 +250,7 @@ async function atualizarGraficoWifi(salaIdOuObjeto, modoAuto = false) {
             elIntervalo24h.innerText = metrica24h;
         }
 
-        // Montagem da Timeline em intervalos de 5 minutos
+        // --- 3. CRIAR OS 24 SLOTS HORÁRIOS ---
         const timelineMap = new Map();
         let ponteiroTempo = new Date(inicioCiclo);
 
@@ -278,24 +258,61 @@ async function atualizarGraficoWifi(salaIdOuObjeto, modoAuto = false) {
             const labelHora = formatarHoraMinuto(ponteiroTempo);
             timelineMap.set(ponteiroTempo.getTime(), {
                 horaFormatada: labelHora,
-                luminosidade: null
+                somasLuminosidade: 0,
+                qtdLuminosidade: 0,
+                somasSinal: 0,
+                qtdSinal: 0,
+                luminosidade: null,
+                sinal: null
             });
-            ponteiroTempo.setMinutes(ponteiroTempo.getMinutes() + 5);
+            ponteiroTempo.setHours(ponteiroTempo.getHours() + 1);
         }
 
+        // --- 4. AGRUPAR DADOS DE 1 EM 1 HORA E CALCULAR MÉDIAS ---
         dadosDaSala.forEach(item => {
             const dataMedicao = parseDataJson(item.data);
             if (dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
-                const chaveMs = arredondarMinutos(dataMedicao, 5).getTime();
+                const chaveMs = arredondarHoras(dataMedicao).getTime();
+
                 if (timelineMap.has(chaveMs)) {
-                    timelineMap.get(chaveMs).luminosidade = item.luminosidade;
+                    const slot = timelineMap.get(chaveMs);
+
+                    if (item.luminosidade !== undefined && item.luminosidade !== null) {
+                        slot.somasLuminosidade += Number(item.luminosidade);
+                        slot.qtdLuminosidade += 1;
+                    }
+                    if (item.sinal !== undefined && item.sinal !== null) {
+                        slot.somasSinal += Number(item.sinal);
+                        slot.qtdSinal += 1;
+                    }
                 }
             }
         });
 
-        const slots = Array.from(timelineMap.values());
+        // Consolida os valores das médias calculadas em cada hora
+        const slots = Array.from(timelineMap.values()).map(slot => {
+            return {
+                horaFormatada: slot.horaFormatada,
+                luminosidade: slot.qtdLuminosidade > 0 ? Math.round(slot.somasLuminosidade / slot.qtdLuminosidade) : 0,
+                sinal: slot.qtdSinal > 0 ? Math.round(slot.somasSinal / slot.qtdSinal) : null
+            };
+        });
 
-        // --- 5. Atualizar Gráfico de Luminosidade ---
+        // --- 5. ATUALIZAR INDICADORES COM O ÚLTIMO SLOT COM DADOS ---
+        const slotsComDados = slots.filter(s => s.sinal !== null);
+        const ultimoSlot = slotsComDados.length > 0 ? slotsComDados[slotsComDados.length - 1] : null;
+
+        const sinalExibicao = ultimoSlot ? ultimoSlot.sinal : -90;
+        const luxExibicao = ultimoSlot ? ultimoSlot.luminosidade : 0;
+
+        renderizarManometro(sinalExibicao);
+
+        const elLumi = document.querySelector('#valorLuminosidade');
+        if (elLumi) {
+            elLumi.innerText = `${luxExibicao} Lux`;
+        }
+
+        // --- 6. ATUALIZAR GRÁFICO DE LUMINOSIDADE (BARRAS DE 1H) ---
         renderizarGraficoLuminosidade(slots);
 
     } catch (error) {
@@ -334,7 +351,7 @@ async function initGraficoWifi(salaId, exibir) {
     }
 
     // MODO SELEÇÃO MANUAL
-    const elSeletor = document.querySelector('[data-seVa]') || document.getElementById('selected-value');
+    const elSeletor = document.querySelector('[data-seVa-1]');
     if (elSeletor) elSeletor.innerText = exibir;
 
     await atualizarGraficoWifi(salaId, false);

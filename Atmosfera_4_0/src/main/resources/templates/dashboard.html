@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Geral - Atmosfera 4.0</title>
+
+    <link rel="shortcut icon" href="../static/images/Senai_Perfil.png" type="image/x-icon">
+    <link rel="stylesheet" href="../static/css/04dashboard-GERAL.css">
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="logo" onclick="window.location='./index.html'">
+            <img src="../static/images/Senai_Logo.png" alt="Senai Logo" width="200" height="50" />
+            <p>Mais detalhes</p>
+        </div>
+        <div style="color: white;">
+            <h2>Painel Geral - Atmosfera 4.0</h2>
+            <small id="intervalo24h">Carregando período...</small>
+        </div>
+        <div class="Select" id="select-local">
+            <div class="dropdown-selected" onclick="toggleSelect()">
+                <span id="selected-value" data-seVa-0="">Auto</span>
+            </div>
+
+            <div class="dropdown-options">
+                <div class="option" onclick="initDashboardGeral('auto', 'Auto')">Auto</div>
+                <div class="option" onclick="initDashboardGeral('0', 'Laboratório 0')">Laboratório 0</div>
+                <div class="option" onclick="initDashboardGeral('1', 'Laboratório 1')">Laboratório 1</div>
+                <div class="option" onclick="initDashboardGeral('2', 'Laboratório 2')">Laboratório 2</div>
+                <div class="option" onclick="initDashboardGeral('3', 'Laboratório 3')">Laboratório 3</div>
+                <div class="option" onclick="initDashboardGeral('4', 'Laboratório 4')">Laboratório 4</div>
+                <div class="option" onclick="initDashboardGeral('5', 'Laboratório 5')">Laboratório 5</div>
+                <div class="option" onclick="initDashboardGeral('6', 'Laboratório 6')">Laboratório 6</div>
+                <div class="option" onclick="initDashboardGeral('7', 'Laboratório 7')">Laboratório 7</div>
+                <div class="option" onclick="initDashboardGeral('8', 'Laboratório 8')">Laboratório 8</div>
+                <div class="option" onclick="initDashboardGeral('9', 'Laboratório 9')">Laboratório 9</div>
+                <div class="option" onclick="initDashboardGeral('10', 'Laboratório 10')">Laboratório 10</div>
+                <div class="option" onclick="initDashboardGeral('11', 'Laboratório 11')">Laboratório 11</div>
+                <div class="option" onclick="initDashboardGeral('16', 'Pátio')">Pátio</div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- CARDS SUPERIORES KPI (NOVO) -->
+        <section class="kpi-top-bar">
+            <!-- CARD 1: TOTAL DISPOSITIVOS -->
+            <div class="kpi-card">
+                <div>
+                    <img class="kpi-icon" src="../static/images/sinal-light.png" alt="Disp_Icon">
+                </div>
+                <div class="kpi-info">
+                    <span class="kpi-title">Total Dispositivos</span>
+                    <span class="kpi-value" id="kpiTotalDispositivos">0</span>
+                    <small class="kpi-status" id="kpiDispositivosStatus">Calculando...</small>
+                </div>
+            </div>
+
+            <!-- CARD 2: ATUADORES ATIVOS -->
+            <div class="kpi-card">
+                <div class="Img-Atuador">
+                    <img class="kpi-icon" src="../static/images/switch-light.png" alt="Atua_Icon" />
+                    <img class="kpi-icon" id="inverso" src="../static/images/switch-light.png" alt="Atua_Icon" />
+                </div>
+                <div class="kpi-info">
+                    <span class="kpi-title">Atuadores Ativos</span>
+                    <span class="kpi-value" id="kpiAtuadoresAtivos">0 / 0</span>
+                    <small class="kpi-status" id="kpiAtuadorExemplo">--</small>
+                </div>
+            </div>
+
+            <!-- CARD 3: MÉDIA CAMPUS TEMP/UMID -->
+            <div class="kpi-card">
+                <div>
+                    <img class="kpi-icon" src="../static/images/thermometer-light.png" alt="Temp_Icon" />
+                </div>
+                <div class="kpi-info">
+                    <span class="kpi-title">Média Campus: Temp/Umid</span>
+                    <span class="kpi-value" id="kpiMediaCampus">0.0 °C / 0%</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="dashboard-grid">
+
+            <!-- CARD 1: TEMPERATURA E UMIDADE -->
+            <section class="card">
+                <div class="card-header">
+                    <h3>Temperatura & Umidade</h3>
+                    <span data-seVa class="data-seVa">Auto</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="graficoTempUmi"></canvas>
+                </div>
+            </section>
+
+            <!-- CARD 2: ALTITUDE E PRESSÃO -->
+            <section class="card">
+                <div class="card-header">
+                    <h3>Altitude & Pressão</h3>
+                    <span data-seVa class="data-seVa">Auto</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="graficoAltitude"></canvas>
+                </div>
+            </section>
+
+            <!-- CARD 3: LUMINOSIDADE E SINAL (WIFI) -->
+            <section class="card">
+                <div class="card-header">
+                    <h3>Luminosidade & Sinal WiFi</h3>
+                    <span data-seVa class="data-seVa">Auto</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="chart-container" style="height: 180px;">
+                        <canvas id="graficoSinal"></canvas>
+                        <div class="kpi-box">
+                            <span id="valorTexto">-- dBm</span>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height: 180px;">
+                        <canvas id="graficoLuminosidade"></canvas>
+                        <div class="kpi-box">
+                            <span id="valorLuminosidade">-- Lux</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="../static/js/dashBoardGeral.js"></script>
+</body>
+
+</html>
