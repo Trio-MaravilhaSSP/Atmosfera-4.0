@@ -1,5 +1,11 @@
-// Instância global do gráfico
-let graficoTendencia = null;
+// Instâncias globais de controle
+var graficoTendencia = null;
+var intervalAuto = null;
+var salaAtualAuto = 0;
+
+// Caches globais para não refazer fetch a cada 15 segundos
+var cacheSalas = null;
+var cacheDados = null;
 
 function arredondarMinutos(date, minutos = 5) {
     const ms = 1000 * 60 * minutos;
@@ -28,24 +34,37 @@ function parseDataJson(dataStr) {
     );
 }
 
-async function initGraficoTendencia(salaId) {
-    try {
+/**
+ * Busca os dados dos JSONs (Apenas na primeira vez)
+ */
+async function carregarBancoDeDados() {
+    if (!cacheSalas || !cacheDados) {
         const [salasResp, dadosResp] = await Promise.all([
             fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/bancoDeSalas.json"),
             fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json.json")
         ]);
+        cacheSalas = await salasResp.json();
+        cacheDados = await dadosResp.json();
+    }
+    return { bancoDeSalas: cacheSalas, bancoDeDados: cacheDados };
+}
 
-        const bancoDeSalas = await salasResp.json();
-        const bancoDeDados = await dadosResp.json();
+/**
+ * Monta e renderiza o gráfico para a sala informada
+ */
+async function renderizarGrafico(salaId) {
+    try {
+        const { bancoDeSalas, bancoDeDados } = await carregarBancoDeDados();
 
         const sala = bancoDeSalas.find(s => s.id == salaId);
-        if (!sala) return console.error("Sala não encontrada");
+        if (!sala) return console.error("Sala não encontrada com id:", salaId);
 
-        // 1. FILTRAR DADOS VÁLIDOS DA SALA E ENCONTRAR O REGISTRO MAIS RECENTE
+        // 1. FILTRAR DADOS DA SALA
         const dadosDaSala = bancoDeDados.filter(item => item.sala == sala.id && item.data);
 
         if (dadosDaSala.length === 0) {
-            console.warn("Nenhum dado encontrado para esta sala.");
+            console.warn(`Nenhum dado encontrado para a sala ${salaId}`);
+            if (graficoTendencia) graficoTendencia.destroy();
             return;
         }
 
@@ -58,17 +77,16 @@ async function initGraficoTendencia(salaId) {
             }
         });
 
-        // 2. DEFINIR A JANELA DE 24 HORAS (Do momento mais recente até 24h atrás)
+        // 2. DEFINIR JANELA DE 24 HORAS (Do momento mais recente até 24h atrás)
         const fimCiclo = arredondarMinutos(dataMaisRecente, 5);
         const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
 
-        // 3. GERAR TODOS OS SLOTS DE 5 EM 5 MINUTOS (Linha do tempo)
+        // 3. GERAR SLOTS DE 5 EM 5 MINUTOS (Eixo X)
         const timelineMap = new Map();
         let ponteiroTempo = new Date(inicioCiclo);
 
         while (ponteiroTempo <= fimCiclo) {
             const labelHora = formatarHoraMinuto(ponteiroTempo);
-            // Armazena a label acompanhada do timestamp para evitar conflitos de horários repetidos
             timelineMap.set(ponteiroTempo.getTime(), {
                 horaFormatada: labelHora,
                 temperatura: null,
@@ -77,7 +95,7 @@ async function initGraficoTendencia(salaId) {
             ponteiroTempo.setMinutes(ponteiroTempo.getMinutes() + 5);
         }
 
-        // 4. PREENCHER OS SLOTS COM OS DADOS DENTRO DESSAS 24H
+        // 4. PREENCHER OS SLOTS COM OS DADOS DAS 24H
         dadosDaSala.forEach(item => {
             const dataMedicao = parseDataJson(item.data);
 
@@ -92,13 +110,13 @@ async function initGraficoTendencia(salaId) {
             }
         });
 
-        // 5. PREPARAR DADOS PARA O CHART.JS
+        // 5. SEPARAR EM ARRAYS PARA O CHART.JS
         const slots = Array.from(timelineMap.values());
         const labels = slots.map(s => s.horaFormatada);
         const dadosTemperatura = slots.map(s => s.temperatura);
         const dadosUmidade = slots.map(s => s.umidade);
 
-        // 6. RENDERIZAR O GRÁFICO
+        // 6. RENDERIZAÇÃO
         const ctxTemp = document.getElementById('graficoTempUmi');
         if (!ctxTemp) return;
 
@@ -146,14 +164,13 @@ async function initGraficoTendencia(salaId) {
                         grid: { display: false },
                         ticks: {
                             maxRotation: 0,
-                            // Exibe a legenda de 1 em 1 hora (12 intervalos de 5 minutos)
                             callback: function (val, index) {
                                 return index % 12 === 0 ? this.getLabelForValue(val) : '';
                             }
                         },
                         title: {
                             display: true,
-                            text: `Últimas 24 Horas (${inicioCiclo.toLocaleDateString('pt-BR')} ${formatarHoraMinuto(inicioCiclo)} até ${fimCiclo.toLocaleDateString('pt-BR')} ${formatarHoraMinuto(fimCiclo)})`
+                            text: `Últimas 24h — ${sala.nome || 'Sala ' + salaId} (${inicioCiclo.toLocaleDateString('pt-BR')} ${formatarHoraMinuto(inicioCiclo)} até ${fimCiclo.toLocaleDateString('pt-BR')} ${formatarHoraMinuto(fimCiclo)})`
                         }
                     },
                     yTemp: {
@@ -176,8 +193,46 @@ async function initGraficoTendencia(salaId) {
         });
 
     } catch (error) {
-        console.error("Erro ao carregar o gráfico de tendência:", error);
+        console.error("Erro ao renderizar o gráfico:", error);
     }
 }
 
-initGraficoTendencia(2);
+/**
+ * Função chamada pelos botões/dropdown da interface
+ */
+async function initGraficoTendencia(salaId, exibir) {
+    // 1. Limpa o intervalo automático se o usuário trocar manual/auto
+    if (intervalAuto) {
+        clearInterval(intervalAuto);
+        intervalAuto = null;
+    }
+
+    // Fecha o menu dropdown visualmente
+    const dropOptions = document.querySelector('.dropdown-options');
+    if (dropOptions) dropOptions.classList.remove('Select-active');
+
+    // 2. MODO AUTOMÁTICO (-2)
+    if (salaId === -2) {
+        const labNome = `Laboratório ${salaAtualAuto}`;
+        document.querySelector('#selected-value').innerText = `Auto (${labNome})`;
+
+        await renderizarGrafico(salaAtualAuto);
+
+        intervalAuto = setInterval(async () => {
+            salaAtualAuto = (salaAtualAuto + 1) % 16;
+            const proximoLab = `Laboratório ${salaAtualAuto}`;
+            document.querySelector('#selected-value').innerText = `Auto (${proximoLab})`;
+
+            await renderizarGrafico(salaAtualAuto);
+        }, 15000);
+
+        return;
+    }
+
+    // 3. MODO SELEÇÃO MANUAL
+    document.querySelector('#selected-value').innerText = exibir;
+    await renderizarGrafico(salaId);
+}
+
+// Inicialização automática ao carregar
+initGraficoTendencia(-2, 'Auto');

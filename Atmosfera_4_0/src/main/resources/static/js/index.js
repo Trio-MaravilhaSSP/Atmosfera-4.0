@@ -103,8 +103,3 @@ function toggleSelect(id) {
         }
     });
 }
-
-function selectOption(exibir) {
-    document.querySelector('#selected-value').innerText = exibir;
-    document.querySelector('.dropdown-options').classList.remove('Select-active');
-}
