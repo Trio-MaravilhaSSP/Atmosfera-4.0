@@ -34,6 +34,17 @@
         "pressao": 0.94
     },
     {
+        "id": 1,
+        "sala": 1,
+        "data": "2026-10-24 08:10:00",
+        "temperatura": 22,
+        "umidade": 88,
+        "sinal": -48,
+        "altitude": 780,
+        "luminosidade": 450,
+        "pressao": 0.94
+    },
+    {
         "id": 2,
         "sala": 2, 
         "data": "2026-10-22 08:00:00",
@@ -289,12 +300,34 @@
     {
         "id": 17,
         "sala": 16,
-        "data": "2026-10-22 08:00:00",
-        "temperatura": 22,
-        "umidade": 70,
-        "sinal": -38,
+        "data": "2026-10-23 08:00:00",
+        "temperatura": 25,
+        "umidade": 75,
+        "sinal": -88,
         "altitude": 772,
-        "luminosidade": 320,
+        "luminosidade": 28000,
+        "pressao": 0.93
+    },
+    {
+        "id": 18,
+        "sala": 16,
+        "data": "2026-10-23 12:00:00",
+        "temperatura": 30,
+        "umidade": 75,
+        "sinal": -88,
+        "altitude": 772,
+        "luminosidade": 39000,
+        "pressao": 0.93
+    },
+    {
+        "id": 19,
+        "sala": 16,
+        "data": "2026-10-23 18:50:00",
+        "temperatura": 20,
+        "umidade": 75,
+        "sinal": -88,
+        "altitude": 772,
+        "luminosidade": 19000,
         "pressao": 0.93
     }
 ]

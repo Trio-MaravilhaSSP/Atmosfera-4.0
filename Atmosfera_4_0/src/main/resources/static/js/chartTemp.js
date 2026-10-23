@@ -200,39 +200,35 @@ async function renderizarGrafico(salaId) {
 /**
  * Função chamada pelos botões/dropdown da interface
  */
-async function initGraficoTendencia(salaId, exibir) {
-    // 1. Limpa o intervalo automático se o usuário trocar manual/auto
+async function initGraficoTemp(salaId, exibir) {
     if (intervalAuto) {
         clearInterval(intervalAuto);
         intervalAuto = null;
     }
 
-    // Fecha o menu dropdown visualmente
     const dropOptions = document.querySelector('.dropdown-options');
     if (dropOptions) dropOptions.classList.remove('Select-active');
 
-    // 2. MODO AUTOMÁTICO (-2)
     if (salaId === -2) {
         const labNome = `Laboratório ${salaAtualAuto}`;
         document.querySelector('#selected-value').innerText = `Auto (${labNome})`;
 
-        await renderizarGrafico(salaAtualAuto);
+        await atualizarTodosOsGraficos(salaAtualAuto);
 
         intervalAuto = setInterval(async () => {
             salaAtualAuto = (salaAtualAuto + 1) % 16;
             const proximoLab = `Laboratório ${salaAtualAuto}`;
             document.querySelector('#selected-value').innerText = `Auto (${proximoLab})`;
 
-            await renderizarGrafico(salaAtualAuto);
+            await atualizarTodosOsGraficos(salaAtualAuto);
         }, 15000);
 
         return;
     }
 
-    // 3. MODO SELEÇÃO MANUAL
     document.querySelector('#selected-value').innerText = exibir;
-    await renderizarGrafico(salaId);
+    await atualizarTodosOsGraficos(salaId);
 }
 
 // Inicialização automática ao carregar
-initGraficoTendencia(-2, 'Auto');
+initGraficoTemp(-2, 'Auto');

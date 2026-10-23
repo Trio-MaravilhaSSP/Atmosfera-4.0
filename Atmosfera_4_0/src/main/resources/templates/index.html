@@ -33,6 +33,10 @@
                     <img src="../static/images/icons/file-icon.png" alt="Relatorio_Icon" />
                     <p class="BeautyUnderline">Relatórios</p>
                 </div>
+                <div class="Option" onclick="changeWindow('relatorio')">
+                    <img src="../static/images/icons/file-icon.png" alt="Relatorio_Icon" />
+                    <p class="BeautyUnderline">Relatórios</p>
+                </div>
 
                 <div class="Option" onclick="changeWindow('perfil')">
                     <img src="../static/images/icons/user-icon.png" alt="Perfil_Icon" />
@@ -232,7 +236,7 @@
 
             </section>
 
-            <section id="sec-temperatura" class="section-content active">
+            <section id="sec-temperatura" class="section-content">
 
                 <div class="Data-Options">
                     <button class="Botao-Atualizar" onclick="atualizarValor()">
@@ -250,19 +254,19 @@
                         </div>
 
                         <div class="dropdown-options" data-id="0">
-                            <div class="option" onclick="initGraficoTendencia(-2, 'Auto')">Auto</div>
-                            <div class="option" onclick="initGraficoTendencia(0, 'Laboratório 0')">Laboratório 0</div>
-                            <div class="option" onclick="initGraficoTendencia(1, 'Laboratório 1')">Laboratório 1</div>
-                            <div class="option" onclick="initGraficoTendencia(2, 'Laboratório 2')">Laboratório 2</div>
-                            <div class="option" onclick="initGraficoTendencia(3, 'Laboratório 3')">Laboratório 3</div>
-                            <div class="option" onclick="initGraficoTendencia(4, 'Laboratório 4')">Laboratório 4</div>
-                            <div class="option" onclick="initGraficoTendencia(5, 'Laboratório 5')">Laboratório 5</div>
-                            <div class="option" onclick="initGraficoTendencia(6, 'Laboratório 6')">Laboratório 6</div>
-                            <div class="option" onclick="initGraficoTendencia(7, 'Laboratório 7')">Laboratório 7</div>
-                            <div class="option" onclick="initGraficoTendencia(8, 'Laboratório 8')">Laboratório 8</div>
-                            <div class="option" onclick="initGraficoTendencia(9, 'Laboratório 9')">Laboratório 9</div>
-                            <div class="option" onclick="initGraficoTendencia(10, 'Laboratório 10')">Laboratório 10</div>
-                            <div class="option" onclick="initGraficoTendencia(11, 'Laboratório 11')">Laboratório 11</div>
+                            <div class="option" onclick="initGraficoTemp(-2, 'Auto')">Auto</div>
+                            <div class="option" onclick="initGraficoTemp(0, 'Laboratório 0')">Laboratório 0</div>
+                            <div class="option" onclick="initGraficoTemp(1, 'Laboratório 1')">Laboratório 1</div>
+                            <div class="option" onclick="initGraficoTemp(2, 'Laboratório 2')">Laboratório 2</div>
+                            <div class="option" onclick="initGraficoTemp(3, 'Laboratório 3')">Laboratório 3</div>
+                            <div class="option" onclick="initGraficoTemp(4, 'Laboratório 4')">Laboratório 4</div>
+                            <div class="option" onclick="initGraficoTemp(5, 'Laboratório 5')">Laboratório 5</div>
+                            <div class="option" onclick="initGraficoTemp(6, 'Laboratório 6')">Laboratório 6</div>
+                            <div class="option" onclick="initGraficoTemp(7, 'Laboratório 7')">Laboratório 7</div>
+                            <div class="option" onclick="initGraficoTemp(8, 'Laboratório 8')">Laboratório 8</div>
+                            <div class="option" onclick="initGraficoTemp(9, 'Laboratório 9')">Laboratório 9</div>
+                            <div class="option" onclick="initGraficoTemp(10, 'Laboratório 10')">Laboratório 10</div>
+                            <div class="option" onclick="initGraficoTemp(11, 'Laboratório 11')">Laboratório 11</div>
                         </div>
                     </div>
                 </div>
@@ -274,7 +278,7 @@
                 </div>
             </section>
 
-            <section id="sec-wifi" class="section-content ">
+            <section id="sec-wifi" class="section-content active">
 
                 <div class="Data-Options">
                     <button class="Botao-Atualizar" onclick="atualizarValor()">
@@ -292,19 +296,20 @@
                         </div>
 
                         <div class="dropdown-options" data-id="1">
-                            <div class="option" onclick="selectOption('auto', 'Auto')">Auto</div>
-                            <div class="option" onclick="selectOption('lab0', 'Laboratório 0')">Laboratório 0</div>
-                            <div class="option" onclick="selectOption('lab2', 'Laboratório 1')">Laboratório 1</div>
-                            <div class="option" onclick="selectOption('lab1', 'Laboratório 2')">Laboratório 2</div>
-                            <div class="option" onclick="selectOption('lab3', 'Laboratório 3')">Laboratório 3</div>
-                            <div class="option" onclick="selectOption('lab4', 'Laboratório 4')">Laboratório 4</div>
-                            <div class="option" onclick="selectOption('lab5', 'Laboratório 5')">Laboratório 5</div>
-                            <div class="option" onclick="selectOption('lab6', 'Laboratório 6')">Laboratório 6</div>
-                            <div class="option" onclick="selectOption('lab7', 'Laboratório 7')">Laboratório 7</div>
-                            <div class="option" onclick="selectOption('lab8', 'Laboratório 8')">Laboratório 8</div>
-                            <div class="option" onclick="selectOption('lab9', 'Laboratório 9')">Laboratório 9</div>
-                            <div class="option" onclick="selectOption('lab10', 'Laboratório10')">Laboratório 10</div>
-                            <div class="option" onclick="selectOption('lab11', 'Laboratório11')">Laboratório 11</div>
+                            <div class="option" onclick="initGraficoWifi(-2, 'Auto')">Auto</div>
+                            <div class="option" onclick="initGraficoWifi(0, 'Laboratório 0')">Laboratório 0</div>
+                            <div class="option" onclick="initGraficoWifi(1, 'Laboratório 1')">Laboratório 1</div>
+                            <div class="option" onclick="initGraficoWifi(2, 'Laboratório 2')">Laboratório 2</div>
+                            <div class="option" onclick="initGraficoWifi(3, 'Laboratório 3')">Laboratório 3</div>
+                            <div class="option" onclick="initGraficoWifi(4, 'Laboratório 4')">Laboratório 4</div>
+                            <div class="option" onclick="initGraficoWifi(5, 'Laboratório 5')">Laboratório 5</div>
+                            <div class="option" onclick="initGraficoWifi(6, 'Laboratório 6')">Laboratório 6</div>
+                            <div class="option" onclick="initGraficoWifi(7, 'Laboratório 7')">Laboratório 7</div>
+                            <div class="option" onclick="initGraficoWifi(8, 'Laboratório 8')">Laboratório 8</div>
+                            <div class="option" onclick="initGraficoWifi(9, 'Laboratório 9')">Laboratório 9</div>
+                            <div class="option" onclick="initGraficoWifi(10, 'Laboratório 10')">Laboratório 10</div>
+                            <div class="option" onclick="initGraficoWifi(11, 'Laboratório 11')">Laboratório 11</div>
+                            <div class="option" onclick="initGraficoWifi(16, 'Pátio')">Pátio</div>
                         </div>
                     </div>
                 </div>
@@ -312,22 +317,14 @@
                 <div class="Wifi">
                     <div class="Luminosidade">
                         <div class="Grafico">
-                            <p>Aqui virá um gráfico de barras</p>
-                        </div>
-
-                        <div class="Legenda">
-                            <p>Aqui virá uma legenda para o gráfico de barras</p>
+                            <canvas id="graficoLuminosidade"></canvas>
                         </div>
                     </div>
 
                     <div class="Sinal">
                         <div class="Grafico">
-                            <canvas id="meuManometro"></canvas>
+                            <canvas id="graficoSinal"></canvas>
                             <div class="Texto-central" id="valorTexto">-50 dBm</div>
-                        </div>
-
-                        <div class="Legenda">
-                            <p>Aqui virá uma legenda para o gráfico de manômetro</p>
                         </div>
                     </div>
                 </div>
