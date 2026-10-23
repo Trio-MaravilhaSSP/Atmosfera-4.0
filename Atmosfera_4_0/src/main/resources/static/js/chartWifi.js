@@ -5,9 +5,9 @@ var manometroChart = null;
 var luminosidadeChart = null;
 
 var intervalAuto = null;
-var salaAtualAuto = 0;
+var indiceSalaAuto = 0;
 
-// Cache em memória dos JSONs para evitar refazer fetch a cada 15s no Auto
+// Caches em memória dos JSONs
 var cacheSalas = null;
 var cacheDados = null;
 
@@ -25,7 +25,6 @@ function formatarHoraMinuto(date) {
     return `${horas}:${mins}`;
 }
 
-// Formata a data completa para exibição (ex: 23/10 14:30)
 function formatarDataHoraCompleta(date) {
     const dia = String(date.getDate()).padStart(2, '0');
     const mes = String(date.getMonth() + 1).padStart(2, '0');
@@ -36,7 +35,6 @@ function formatarDataHoraCompleta(date) {
 
 function parseDataJson(dataStr) {
     if (!dataStr) return null;
-    // Correção: Expressão regular para aceitar separadores como ':', '-', 'T', ' ' ou '/'
     const partes = dataStr.split(/[:\-\sT\/]/);
     return new Date(
         partes[0],
@@ -58,12 +56,11 @@ function dbmParaPorcentagem(dbm) {
     return ((dbm - minDbm) / (maxDbm - minDbm)) * 100;
 }
 
-// Busca os arquivos JSON uma vez e reutiliza em memória
 async function carregarBancoDeDados() {
     if (!cacheSalas || !cacheDados) {
         const [salasResp, dadosResp] = await Promise.all([
-            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/bancoDeSalas.json"),
-            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json.json")
+            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/salas.json"),
+            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/wifi.json")
         ]);
         cacheSalas = await salasResp.json();
         cacheDados = await dadosResp.json();
@@ -91,7 +88,6 @@ var gaugeNeedle = {
 
         const needleRadius = (height / 1.5);
 
-        // Agulha
         ctx.translate(cx, cy);
         ctx.rotate(anguloRad);
 
@@ -105,7 +101,6 @@ var gaugeNeedle = {
         ctx.rotate(-anguloRad);
         ctx.translate(-cx, -cy);
 
-        // Centro do ponteiro
         ctx.beginPath();
         ctx.arc(cx, cy, 12, 0, Math.PI * 2);
         ctx.fillStyle = '#94a3b8';
@@ -181,7 +176,9 @@ function renderizarGraficoLuminosidade(historicoLuminosidade) {
                 backgroundColor: 'rgba(255, 206, 86, 0.6)',
                 borderColor: 'rgba(255, 206, 86, 1)',
                 borderWidth: 1,
-                borderRadius: 4
+                borderRadius: 4,
+                barPercentage: 1.0,
+                categoryPercentage: 1.0
             }]
         },
         options: {
@@ -208,23 +205,31 @@ function renderizarGraficoLuminosidade(historicoLuminosidade) {
 // =============================================================
 // 3. ATUALIZADOR PRINCIPAL DE TODOS OS GRÁFICOS E INDICADORES
 // =============================================================
-async function atualizarGraficoWifi(salaId, modoAuto = false) {
+async function atualizarGraficoWifi(salaIdOuObjeto, modoAuto = false) {
     try {
         const { bancoDeSalas, bancoDeDados } = await carregarBancoDeDados();
 
-        const sala = bancoDeSalas.find(s => s.id == salaId);
-        if (!sala) return console.error("Sala não encontrada com id:", salaId);
+        let sala;
+        if (typeof salaIdOuObjeto === 'object') {
+            sala = salaIdOuObjeto;
+        } else {
+            sala = bancoDeSalas.find(s => s.id == salaIdOuObjeto);
+        }
+
+        if (!sala) {
+            console.error("Sala não encontrada:", salaIdOuObjeto);
+            return;
+        }
 
         // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
-        const nomeExibicao = sala.nome || `Laboratório ${sala.id}`;
+        const nomeExibicao = sala.sala || sala.nome || `Laboratório ${sala.id}`;
 
-        // Atualiza o texto do Dropdown (#selected-value) no formato especificado
-        const elementoSeletor = document.querySelector('#selected-value');
+        // Atualiza a interface com o seletor genérico por atributo ou id
+        const elementoSeletor = document.querySelector('[data-seVa-1]');
         if (elementoSeletor) {
             elementoSeletor.innerText = modoAuto ? `Auto (${nomeExibicao})` : nomeExibicao;
         }
 
-        // Atualiza o título do topo da página
         const indicadorTitulo = document.querySelector('#indicadorSala') || document.querySelector('.titulo-sala');
         if (indicadorTitulo) {
             indicadorTitulo.innerText = nomeExibicao;
@@ -233,7 +238,7 @@ async function atualizarGraficoWifi(salaId, modoAuto = false) {
         const dadosDaSala = bancoDeDados.filter(item => item.sala == sala.id && item.data);
 
         if (dadosDaSala.length === 0) {
-            console.warn(`Sem registros para a sala ${salaId}`);
+            console.warn(`Sem registros para a sala ${sala.id}`);
             return;
         }
 
@@ -243,23 +248,13 @@ async function atualizarGraficoWifi(salaId, modoAuto = false) {
 
         renderizarManometro(sinalAtual);
 
-        // --- 3. Atualizar Indicadores numéricos adicionais da sala ---
-        const elTemp = document.querySelector('#valorTemperatura');
-        if (elTemp && ultimoRegistro.temperatura !== undefined) {
-            elTemp.innerText = `${ultimoRegistro.temperatura} °C`;
-        }
-
-        const elUmid = document.querySelector('#valorUmidade');
-        if (elUmid && ultimoRegistro.umidade !== undefined) {
-            elUmid.innerText = `${ultimoRegistro.umidade} %`;
-        }
-
+        // --- 3. Atualizar Indicadores Numéricos ---
         const elLumi = document.querySelector('#valorLuminosidade');
         if (elLumi && ultimoRegistro.luminosidade !== undefined) {
             elLumi.innerText = `${ultimoRegistro.luminosidade} Lux`;
         }
 
-        // --- 4. Janela de 24h para o Gráfico de Luminosidade e Métrica Temporal ---
+        // --- 4. Métrica de Tempo (Janela de 24h) ---
         let dataMaisRecente = null;
         dadosDaSala.forEach(item => {
             const d = parseDataJson(item.data);
@@ -269,15 +264,13 @@ async function atualizarGraficoWifi(salaId, modoAuto = false) {
         const fimCiclo = arredondarMinutos(dataMaisRecente, 5);
         const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
 
-        // Métrica textual do intervalo das últimas 24 horas (ex: "22/10 14:00 até 23/10 14:00")
-        const metrica24h = `${formatarDataHoraCompleta(inicioCiclo)} - ${formatarDataHoraCompleta(fimCiclo)}`;
-
+        const metrica24h = `${formatarDataHoraCompleta(inicioCiclo)} até ${formatarDataHoraCompleta(fimCiclo)}`;
         const elIntervalo24h = document.querySelector('#intervalo24h');
         if (elIntervalo24h) {
             elIntervalo24h.innerText = metrica24h;
         }
 
-        // Mapeia os slots de 5 em 5 minutos para o gráfico
+        // Montagem da Timeline em intervalos de 5 minutos
         const timelineMap = new Map();
         let ponteiroTempo = new Date(inicioCiclo);
 
@@ -290,7 +283,6 @@ async function atualizarGraficoWifi(salaId, modoAuto = false) {
             ponteiroTempo.setMinutes(ponteiroTempo.getMinutes() + 5);
         }
 
-        // Aloca os registros do JSON nos intervalos correspondentes
         dadosDaSala.forEach(item => {
             const dataMedicao = parseDataJson(item.data);
             if (dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
@@ -315,31 +307,38 @@ async function atualizarGraficoWifi(salaId, modoAuto = false) {
 // 4. INICIALIZADOR PRINCIPAL (DROPDOWN / MODO AUTO)
 // =============================================================
 async function initGraficoWifi(salaId, exibir) {
-    // Parar temporizador antigo se existir
     if (intervalAuto) {
         clearInterval(intervalAuto);
         intervalAuto = null;
     }
 
-    // Fecha o dropdown visualmente ao selecionar
     const dropOptions = document.querySelector('.dropdown-options');
     if (dropOptions) dropOptions.classList.remove('Select-active');
 
     // MODO AUTOMÁTICO (-2)
     if (salaId === -2) {
-        await atualizarGraficoWifi(salaAtualAuto, true);
+        const { bancoDeSalas } = await carregarBancoDeDados();
 
-        intervalAuto = setInterval(async () => {
-            salaAtualAuto = (salaAtualAuto + 1) % 16;
-            await atualizarGraficoWifi(salaAtualAuto, true);
-        }, 15000);
+        if (!bancoDeSalas || bancoDeSalas.length === 0) return;
+
+        const rodarCicloAuto = async () => {
+            const salaAtual = bancoDeSalas[indiceSalaAuto];
+            await atualizarGraficoWifi(salaAtual, true);
+            indiceSalaAuto = (indiceSalaAuto + 1) % bancoDeSalas.length;
+        };
+
+        await rodarCicloAuto();
+        intervalAuto = setInterval(rodarCicloAuto, 15000);
 
         return;
     }
 
     // MODO SELEÇÃO MANUAL
+    const elSeletor = document.querySelector('[data-seVa]') || document.getElementById('selected-value');
+    if (elSeletor) elSeletor.innerText = exibir;
+
     await atualizarGraficoWifi(salaId, false);
 }
 
-// Inicializa automaticamente no modo Auto
+// Inicializa no modo Auto por padrão
 initGraficoWifi(-2, 'Auto');

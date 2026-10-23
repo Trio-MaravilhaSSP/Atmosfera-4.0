@@ -1,12 +1,17 @@
-// Instâncias globais de controle
+// =============================================================
+// VARIÁVEIS DE CONTROLE GLOBAL
+// =============================================================
 var graficoTendencia = null;
-var intervalAuto = null;
-var salaAtualAuto = 0;
+var intervalAutoTemp = null;
+var indiceSalaAutoTemp = 0;
 
-// Caches globais para não refazer fetch a cada 15 segundos
-var cacheSalas = null;
-var cacheDados = null;
+// Caches em memória dos JSONs
+var cacheSalasTemp = null;
+var cacheDadosTemp = null;
 
+// =============================================================
+// FUNÇÕES UTILITÁRIAS DE DATA E FORMATOS
+// =============================================================
 function arredondarMinutos(date, minutos = 5) {
     const ms = 1000 * 60 * minutos;
     return new Date(Math.round(date.getTime() / ms) * ms);
@@ -18,12 +23,17 @@ function formatarHoraMinuto(date) {
     return `${horas}:${mins}`;
 }
 
-/**
- * Converte string 'YYYY-MM-DD HH:mm:ss' em objeto Date no fuso local
- */
+function formatarDataHoraCompleta(date) {
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
+    const horas = String(date.getHours()).padStart(2, '0');
+    const mins = String(date.getMinutes()).padStart(2, '0');
+    return `${dia}/${mes} ${horas}:${mins}`;
+}
+
 function parseDataJson(dataStr) {
     if (!dataStr) return null;
-    const partes = dataStr.split(/[- :]/);
+    const partes = dataStr.split(/[:\-\sT\/]/);
     return new Date(
         partes[0],
         partes[1] - 1,
@@ -34,41 +44,60 @@ function parseDataJson(dataStr) {
     );
 }
 
-/**
- * Busca os dados dos JSONs (Apenas na primeira vez)
- */
-async function carregarBancoDeDados() {
-    if (!cacheSalas || !cacheDados) {
+async function carregarBancoDeDadosTemp() {
+    if (!cacheSalasTemp || !cacheDadosTemp) {
         const [salasResp, dadosResp] = await Promise.all([
-            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/bancoDeSalas.json"),
-            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json.json")
+            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/salas.json"),
+            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/temp.json")
         ]);
-        cacheSalas = await salasResp.json();
-        cacheDados = await dadosResp.json();
+        cacheSalasTemp = await salasResp.json();
+        cacheDadosTemp = await dadosResp.json();
     }
-    return { bancoDeSalas: cacheSalas, bancoDeDados: cacheDados };
+    return { bancoDeSalas: cacheSalasTemp, bancoDeDados: cacheDadosTemp };
 }
 
-/**
- * Monta e renderiza o gráfico para a sala informada
- */
-async function renderizarGrafico(salaId) {
+// =============================================================
+// 1. ATUALIZADOR PRINCIPAL DO GRÁFICO DE TEMPERATURA E UMIDADE
+// =============================================================
+async function atualizarGraficoTemp(salaIdOuObjeto, modoAuto = false) {
     try {
-        const { bancoDeSalas, bancoDeDados } = await carregarBancoDeDados();
+        const { bancoDeSalas, bancoDeDados } = await carregarBancoDeDadosTemp();
 
-        const sala = bancoDeSalas.find(s => s.id == salaId);
-        if (!sala) return console.error("Sala não encontrada com id:", salaId);
+        let sala;
+        if (typeof salaIdOuObjeto === 'object') {
+            sala = salaIdOuObjeto;
+        } else {
+            sala = bancoDeSalas.find(s => s.id == salaIdOuObjeto);
+        }
 
-        // 1. FILTRAR DADOS DA SALA
+        if (!sala) {
+            console.error("Sala não encontrada (Temp):", salaIdOuObjeto);
+            return;
+        }
+
+        // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
+        const nomeExibicao = sala.sala || sala.nome || `Laboratório ${sala.id}`;
+
+        const elementoSeletor = document.querySelector('[data-seVa-0]');
+        if (elementoSeletor) {
+            elementoSeletor.innerText = modoAuto ? `Auto (${nomeExibicao})` : nomeExibicao;
+        }
+
+        const indicadorTitulo = document.querySelector('#indicadorSala') || document.querySelector('.titulo-sala');
+        if (indicadorTitulo) {
+            indicadorTitulo.innerText = nomeExibicao;
+        }
+
+        // Filtrar dados da sala
         const dadosDaSala = bancoDeDados.filter(item => item.sala == sala.id && item.data);
 
         if (dadosDaSala.length === 0) {
-            console.warn(`Nenhum dado encontrado para a sala ${salaId}`);
+            console.warn(`Nenhum dado de temperatura encontrado para a sala ${sala.id}`);
             if (graficoTendencia) graficoTendencia.destroy();
             return;
         }
 
-        // Descobre a data/hora do registro mais recente
+        // Descobre o registro mais recente
         let dataMaisRecente = null;
         dadosDaSala.forEach(item => {
             const d = parseDataJson(item.data);
@@ -77,11 +106,17 @@ async function renderizarGrafico(salaId) {
             }
         });
 
-        // 2. DEFINIR JANELA DE 24 HORAS (Do momento mais recente até 24h atrás)
+        // --- 2. DEFINIR JANELA DE 24 HORAS ---
         const fimCiclo = arredondarMinutos(dataMaisRecente, 5);
         const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
 
-        // 3. GERAR SLOTS DE 5 EM 5 MINUTOS (Eixo X)
+        const metrica24h = `${formatarDataHoraCompleta(inicioCiclo)} até ${formatarDataHoraCompleta(fimCiclo)}`;
+        const elIntervalo24h = document.querySelector('#intervalo24h');
+        if (elIntervalo24h) {
+            elIntervalo24h.innerText = metrica24h;
+        }
+
+        // --- 3. GERAR SLOTS DE 5 EM 5 MINUTOS ---
         const timelineMap = new Map();
         let ponteiroTempo = new Date(inicioCiclo);
 
@@ -89,19 +124,16 @@ async function renderizarGrafico(salaId) {
             const labelHora = formatarHoraMinuto(ponteiroTempo);
             timelineMap.set(ponteiroTempo.getTime(), {
                 horaFormatada: labelHora,
-                temperatura: null,
-                umidade: null
             });
             ponteiroTempo.setMinutes(ponteiroTempo.getMinutes() + 5);
         }
 
-        // 4. PREENCHER OS SLOTS COM OS DADOS DAS 24H
+        // --- 4. PREENCHER OS SLOTS ---
         dadosDaSala.forEach(item => {
             const dataMedicao = parseDataJson(item.data);
 
             if (dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
-                const dataArredondada = arredondarMinutos(dataMedicao, 5);
-                const chaveMs = dataArredondada.getTime();
+                const chaveMs = arredondarMinutos(dataMedicao, 5).getTime();
 
                 if (timelineMap.has(chaveMs)) {
                     timelineMap.get(chaveMs).temperatura = item.temperatura;
@@ -110,13 +142,13 @@ async function renderizarGrafico(salaId) {
             }
         });
 
-        // 5. SEPARAR EM ARRAYS PARA O CHART.JS
+        // --- 5. PREPARAR DADOS PARA O CHART.JS ---
         const slots = Array.from(timelineMap.values());
         const labels = slots.map(s => s.horaFormatada);
         const dadosTemperatura = slots.map(s => s.temperatura);
         const dadosUmidade = slots.map(s => s.umidade);
 
-        // 6. RENDERIZAÇÃO
+        // --- 6. RENDERIZAÇÃO DO GRÁFICO ---
         const ctxTemp = document.getElementById('graficoTempUmi');
         if (!ctxTemp) return;
 
@@ -170,7 +202,7 @@ async function renderizarGrafico(salaId) {
                         },
                         title: {
                             display: true,
-                            text: `Últimas 24h — ${sala.nome || 'Sala ' + salaId} (${inicioCiclo.toLocaleDateString('pt-BR')} ${formatarHoraMinuto(inicioCiclo)} até ${fimCiclo.toLocaleDateString('pt-BR')} ${formatarHoraMinuto(fimCiclo)})`
+                            text: `Últimas 24h — ${nomeExibicao} (${metrica24h})`
                         }
                     },
                     yTemp: {
@@ -193,41 +225,45 @@ async function renderizarGrafico(salaId) {
         });
 
     } catch (error) {
-        console.error("Erro ao renderizar o gráfico:", error);
+        console.error("Erro ao renderizar o gráfico de Temperatura:", error);
     }
 }
 
-/**
- * Função chamada pelos botões/dropdown da interface
- */
+// =============================================================
+// 2. INICIALIZADOR PRINCIPAL (DROPDOWN / MODO AUTO)
+// =============================================================
 async function initGraficoTemp(salaId, exibir) {
-    if (intervalAuto) {
-        clearInterval(intervalAuto);
-        intervalAuto = null;
+    if (intervalAutoTemp) {
+        clearInterval(intervalAutoTemp);
+        intervalAutoTemp = null;
     }
 
     const dropOptions = document.querySelector('.dropdown-options');
     if (dropOptions) dropOptions.classList.remove('Select-active');
 
+    // MODO AUTOMÁTICO (-2)
     if (salaId === -2) {
-        const labNome = `Laboratório ${salaAtualAuto}`;
-        document.querySelector('#selected-value').innerText = `Auto (${labNome})`;
+        const { bancoDeSalas } = await carregarBancoDeDadosTemp();
 
-        await atualizarTodosOsGraficos(salaAtualAuto);
+        if (!bancoDeSalas || bancoDeSalas.length === 0) return;
 
-        intervalAuto = setInterval(async () => {
-            salaAtualAuto = (salaAtualAuto + 1) % 16;
-            const proximoLab = `Laboratório ${salaAtualAuto}`;
-            document.querySelector('#selected-value').innerText = `Auto (${proximoLab})`;
+        const rodarCicloAuto = async () => {
+            const salaAtual = bancoDeSalas[indiceSalaAutoTemp];
+            await atualizarGraficoTemp(salaAtual, true);
+            indiceSalaAutoTemp = (indiceSalaAutoTemp + 1) % bancoDeSalas.length;
+        };
 
-            await atualizarTodosOsGraficos(salaAtualAuto);
-        }, 15000);
+        await rodarCicloAuto();
+        intervalAutoTemp = setInterval(rodarCicloAuto, 15000);
 
         return;
     }
 
-    document.querySelector('#selected-value').innerText = exibir;
-    await atualizarTodosOsGraficos(salaId);
+    // MODO SELEÇÃO MANUAL
+    const elSeletor = document.querySelector('[data-seVa]') || document.getElementById('selected-value');
+    if (elSeletor) elSeletor.innerText = exibir;
+
+    await atualizarGraficoTemp(salaId, false);
 }
 
 // Inicialização automática ao carregar

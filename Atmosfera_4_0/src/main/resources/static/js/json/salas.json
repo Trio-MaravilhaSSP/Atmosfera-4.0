@@ -1,77 +1,77 @@
 [
     {
         "id": 0,
-        "sala": "Laboratorio 0",
+        "sala": "Laboratório 0",
         "andar": 2
     },
     {
         "id": 1,
-        "sala": "Laboratorio 1",
+        "sala": "Laboratório 1",
         "andar": 1
     },
     {
         "id": 2,
-        "sala": "Laboratorio 2",
+        "sala": "Laboratório 2",
         "andar": 1
     },
     {
         "id": 3,
-        "sala": "Laboratorio 3",
+        "sala": "Laboratório 3",
         "andar": 1
     },
     {
         "id": 4,
-        "sala": "Laboratorio 4",
+        "sala": "Laboratório 4",
         "andar": 1
     },
     {
         "id": 5,
-        "sala": "Laboratorio 5",
+        "sala": "Laboratório 5",
         "andar": 1
     },
     {
         "id": 6,
-        "sala": "Laboratorio 6",
+        "sala": "Laboratório 6",
         "andar": 1
     },
     {
         "id": 7,
-        "sala": "Laboratorio 7",
+        "sala": "Laboratório 7",
         "andar": 1
     },
     {
         "id": 8,
-        "sala": "Laboratorio 8",
+        "sala": "Laboratório 8",
         "andar": 1
     },
     {
         "id": 9,
-        "sala": "Laboratorio 9",
+        "sala": "Laboratório 9",
         "andar": 1
     },
     {
         "id": 10,
-        "sala": "Laboratorio 10",
+        "sala": "Laboratório 10",
         "andar": 1
     },
     {
         "id": 11,
-        "sala": "Laboratorio 11",
+        "sala": "Laboratório 11",
         "andar": 1
     },
     {
         "id": 12,
-        "sala": "Laboratorio 14",
+        "sala": "Laboratório 14",
         "andar": -1
     },
     {
         "id": 13,
-        "sala": "Biblioteca",
+        "sala": "Entrada",
         "andar": 0
     },
     {
         "id": 14,
-        "sala": "Entrada",
+        "sala": "Biblioteca",
         "andar": 0
     },
     {

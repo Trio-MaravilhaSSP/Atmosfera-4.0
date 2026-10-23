@@ -1,0 +1,128 @@
+[
+    {
+        "id": 0,
+        "sala": 16,
+        "data": "2026-10-23 08:00:00",
+        "sinal": -88,
+        "luminosidade": 28000
+    },
+    {
+        "id": 1,
+        "sala": 16,
+        "data": "2026-10-23 12:05:00",
+        "sinal": -89,
+        "luminosidade": 29000
+    },
+    {
+        "id": 2,
+        "sala": 16,
+        "data": "2026-10-23 18:05:00",
+        "sinal": -78,
+        "luminosidade": 31000
+    },
+    {
+        "id": 3,
+        "sala": 16,
+        "data": "2026-10-23 22:05:00",
+        "sinal": -84,
+        "luminosidade": 30000
+    },
+    {
+        "id": 4,
+        "sala": 16,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 5,
+        "sala": 0,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 6,
+        "sala": 1,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 7,
+        "sala": 2,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 8,
+        "sala": 3,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 9,
+        "sala": 4,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 10,
+        "sala": 5,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 11,
+        "sala": 6,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 12,
+        "sala": 7,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 13,
+        "sala": 8,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 14,
+        "sala": 9,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 15,
+        "sala": 10,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 16,
+        "sala": 11,
+        "data": "2026-10-24 07:55:00",
+        "sinal": -82,
+        "luminosidade": 45000
+    },
+    {
+        "id": 17,
+        "sala": 13,
+        "data": "2026-10-24 08:00:00",
+        "sinal": -40,
+        "luminosidade": 500
+    }
+]

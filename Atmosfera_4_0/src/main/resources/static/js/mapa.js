@@ -2,8 +2,8 @@ async function loadCards(andarId) {
     try {
         // 1. Busca ambos os JSONs em paralelo
         const [salasResp, dadosResp] = await Promise.all([
-            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/bancoDeSalas.json"),
-            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json.json")
+            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/salas.json"),
+            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/json.json")
         ]);
 
         const bancoDeSalas = await salasResp.json();
