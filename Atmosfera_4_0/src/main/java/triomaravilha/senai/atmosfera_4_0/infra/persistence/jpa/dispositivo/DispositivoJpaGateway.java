@@ -23,7 +23,7 @@ public class DispositivoJpaGateway implements DispositivoGateway {
 
     @Override
     public DispositivoResponse save(DispositivoRequest dispositivo) {
-        if (dispositivo.toModel().getGateway_pai_fk() != null && respository.findById(dispositivo.toModel().getGateway_pai_fk()).isPresent()) {
+        if (dispositivo.toModel().getGateway_pai_fk() != null && !respository.findById(dispositivo.toModel().getGateway_pai_fk()).isPresent()) {
             throw new NoIntegridadeReferencial("Conexão do Dispositivo com Gateway");
         }
         return DispositivoMapper.mapper(respository.save(dispositivo.toModel()));

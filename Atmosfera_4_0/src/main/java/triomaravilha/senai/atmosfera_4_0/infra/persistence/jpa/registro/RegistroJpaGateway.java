@@ -25,7 +25,7 @@ public class RegistroJpaGateway implements RegistroGateway {
 
     @Override
     public RegistroResponse save(RegistroRequest atuador) {
-        if (repositoryDispositivo.findById(atuador.toModel().getId_dispositivo_fk()).isPresent()) {
+        if (!repositoryDispositivo.findById(atuador.toModel().getId_dispositivo_fk()).isPresent()) {
             throw new NoIntegridadeReferencial("Conexão com Registro e Dispositivo");
         }
 
