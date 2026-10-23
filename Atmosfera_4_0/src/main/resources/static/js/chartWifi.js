@@ -1,75 +1,28 @@
 // =============================================================
-// VARIÁVEIS DE CONTROLE GLOBAL
+// chartWifi.js — Módulo do Manômetro (dBm) e Luminosidade (Lux)
 // =============================================================
-var manometroChart = null;
-var luminosidadeChart = null;
 
-var intervalAuto = null;
-var indiceSalaAuto = 0;
+import {
+    carregarDadosGerais,
+    parseDataJson,
+    arredondarHoras,
+    formatarHoraMinuto,
+    formatarDataHoraCompleta,
+    dbmParaPorcentagem,
+    popularDropdownDispositivos
+} from './chartAll.js';
 
-// Caches em memória dos JSONs
-var cacheSalas = null;
-var cacheDados = null;
+// Instâncias locais dos gráficos do Chart.js
+let manometroChart = null;
+let luminosidadeChart = null;
 
-// =============================================================
-// FUNÇÕES UTILITÁRIAS DE DATA E FORMATOS
-// =============================================================
-function arredondarHoras(date) {
-    const ms = 1000 * 60 * 60;
-    return new Date(Math.round(date.getTime() / ms) * ms);
-}
-
-function formatarHoraMinuto(date) {
-    const horas = String(date.getHours()).padStart(2, '0');
-    return `${horas}:00`;
-}
-
-function formatarDataHoraCompleta(date) {
-    const dia = String(date.getDate()).padStart(2, '0');
-    const mes = String(date.getMonth() + 1).padStart(2, '0');
-    const horas = String(date.getHours()).padStart(2, '0');
-    return `${dia}/${mes} ${horas}:00`;
-}
-
-function parseDataJson(dataStr) {
-    if (!dataStr) return null;
-    const partes = dataStr.split(/[:\-\sT\/]/);
-    return new Date(
-        partes[0],
-        partes[1] - 1,
-        partes[2],
-        partes[3] || 0,
-        partes[4] || 0,
-        partes[5] || 0
-    );
-}
-
-function dbmParaPorcentagem(dbm) {
-    const minDbm = -90;
-    const maxDbm = -30;
-
-    if (dbm <= minDbm) return 0;
-    if (dbm >= maxDbm) return 100;
-
-    return ((dbm - minDbm) / (maxDbm - minDbm)) * 100;
-}
-
-async function carregarBancoDeDados() {
-    if (!cacheSalas || !cacheDados) {
-        const [salasResp, dadosResp] = await Promise.all([
-            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/salas.json"),
-            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/wifi.json")
-        ]);
-        cacheSalas = await salasResp.json();
-        cacheDados = await dadosResp.json();
-    }
-    return { bancoDeSalas: cacheSalas, bancoDeDados: cacheDados };
-}
+let intervalAuto = null;
+let indiceDispositivoAuto = 0;
 
 // =============================================================
 // 1. MANÔMETRO DE SINAL (dBm)
 // =============================================================
-var gaugeNeedle = {
+const gaugeNeedle = {
     id: 'gaugeNeedle',
     afterDatasetDraw(chart) {
         const { ctx, config, chartArea: { left, width, height } } = chart;
@@ -113,7 +66,7 @@ var gaugeNeedle = {
     }
 };
 
-function renderizarManometro(valorSinalDbm) {
+export function renderizarManometro(valorSinalDbm) {
     const elementoCanvas = document.getElementById('graficoSinal');
     const valorTexto = document.getElementById('valorTexto');
 
@@ -150,7 +103,7 @@ function renderizarManometro(valorSinalDbm) {
 // =============================================================
 // 2. BARRAS DE LUMINOSIDADE (LUX)
 // =============================================================
-function renderizarGraficoLuminosidade(historicoLuminosidade) {
+export function renderizarGraficoLuminosidade(historicoLuminosidade) {
     const elementoCanvas = document.getElementById('graficoLuminosidade');
     if (!elementoCanvas) return;
 
@@ -201,42 +154,43 @@ function renderizarGraficoLuminosidade(historicoLuminosidade) {
 }
 
 // =============================================================
-// 3. ATUALIZADOR PRINCIPAL DE TODOS OS GRÁFICOS E INDICADORES
+// 3. ATUALIZADOR PRINCIPAL DO MÓDULO WIFI & LUMINOSIDADE
 // =============================================================
-async function atualizarGraficoWifi(salaIdOuObjeto, modoAuto = false) {
+export async function atualizarGraficoWifi(dispositivoIdOuObjeto, modoAuto = false) {
     try {
-        const { bancoDeSalas, bancoDeDados } = await carregarBancoDeDados();
+        const { dispositivos, wifi } = await carregarDadosGerais();
 
-        let sala;
-        if (typeof salaIdOuObjeto === 'object') {
-            sala = salaIdOuObjeto;
+        let dispositivo;
+        if (typeof dispositivoIdOuObjeto === 'object') {
+            dispositivo = dispositivoIdOuObjeto;
         } else {
-            sala = bancoDeSalas.find(s => s.id == salaIdOuObjeto);
+            dispositivo = dispositivos.find(d => d.id == dispositivoIdOuObjeto);
         }
 
-        if (!sala) {
-            console.error("Sala não encontrada:", salaIdOuObjeto);
+        if (!dispositivo) {
+            console.error("Dispositivo não encontrado:", dispositivoIdOuObjeto);
             return;
         }
 
         // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
-        const nomeExibicao = sala.sala || `Laboratório ${sala.id}`;
+        const nomeExibicao = dispositivo.nome || `Dispositivo ${dispositivo.id}`;
 
         const elementoSeletor = document.querySelector('[data-seVa-1]');
         if (elementoSeletor) {
-            elementoSeletor.innerText = modoAuto ? `Auto (${nomeExibicao})` : nomeExibicao;
+            elementoSeletor.innerHTML = modoAuto ? `Auto <br> (${nomeExibicao})` : nomeExibicao;
         }
 
-        const dadosDaSala = bancoDeDados.filter(item => item.sala == sala.id && item.data);
+        // Filtra os dados da tabela wifi.json usando a FK 'dispositivo'
+        const dadosDoDispositivo = wifi.filter(item => item.dispositivo == dispositivo.id && item.data);
 
-        if (dadosDaSala.length === 0) {
-            console.warn(`Sem registros para a sala ${sala.id}`);
+        if (dadosDoDispositivo.length === 0) {
+            console.warn(`Sem registros para o dispositivo ${dispositivo.id}`);
             return;
         }
 
         // --- 2. DETERMINAR JANELA DE TEMPO (ÚLTIMAS 24 HORAS) ---
         let dataMaisRecente = null;
-        dadosDaSala.forEach(item => {
+        dadosDoDispositivo.forEach(item => {
             const d = parseDataJson(item.data);
             if (!dataMaisRecente || d > dataMaisRecente) dataMaisRecente = d;
         });
@@ -255,7 +209,7 @@ async function atualizarGraficoWifi(salaIdOuObjeto, modoAuto = false) {
         let ponteiroTempo = new Date(inicioCiclo);
 
         while (ponteiroTempo <= fimCiclo) {
-            const labelHora = formatarHoraMinuto(ponteiroTempo);
+            const labelHora = formatarHoraMinuto(ponteiroTempo, false);
             timelineMap.set(ponteiroTempo.getTime(), {
                 horaFormatada: labelHora,
                 somasLuminosidade: 0,
@@ -269,7 +223,7 @@ async function atualizarGraficoWifi(salaIdOuObjeto, modoAuto = false) {
         }
 
         // --- 4. AGRUPAR DADOS DE 1 EM 1 HORA E CALCULAR MÉDIAS ---
-        dadosDaSala.forEach(item => {
+        dadosDoDispositivo.forEach(item => {
             const dataMedicao = parseDataJson(item.data);
             if (dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
                 const chaveMs = arredondarHoras(dataMedicao).getTime();
@@ -316,14 +270,14 @@ async function atualizarGraficoWifi(salaIdOuObjeto, modoAuto = false) {
         renderizarGraficoLuminosidade(slots);
 
     } catch (error) {
-        console.error("Erro ao atualizar os gráficos:", error);
+        console.error("Erro ao atualizar os gráficos de WiFi:", error);
     }
 }
 
 // =============================================================
 // 4. INICIALIZADOR PRINCIPAL (DROPDOWN / MODO AUTO)
 // =============================================================
-async function initGraficoWifi(salaId, exibir) {
+export async function initGraficoWifi(dispositivoId, exibir) {
     if (intervalAuto) {
         clearInterval(intervalAuto);
         intervalAuto = null;
@@ -332,30 +286,37 @@ async function initGraficoWifi(salaId, exibir) {
     const dropOptions = document.querySelector('.dropdown-options');
     if (dropOptions) dropOptions.classList.remove('Select-active');
 
-    // MODO AUTOMÁTICO (-2)
-    if (salaId === -2) {
-        const { bancoDeSalas } = await carregarBancoDeDados();
+    const { dispositivos } = await carregarDadosGerais();
 
-        if (!bancoDeSalas || bancoDeSalas.length === 0) return;
+    // Popula o menu suspenso dinamicamente se a função utilitária existir
+    if (typeof popularDropdownDispositivos === 'function') {
+        popularDropdownDispositivos(dispositivos, 'initGraficoWifi', '#select-wifi .dropdown-options');
+    }
+
+    // MODO AUTOMÁTICO ('auto')
+    if (dispositivoId === 'auto') {
+        if (!dispositivos || dispositivos.length === 0) return;
 
         const rodarCicloAuto = async () => {
-            const salaAtual = bancoDeSalas[indiceSalaAuto];
-            await atualizarGraficoWifi(salaAtual, true);
-            indiceSalaAuto = (indiceSalaAuto + 1) % bancoDeSalas.length;
+            const dispAtual = dispositivos[indiceDispositivoAuto];
+            await atualizarGraficoWifi(dispAtual, true);
+            indiceDispositivoAuto = (indiceDispositivoAuto + 1) % dispositivos.length;
         };
 
         await rodarCicloAuto();
         intervalAuto = setInterval(rodarCicloAuto, 15000);
-
         return;
     }
 
-    // MODO SELEÇÃO MANUAL
+    // MODO SELEÇÃO MANUAL DE DISPOSITIVO
     const elSeletor = document.querySelector('[data-seVa-1]');
     if (elSeletor) elSeletor.innerText = exibir;
 
-    await atualizarGraficoWifi(salaId, false);
+    await atualizarGraficoWifi(dispositivoId, false);
 }
 
-// Inicializa no modo Auto por padrão
-initGraficoWifi(-2, 'Auto');
+// Expõe a função globalmente para compatibilidade com os 'onclick' do HTML
+window.initGraficoWifi = initGraficoWifi;
+
+// Auto-inicializa no carregamento do módulo
+initGraficoWifi('auto', 'Auto');

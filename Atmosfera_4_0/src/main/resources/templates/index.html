@@ -76,8 +76,8 @@
 
         <aside class="relative">
 
-            <p onclick="window.location='./dashboard.html'" class="absolute top-[0] left-[15%] text-[#606060] cursor-pointer">Mais
-                detalhes</p>
+            <p onclick="window.location='./dashboard.html'"
+                class="absolute top-[0] left-[15%] text-[#606060] cursor-pointer">Mais detalhes</p>
 
             <div class="Options">
 
@@ -110,7 +110,7 @@
 
         <main class="imageOn">
 
-            <section id="sec-inicio" class="section-content active">
+            <section id="sec-inicio" class="section-content">
 
                 <div class="Inicio">
 
@@ -238,7 +238,7 @@
             <section id="sec-temperatura" class="section-content">
 
                 <div class="Data-Options">
-                    <button class="Botao-Atualizar" onclick="atualizarGraficoTemp(13, false)">
+                    <button class="Botao-Atualizar" onclick="atualizarGraficoTemp('16', false)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="icon-reload">
@@ -247,26 +247,26 @@
                         </svg>
                     </button>
 
-                    <div class="Select" id="select-local">
+                    <div class="Select" id="select-temp">
                         <div class="dropdown-selected" onclick="toggleSelect(0)">
                             <span id="selected-value" data-seVa-0="">Auto</span>
                         </div>
 
                         <div class="dropdown-options" data-id="0">
-                            <div class="option" onclick="initGraficoTemp(-2, 'Auto')">Auto</div>
-                            <div class="option" onclick="initGraficoTemp(0, 'Laboratório 0')">Laboratório 0</div>
-                            <div class="option" onclick="initGraficoTemp(1, 'Laboratório 1')">Laboratório 1</div>
-                            <div class="option" onclick="initGraficoTemp(2, 'Laboratório 2')">Laboratório 2</div>
-                            <div class="option" onclick="initGraficoTemp(3, 'Laboratório 3')">Laboratório 3</div>
-                            <div class="option" onclick="initGraficoTemp(4, 'Laboratório 4')">Laboratório 4</div>
-                            <div class="option" onclick="initGraficoTemp(5, 'Laboratório 5')">Laboratório 5</div>
-                            <div class="option" onclick="initGraficoTemp(6, 'Laboratório 6')">Laboratório 6</div>
-                            <div class="option" onclick="initGraficoTemp(7, 'Laboratório 7')">Laboratório 7</div>
-                            <div class="option" onclick="initGraficoTemp(8, 'Laboratório 8')">Laboratório 8</div>
-                            <div class="option" onclick="initGraficoTemp(9, 'Laboratório 9')">Laboratório 9</div>
-                            <div class="option" onclick="initGraficoTemp(10, 'Laboratório 10')">Laboratório 10</div>
-                            <div class="option" onclick="initGraficoTemp(11, 'Laboratório 11')">Laboratório 11</div>
-                            <div class="option" onclick="initGraficoTemp(16, 'Pátio')">Pátio</div>
+                            <div class="option" onclick="initGraficoTemp('auto', 'Auto')">Auto</div>
+                            <div class="option" onclick="initGraficoTemp('0', 'Laboratório 0')">Laboratório 0</div>
+                            <div class="option" onclick="initGraficoTemp('1', 'Laboratório 1')">Laboratório 1</div>
+                            <div class="option" onclick="initGraficoTemp('2', 'Laboratório 2')">Laboratório 2</div>
+                            <div class="option" onclick="initGraficoTemp('3', 'Laboratório 3')">Laboratório 3</div>
+                            <div class="option" onclick="initGraficoTemp('4', 'Laboratório 4')">Laboratório 4</div>
+                            <div class="option" onclick="initGraficoTemp('5', 'Laboratório 5')">Laboratório 5</div>
+                            <div class="option" onclick="initGraficoTemp('6', 'Laboratório 6')">Laboratório 6</div>
+                            <div class="option" onclick="initGraficoTemp('7', 'Laboratório 7')">Laboratório 7</div>
+                            <div class="option" onclick="initGraficoTemp('8', 'Laboratório 8')">Laboratório 8</div>
+                            <div class="option" onclick="initGraficoTemp('9', 'Laboratório 9')">Laboratório 9</div>
+                            <div class="option" onclick="initGraficoTemp('10', 'Laboratório 10')">Laboratório 10</div>
+                            <div class="option" onclick="initGraficoTemp('11', 'Laboratório 11')">Laboratório 11</div>
+                            <div class="option" onclick="initGraficoTemp('16', 'Pátio')">Pátio</div>
                         </div>
                     </div>
                 </div>
@@ -290,26 +290,26 @@
                         </svg>
                     </button>
 
-                    <div class="Select" id="select-local">
+                    <div class="Select" id="select-wifi">
                         <div class="dropdown-selected" onclick="toggleSelect(1)">
                             <span id="selected-value" data-seVa-1="">Auto</span>
                         </div>
 
                         <div class="dropdown-options" data-id="1">
-                            <div class="option" onclick="initGraficoWifi(-2, 'Auto')">Auto</div>
-                            <div class="option" onclick="initGraficoWifi(0, 'Laboratório 0')">Laboratório 0</div>
-                            <div class="option" onclick="initGraficoWifi(1, 'Laboratório 1')">Laboratório 1</div>
-                            <div class="option" onclick="initGraficoWifi(2, 'Laboratório 2')">Laboratório 2</div>
-                            <div class="option" onclick="initGraficoWifi(3, 'Laboratório 3')">Laboratório 3</div>
-                            <div class="option" onclick="initGraficoWifi(4, 'Laboratório 4')">Laboratório 4</div>
-                            <div class="option" onclick="initGraficoWifi(5, 'Laboratório 5')">Laboratório 5</div>
-                            <div class="option" onclick="initGraficoWifi(6, 'Laboratório 6')">Laboratório 6</div>
-                            <div class="option" onclick="initGraficoWifi(7, 'Laboratório 7')">Laboratório 7</div>
-                            <div class="option" onclick="initGraficoWifi(8, 'Laboratório 8')">Laboratório 8</div>
-                            <div class="option" onclick="initGraficoWifi(9, 'Laboratório 9')">Laboratório 9</div>
-                            <div class="option" onclick="initGraficoWifi(10, 'Laboratório 10')">Laboratório 10</div>
-                            <div class="option" onclick="initGraficoWifi(11, 'Laboratório 11')">Laboratório 11</div>
-                            <div class="option" onclick="initGraficoWifi(16, 'Pátio')">Pátio</div>
+                            <div class="option" onclick="initGraficoWifi('auto', 'Auto')">Auto</div>
+                            <div class="option" onclick="initGraficoWifi('0', 'Laboratório 0')">Laboratório 0</div>
+                            <div class="option" onclick="initGraficoWifi('1', 'Laboratório 1')">Laboratório 1</div>
+                            <div class="option" onclick="initGraficoWifi('2', 'Laboratório 2')">Laboratório 2</div>
+                            <div class="option" onclick="initGraficoWifi('3', 'Laboratório 3')">Laboratório 3</div>
+                            <div class="option" onclick="initGraficoWifi('4', 'Laboratório 4')">Laboratório 4</div>
+                            <div class="option" onclick="initGraficoWifi('5', 'Laboratório 5')">Laboratório 5</div>
+                            <div class="option" onclick="initGraficoWifi('6', 'Laboratório 6')">Laboratório 6</div>
+                            <div class="option" onclick="initGraficoWifi('7', 'Laboratório 7')">Laboratório 7</div>
+                            <div class="option" onclick="initGraficoWifi('8', 'Laboratório 8')">Laboratório 8</div>
+                            <div class="option" onclick="initGraficoWifi('9', 'Laboratório 9')">Laboratório 9</div>
+                            <div class="option" onclick="initGraficoWifi('10', 'Laboratório 10')">Laboratório 10</div>
+                            <div class="option" onclick="initGraficoWifi('11', 'Laboratório 11')">Laboratório 11</div>
+                            <div class="option" onclick="initGraficoWifi('16', 'Pátio')">Pátio</div>
                         </div>
                     </div>
                 </div>
@@ -334,7 +334,7 @@
             <section id="sec-altitude" class="section-content">
 
                 <div class="Data-Options">
-                    <button class="Botao-Atualizar" onclick="atualizarGraficoAltPress(13, false)">
+                    <button class="Botao-Atualizar" onclick="atualizarGraficoAltPress('13', false)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="icon-reload">
@@ -343,26 +343,26 @@
                         </svg>
                     </button>
 
-                    <div class="Select" id="select-local">
+                    <div class="Select" id="select-alti">
                         <div class="dropdown-selected" onclick="toggleSelect(2)">
                             <span id="selected-value" data-seVa-2="">Auto</span>
                         </div>
 
                         <div class="dropdown-options" data-id="2">
-                            <div class="option" onclick="initGraficoAlt(-2, 'Auto')">Auto</div>
-                            <div class="option" onclick="initGraficoAlt(0, 'Laboratório 0')">Laboratório 0</div>
-                            <div class="option" onclick="initGraficoAlt(1, 'Laboratório 1')">Laboratório 1</div>
-                            <div class="option" onclick="initGraficoAlt(2, 'Laboratório 2')">Laboratório 2</div>
-                            <div class="option" onclick="initGraficoAlt(3, 'Laboratório 3')">Laboratório 3</div>
-                            <div class="option" onclick="initGraficoAlt(4, 'Laboratório 4')">Laboratório 4</div>
-                            <div class="option" onclick="initGraficoAlt(5, 'Laboratório 5')">Laboratório 5</div>
-                            <div class="option" onclick="initGraficoAlt(6, 'Laboratório 6')">Laboratório 6</div>
-                            <div class="option" onclick="initGraficoAlt(7, 'Laboratório 7')">Laboratório 7</div>
-                            <div class="option" onclick="initGraficoAlt(8, 'Laboratório 8')">Laboratório 8</div>
-                            <div class="option" onclick="initGraficoAlt(9, 'Laboratório 9')">Laboratório 9</div>
-                            <div class="option" onclick="initGraficoAlt(10, 'Laboratório10')">Laboratório 10</div>
-                            <div class="option" onclick="initGraficoAlt(11, 'Laboratório11')">Laboratório 11</div>
-                            <div class="option" onclick="initGraficoAlt(16, 'Pátio')">Pátio</div>
+                            <div class="option" onclick="initGraficoAlt('auto', 'Auto')">Auto</div>
+                            <div class="option" onclick="initGraficoAlt('0', 'Laboratório 0')">Laboratório 0</div>
+                            <div class="option" onclick="initGraficoAlt('1', 'Laboratório 1')">Laboratório 1</div>
+                            <div class="option" onclick="initGraficoAlt('2', 'Laboratório 2')">Laboratório 2</div>
+                            <div class="option" onclick="initGraficoAlt('3', 'Laboratório 3')">Laboratório 3</div>
+                            <div class="option" onclick="initGraficoAlt('4', 'Laboratório 4')">Laboratório 4</div>
+                            <div class="option" onclick="initGraficoAlt('5', 'Laboratório 5')">Laboratório 5</div>
+                            <div class="option" onclick="initGraficoAlt('6', 'Laboratório 6')">Laboratório 6</div>
+                            <div class="option" onclick="initGraficoAlt('7', 'Laboratório 7')">Laboratório 7</div>
+                            <div class="option" onclick="initGraficoAlt('8', 'Laboratório 8')">Laboratório 8</div>
+                            <div class="option" onclick="initGraficoAlt('9', 'Laboratório 9')">Laboratório 9</div>
+                            <div class="option" onclick="initGraficoAlt('10', 'Laboratório10')">Laboratório 10</div>
+                            <div class="option" onclick="initGraficoAlt('11', 'Laboratório11')">Laboratório 11</div>
+                            <div class="option" onclick="initGraficoAlt('16', 'Pátio')">Pátio</div>
                         </div>
                     </div>
                 </div>
@@ -375,7 +375,7 @@
 
             </section>
 
-            <section id="sec-mapa" class="section-content">
+            <section id="sec-mapa" class="section-content active">
 
                 <div class="max-w-7xl mx-auto flex flex-col gap-6 no-select">
 
@@ -383,7 +383,7 @@
                     <div class="grid w-[1200px] grid-cols-1 lg:grid-cols-3 gap-6">
 
                         <!-- Container do Mapa 3D (Ocupa 2 Colunas no Desktop) -->
-                        <div class="lg:col-span-2 relative bg-brand-card rounded-l-xl border border-brand-border shadow-2xl h-[520px] map-viewport flex items-center justify-center relative overflow-hidden"
+                        <div class="lg:col-span-2 relative bg-brand-card rounded-l-xl border border-brand-border shadow-2xl h-[590px] map-viewport flex items-center justify-center relative overflow-hidden"
                             id="viewport">
 
                             <!-- Dica Flutuante de Instrução -->
@@ -424,7 +424,7 @@
                         </div>
 
                         <!-- Card de Detalhes da Sala Selecionada -->
-                        <div
+                        <div id="viewportDetail"
                             class="bg-brand-card rounded-r-xl border border-brand-border p-6 shadow-xl flex flex-col justify-between">
                             <div>
                                 <!-- Badge e Titulo -->
@@ -465,6 +465,43 @@
                                             class="text-xl font-bold text-slate-200 font-mono">Nenhum</span>
                                     </div>
 
+                                    <!-- Card Umidade -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Pressão</span>
+                                        <span id="salaPress"
+                                            class="text-xl font-bold text-slate-200 font-mono">Nenhum</span>
+                                    </div>
+
+                                    <!-- Card Umidade -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Altitude</span>
+                                        <span id="salaAlti"
+                                            class="text-xl font-bold text-slate-200 font-mono">Nenhum</span>
+                                    </div>
+
+                                    <!-- Card Umidade -->
+                                    <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Luminosidade</span>
+                                        <span id="salaLux"
+                                            class="text-xl font-bold text-slate-200 font-mono">Nenhum</span>
+                                    </div>
+
+                                    <!-- Card Velocidade -->
+                                    <div id="containerVento"
+                                        class="hidden bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Velocidade do Vento</span>
+                                        <span id="salaVelo"
+                                            class="text-xl font-bold text-slate-200 font-mono">Nenhum</span>
+                                    </div>
+
+                                    <!-- Card Direção -->
+                                    <div id="containerVento"
+                                        class="hidden bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
+                                        <span class="text-xs text-slate-400 block mb-1">Direção do Vento</span>
+                                        <span id="salaDire"
+                                            class="text-xl font-bold text-slate-200 font-mono">Nenhum</span>
+                                    </div>
+
                                     <!-- Status da Rede -->
                                     <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-700/60">
                                         <span class="text-xs text-slate-400 block mb-1">Conexão ESP32</span>
@@ -495,10 +532,11 @@
 
 </body>
 <script src="../static/js/index.js"></script>
-<script src="../static/js/chartTemp.js"></script>
-<script src="../static/js/chartWifi.js"></script>
-<script src="../static/js/chartAlti.js"></script>
+<script src="../static/js/chartAll.js" type="module"></script>
+<script src="../static/js/chartTemp.js" type="module"></script>
+<script src="../static/js/chartWifi.js" type="module"></script>
+<script src="../static/js/chartAlti.js" type="module"></script>
 <script src="../static/js/config/mapaInterativo.js"></script>
-<script src="../static/js/mapa.js"></script>
+<script src="../static/js/mapa.js" type="module"></script>
 
 </html>

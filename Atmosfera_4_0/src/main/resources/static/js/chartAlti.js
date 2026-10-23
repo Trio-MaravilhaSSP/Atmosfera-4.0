@@ -1,84 +1,46 @@
 // =============================================================
-// VARIÁVEIS DE CONTROLE GLOBAL
+// chartAlti.js — Módulo do Gráfico de Altitude e Pressão
 // =============================================================
-var graficoAltPress = null;
-var intervalAutoAltPress = null;
-var indiceSalaAutoAltPress = 0;
 
-// Caches em memória dos JSONs
-var cacheSalasAltPress = null;
-var cacheDadosAltPress = null;
+import { 
+    carregarDadosGerais, 
+    parseDataJson, 
+    arredondarHoras, 
+    formatarHoraMinuto, 
+    formatarDataHoraCompleta,
+    popularDropdownDispositivos
+} from './chartAll.js';
 
-// =============================================================
-// FUNÇÕES UTILITÁRIAS DE DATA E FORMATOS
-// =============================================================
-function arredondarHoras(date) {
-    const ms = 1000 * 60 * 60;
-    return new Date(Math.round(date.getTime() / ms) * ms);
-}
-
-function formatarHoraMinuto(date) {
-    const horas = String(date.getHours()).padStart(2, '0');
-    return `${horas}:00`;
-}
-
-function formatarDataHoraCompleta(date) {
-    const dia = String(date.getDate()).padStart(2, '0');
-    const mes = String(date.getMonth() + 1).padStart(2, '0');
-    const horas = String(date.getHours()).padStart(2, '0');
-    return `${dia}/${mes} ${horas}:00`;
-}
-
-function parseDataJson(dataStr) {
-    if (!dataStr) return null;
-    const partes = dataStr.split(/[:\-\sT\/]/);
-    return new Date(
-        partes[0],
-        partes[1] - 1,
-        partes[2],
-        partes[3] || 0,
-        partes[4] || 0,
-        partes[5] || 0
-    );
-}
-
-async function carregarBancoDeDadosAltPress() {
-    if (!cacheSalasAltPress || !cacheDadosAltPress) {
-        const [salasResp, dadosResp] = await Promise.all([
-            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/salas.json"),
-            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/alti.json")
-        ]);
-        cacheSalasAltPress = await salasResp.json();
-        cacheDadosAltPress = await dadosResp.json();
-    }
-    return { bancoDeSalas: cacheSalasAltPress, bancoDeDados: cacheDadosAltPress };
-}
+// Instância local do gráfico do Chart.js
+let graficoAltPress = null;
+let intervalAutoAltPress = null;
+let indiceDispositivoAutoAltPress = 0;
 
 // =============================================================
 // 1. ATUALIZADOR PRINCIPAL DO GRÁFICO DE ALTITUDE E PRESSÃO
 // =============================================================
-async function atualizarGraficoAltPress(salaIdOuObjeto, modoAuto = false) {
+export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto = false) {
     try {
-        const { bancoDeSalas, bancoDeDados } = await carregarBancoDeDadosAltPress();
+        const { dispositivos, alti } = await carregarDadosGerais();
 
-        let sala;
-        if (typeof salaIdOuObjeto === 'object') {
-            sala = salaIdOuObjeto;
+        let dispositivo;
+        if (typeof dispositivoIdOuObjeto === 'object') {
+            dispositivo = dispositivoIdOuObjeto;
         } else {
-            sala = bancoDeSalas.find(s => s.id == salaIdOuObjeto);
+            dispositivo = dispositivos.find(d => d.id == dispositivoIdOuObjeto);
         }
 
-        if (!sala) {
-            console.error("Sala não encontrada (Altitude/Pressão): ", salaIdOuObjeto);
+        if (!dispositivo) {
+            console.error("Dispositivo não encontrado (Altitude/Pressão):", dispositivoIdOuObjeto);
             return;
         }
 
         // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
-        const nomeExibicao = sala.sala || `Laboratório ${sala.id}`;
+        const nomeExibicao = dispositivo.nome || `Dispositivo ${dispositivo.id}`;
 
         const elementoSeletor = document.querySelector('[data-seVa-2]');
         if (elementoSeletor) {
-            elementoSeletor.innerText = modoAuto ? `Auto (${nomeExibicao})` : nomeExibicao;
+            elementoSeletor.innerHTML = modoAuto ? `Auto <br> (${nomeExibicao})` : nomeExibicao;
         }
 
         const indicadorTitulo = document.querySelector('#indicadorSala') || document.querySelector('.titulo-sala');
@@ -86,18 +48,18 @@ async function atualizarGraficoAltPress(salaIdOuObjeto, modoAuto = false) {
             indicadorTitulo.innerText = nomeExibicao;
         }
 
-        // Filtrar dados da sala
-        const dadosDaSala = bancoDeDados.filter(item => item.sala == sala.id && item.data);
+        // Filtrar dados do alti.json usando a FK 'dispositivo'
+        const dadosDoDispositivo = alti.filter(item => item.dispositivo == dispositivo.id && item.data);
 
-        if (dadosDaSala.length === 0) {
-            console.warn(`Nenhum dado encontrado para a sala ${sala.id}`);
+        if (dadosDoDispositivo.length === 0) {
+            console.warn(`Nenhum dado de Altitude/Pressão encontrado para o dispositivo ${dispositivo.id}`);
             if (graficoAltPress) graficoAltPress.destroy();
             return;
         }
 
         // Descobre o registro mais recente
         let dataMaisRecente = null;
-        dadosDaSala.forEach(item => {
+        dadosDoDispositivo.forEach(item => {
             const d = parseDataJson(item.data);
             if (!dataMaisRecente || d > dataMaisRecente) {
                 dataMaisRecente = d;
@@ -119,17 +81,17 @@ async function atualizarGraficoAltPress(salaIdOuObjeto, modoAuto = false) {
         let ponteiroTempo = new Date(inicioCiclo);
 
         while (ponteiroTempo <= fimCiclo) {
-            const labelHora = formatarHoraMinuto(ponteiroTempo);
+            const labelHora = formatarHoraMinuto(ponteiroTempo, false);
             timelineMap.set(ponteiroTempo.getTime(), {
                 horaFormatada: labelHora,
                 altitude: null,
                 pressao: null
             });
-            ponteiroTempo.setHours(ponteiroTempo.getHours() + 1); // Avança de 1 em 1 hora
+            ponteiroTempo.setHours(ponteiroTempo.getHours() + 1);
         }
 
         // --- 4. ALOCAR OS DADOS ARREDONDANDO PARA A HORA MAIS PRÓXIMA ---
-        dadosDaSala.forEach(item => {
+        dadosDoDispositivo.forEach(item => {
             const dataMedicao = parseDataJson(item.data);
             if (dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
                 const chaveMs = arredondarHoras(dataMedicao).getTime();
@@ -196,7 +158,6 @@ async function atualizarGraficoAltPress(salaIdOuObjeto, modoAuto = false) {
                         ticks: {
                             maxRotation: 0,
                             callback: function (val) {
-                                // Exibe todas as 24 horas no eixo X
                                 return this.getLabelForValue(val);
                             }
                         }
@@ -230,7 +191,7 @@ async function atualizarGraficoAltPress(salaIdOuObjeto, modoAuto = false) {
 // =============================================================
 // 2. INICIALIZADOR PRINCIPAL (DROPDOWN / MODO AUTO)
 // =============================================================
-async function initGraficoAlt(salaId, exibir) {
+export async function initGraficoAlt(dispositivoId = 'auto', exibir = 'Auto') {
     if (intervalAutoAltPress) {
         clearInterval(intervalAutoAltPress);
         intervalAutoAltPress = null;
@@ -239,30 +200,37 @@ async function initGraficoAlt(salaId, exibir) {
     const dropOptions = document.querySelector('.dropdown-options');
     if (dropOptions) dropOptions.classList.remove('Select-active');
 
-    // MODO AUTOMÁTICO (-2)
-    if (salaId === -2) {
-        const { bancoDeSalas } = await carregarBancoDeDadosAltPress();
+    const { dispositivos } = await carregarDadosGerais();
 
-        if (!bancoDeSalas || bancoDeSalas.length === 0) return;
+    // Popula o menu suspenso dinamicamente com as opções
+    if (typeof popularDropdownDispositivos === 'function') {
+        popularDropdownDispositivos(dispositivos, 'initGraficoAlt', '#select-alti .dropdown-options');
+    }
+
+    // MODO AUTOMÁTICO ('auto' ou -2)
+    if (dispositivoId === 'auto' || dispositivoId === -2) {
+        if (!dispositivos || dispositivos.length === 0) return;
 
         const rodarCicloAuto = async () => {
-            const salaAtual = bancoDeSalas[indiceSalaAutoAltPress];
-            await atualizarGraficoAltPress(salaAtual, true);
-            indiceSalaAutoAltPress = (indiceSalaAutoAltPress + 1) % bancoDeSalas.length;
+            const dispAtual = dispositivos[indiceDispositivoAutoAltPress];
+            await atualizarGraficoAltPress(dispAtual, true);
+            indiceDispositivoAutoAltPress = (indiceDispositivoAutoAltPress + 1) % dispositivos.length;
         };
 
         await rodarCicloAuto();
         intervalAutoAltPress = setInterval(rodarCicloAuto, 15000);
-
         return;
     }
 
-    // MODO SELEÇÃO MANUAL
+    // MODO SELEÇÃO MANUAL DE DISPOSITIVO
     const elSeletor = document.querySelector('[data-seVa-2]');
     if (elSeletor) elSeletor.innerText = exibir;
 
-    await atualizarGraficoAltPress(salaId, false);
+    await atualizarGraficoAltPress(dispositivoId, false);
 }
 
-// Inicialização automática ao carregar
-initGraficoAlt(-2, 'Auto');
+// Expõe a função globalmente para compatibilidade com eventos onclick do HTML
+window.initGraficoAlt = initGraficoAlt;
+
+// Auto-inicialização automática ao carregar o módulo
+initGraficoAlt('auto', 'Auto');

@@ -1,36 +1,54 @@
-async function loadCards(andarId) {
+// =============================================================
+// mapaCards.js — Módulo do Mapa 2D/3D e Cards de Dispositivos
+// =============================================================
+
+import {
+    carregarDadosGerais,
+    parseDataJson
+} from './chartAll.js';
+
+// =============================================================
+// 1. CARREGADOR DE CARDS DO MAPA
+// =============================================================
+export async function loadCards(andarId = "0") {
     try {
-        // 1. Busca ambos os JSONs em paralelo
-        const [salasResp, dadosResp] = await Promise.all([
-            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/salas.json"),
-            fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/json.json")
-        ]);
+        // Carrega todos os bancos em paralelo de forma otimizada
+        const { dispositivos, wifi, temp, alti } = await carregarDadosGerais();
 
-        const bancoDeSalas = await salasResp.json();
-        const bancoDeDados = await dadosResp.json();
 
-        // 2. Filtra apenas as salas que pertencem ao andar solicitado
-        const salasDoAndar = bancoDeSalas.filter(s => s.andar === andarId);
+        // 1. Filtra dispositivos pertencentes ao andar/localização selecionada
+        // (compara string ou número para garantir)
+        const dispositivosDoAndar = dispositivos.filter(d => String(d.localizacao) === String(andarId));
 
         const planilha = document.getElementById('Jojo');
+        if (!planilha) return;
         planilha.innerHTML = '';
 
-        // 3. Renderiza os cards cruzando a sala com os dados do sensor via ID
-        salasDoAndar.forEach(sala => {
-            // Busca a última medição correspondente à sala (compara ID numérico ou nome)
-            const medicoes = bancoDeDados.filter(d =>
-                d.sala === sala.id
-            );
+        // 2. Renderiza os cards cruzando o dispositivo com as últimas medições dos JSONs
+        dispositivosDoAndar.forEach(disp => {
+            // Obtém todos os registros associados ao ID do dispositivo
+            const dadosWifi = wifi.filter(w => w.dispositivo == disp.id && w.data);
+            const dadosTemp = temp.filter(t => t.dispositivo == disp.id && t.data);
+            const dadosAlti = alti.filter(a => a.dispositivo == disp.id && a.data);
 
-            // Pega o registro mais recente (último do array)
-            const ultimaMedicao = medicoes.length > 0 ? medicoes[medicoes.length - 1] : null;
+            // Resgata o registro mais recente de cada métrica
+            const ultWifi = dadosWifi.length > 0 ? dadosWifi[dadosWifi.length - 1] : null;
+            const ultTemp = dadosTemp.length > 0 ? dadosTemp[dadosTemp.length - 1] : null;
+            const ultAlti = dadosAlti.length > 0 ? dadosAlti[dadosAlti.length - 1] : null;
 
-            // Define valores padrão caso não haja medição registrada
-            const sinal = ultimaMedicao ? ultimaMedicao.sinal : null;
-            const temp = ultimaMedicao ? ultimaMedicao.temperatura : '--';
-            const umid = ultimaMedicao ? ultimaMedicao.umidade : '--';
+            // Extração de valores reais com fallback
+            const sinal = ultWifi ? ultWifi.sinal : null;
+            const lux = ultWifi ? ultWifi.luminosidade : '--';
+            const temperatura = ultTemp ? `${ultTemp.temperatura} °C` : '--';
+            const umidade = ultTemp ? `${ultTemp.umidade}%` : '--';
+            const pressao = ultAlti ? `${ultAlti.pressao} hPa` : '--';
+            const altitude = ultAlti ? `${ultAlti.altitude} m` : '--';
 
-            // Define as cores com base no sinal dBm
+            // Valores de vento (fixos ou expansíveis via vento.json se houver)
+            const veloVento = '--';
+            const direVento = '--';
+
+            // Cores baseadas no nível de sinal (dBm)
             let badgeColor = 'text-slate-400';
             let badgeBg = 'bg-slate-700/50';
             let badgeBr = 'border-slate-600';
@@ -41,12 +59,12 @@ async function loadCards(andarId) {
                 sinalTexto = `${sinal} dBm`;
             }
 
-            // Cria o elemento HTML do Card
+            // Elemento Container do Card no Mapa
             const card = document.createElement('div');
             card.className = `planDiv h-full room-block bg-slate-800/80 border ${badgeBg} ${badgeBr} rounded-lg p-3 flex flex-col justify-between cursor-pointer hover:border-brand-accent transition-colors`;
 
             card.innerHTML = `
-                <span class="text-xs font-bold text-slate-300">${sala.sala}</span>
+                <span class="text-xs font-bold text-slate-300">${disp.nome}</span>
                 <div class="flex justify-between items-end">
                     <span class="text-[10px] font-mono dbmSpan ${badgeColor}">${sinalTexto}</span>
                     <span class="w-2 h-2 rounded-full dbmCircle ${badgeBg} ${badgeBr}"></span>
@@ -56,28 +74,39 @@ async function loadCards(andarId) {
                     <div class="pin-billboard cursor-pointer pinClicker">
                         <div class="bg-slate-900 border bg-white-800/20 border-white-800/20 text-white text-xs px-2 py-1 rounded-md shadow-xl flex items-center gap-1.5 hover:scale-110 transition-transform">
                             <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                            <span class="font-bold">IoT ${sala.id}</span>
+                            <span class="font-bold">IoT ${disp.id}</span>
                         </div>
                     </div>
                 </div>
             `;
 
-            // Atribui o evento de clique direto ao Card criado
+            // Clique no Card envia TODAS as métricas coletadas ao painel lateral/detalhes
             card.addEventListener('click', () => {
-                selecionarSala(sala.sala, sinal ?? 0, temp, umid);
+                selecionarSala(
+                    disp.nome,
+                    sinal,
+                    temperatura,
+                    umidade,
+                    pressao,
+                    altitude,
+                    lux !== '--' ? `${lux} Lux` : '--',
+                    veloVento,
+                    direVento
+                );
             });
 
             planilha.appendChild(card);
         });
 
     } catch (erro) {
-        console.error("Erro ao sincronizar os dados: ", erro);
-        alert("Deu ruim mano!");
+        console.error("Erro ao sincronizar os dados do mapa: ", erro);
     }
 }
 
-// Funções auxiliares mantidas
-function verifyColor(dbm) {
+// =============================================================
+// FUNÇÕES AUXILIARES DE CORES E SELEÇÃO
+// =============================================================
+export function verifyColor(dbm) {
     let status = 'Fraco';
     let badgeColor = 'text-rose-400';
     let badgeBg = 'bg-rose-500/20';
@@ -98,31 +127,72 @@ function verifyColor(dbm) {
     return [badgeColor, badgeBg, badgeBr, status];
 }
 
-function selecionarSala(nome, dbm, temp, umid) {
-    document.getElementById('salaNome').innerText = nome;
-    document.getElementById('salaDbm').innerText = dbm ? `${dbm} dBm` : 'N/A';
-    document.getElementById('salaTemp').innerText = temp;
-    document.getElementById('salaUmid').innerText = umid;
-    document.getElementById('salaConexao').innerHTML = '<span class="w-2 h-2 rounded-full bg-green-500 inline-block animate-ping"></span> Online (100ms)';
+export function selecionarSala(nome, dbm, temp, umid, press, alti, lux, velo, dire) {
+    const setTexto = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = val !== undefined && val !== null ? val : '--';
+    };
 
-    let [badgeColor, badgeBg, badgeBr, status] = verifyColor(dbm);
+    setTexto('salaNome', nome);
+    setTexto('salaDbm', dbm ? `${dbm} dBm` : 'N/A');
+    setTexto('salaTemp', temp);
+    setTexto('salaUmid', umid);
+    setTexto('salaPress', press);
+    setTexto('salaAlti', alti);
+    setTexto('salaLux', lux);
+    setTexto('salaVelo', velo);
+    setTexto('salaDire', dire);
+
+    const containerVento = document.querySelectorAll('#containerVento');
+    if (containerVento) {
+        // Verifica se a sala atual é o Pátio (case insensitive)
+        const ePatio = nome.toLowerCase().includes('pátio') || nome.toLowerCase().includes('patio');
+        const mapViewport = document.getElementById('viewport')
+        const detailViewport = document.getElementById('viewportDetail')
+
+        containerVento.forEach(i => {
+            if (ePatio) {
+                mapViewport.style.height = '688px'
+                detailViewport.style.height = '688px'
+                i.classList.remove('hidden'); // Exibe os cards de vento
+            } else {
+                mapViewport.style.height = '590px'
+                detailViewport.style.height = '590px'
+                i.classList.add('hidden');    // Oculta em qualquer laboratório
+            }
+        })
+    }
+
+    const elConexao = document.getElementById('salaConexao');
+    if (elConexao) {
+        elConexao.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-500 inline-block animate-ping"></span> Online (100ms)';
+    }
+
+    const [badgeColor, badgeBg, badgeBr, status] = verifyColor(dbm ?? -90);
 
     const badge = document.getElementById('salaBadge');
-    badge.innerText = status;
-    badge.className = `px-2.5 py-1 rounded-full text-xs font-semibold ${badgeColor} text-slate-200 border ${badgeBg} ${badgeBr}`;
+    if (badge) {
+        badge.innerText = status;
+        badge.className = `px-2.5 py-1 rounded-full text-xs font-semibold ${badgeColor} text-slate-200 border ${badgeBg} ${badgeBr}`;
+    }
 }
 
-function simularRecarregamento(event) {
+export function simularRecarregamento(event) {
     const btn = event.target;
+    if (!btn) return;
+
     btn.innerText = "Sincronizando...";
 
-    // Atualiza os dados reais do andar 0
-    loadCards(0).then(() => {
+    loadCards("0").then(() => {
         setTimeout(() => {
             btn.innerText = "Sincronizar Dados";
         }, 800);
     });
 }
 
-// Inicialização
-loadCards(0);
+// Expõe globalmente para botões HTML (ex: onclick="simularRecarregamento(event)")
+window.loadCards = loadCards;
+window.simularRecarregamento = simularRecarregamento;
+
+// Inicializa no andar 1 por padrão
+loadCards("0");

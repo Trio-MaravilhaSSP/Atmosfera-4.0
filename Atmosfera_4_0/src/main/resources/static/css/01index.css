@@ -135,6 +135,10 @@
 
             border: 1px solid var(--cor-texto-comum);
             border-radius: var(--border-rad-tooltip-button);
+
+            #selected-value {
+                text-align: center;
+            }
         }
 
         /* O Menu Suspenso (Dropdown) com Estilo de Modal/Tooltip */
