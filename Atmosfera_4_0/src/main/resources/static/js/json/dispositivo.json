@@ -1,0 +1,87 @@
+[
+    {
+        "id": 0,
+        "nome": "Sensor Lab 0",
+        "localizacao": "2"
+    },
+    {
+        "id": 1,
+        "nome": "Sensor Lab 1",
+        "localizacao": "1"
+    },
+    {
+        "id": 2,
+        "nome": "Sensor Lab 2",
+        "localizacao": "1"
+    },
+    {
+        "id": 3,
+        "nome": "Sensor Lab 3",
+        "localizacao": "1"
+    },
+    {
+        "id": 4,
+        "nome": "Sensor Lab 4",
+        "localizacao": "1"
+    },
+    {
+        "id": 5,
+        "nome": "Sensor Lab 5",
+        "localizacao": "1"
+    },
+    {
+        "id": 6,
+        "nome": "Sensor Lab 6",
+        "localizacao": "1"
+    },
+    {
+        "id": 7,
+        "nome": "Sensor Lab 7",
+        "localizacao": "1"
+    },
+    {
+        "id": 8,
+        "nome": "Sensor Lab 8",
+        "localizacao": "1"
+    },
+    {
+        "id": 9,
+        "nome": "Sensor Lab 9",
+        "localizacao": "1"
+    },
+    {
+        "id": 10,
+        "nome": "Sensor Lab 10",
+        "localizacao": "1"
+    },
+    {
+        "id": 11,
+        "nome": "Sensor Lab 11",
+        "localizacao": "1"
+    },
+    {
+        "id": 12,
+        "nome": "Sensor Lab 14",
+        "localizacao": "-1"
+    },
+    {
+        "id": 13,
+        "nome": "Sensor Entrada",
+        "localizacao": "0"
+    },
+    {
+        "id": 14,
+        "nome": "Sensor Refeitório",
+        "localizacao": "0"
+    },
+    {
+        "id": 15,
+        "nome": "Sensor Biblioteca",
+        "localizacao": "0"
+    },
+    {
+        "id": 16,
+        "nome": "Sensor Pátio",
+        "localizacao": "0"
+    }
+]

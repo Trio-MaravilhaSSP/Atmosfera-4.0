@@ -5,6 +5,7 @@
 
 @import url('./inicio.css');
 @import url('./relatorio.css');
+@import url('./dispositivos.css');
 @import url('./perfil.css');
 @import url('./cadastro.css');
 @import url('./temperatura.css');
@@ -93,8 +94,8 @@
     .Botao-Atualizar {
         position: relative;
 
-        width: 60px;
-        height: 50px;
+        width: 80px;
+        height: 70px;
 
         display: flex;
         
@@ -115,7 +116,7 @@
         z-index: 999;
 
         width: 180px;
-        height: 50px;
+        height: 70px;
 
         .dropdown-selected {
             width: inherit;
@@ -136,6 +137,10 @@
 
             border: 1px solid var(--cor-texto-comum);
             border-radius: var(--border-rad-tooltip-button);
+
+            #selected-value {
+                text-align: center;
+            }
         }
 
         /* O Menu Suspenso (Dropdown) com Estilo de Modal/Tooltip */
