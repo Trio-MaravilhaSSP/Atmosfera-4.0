@@ -12,6 +12,7 @@ import triomaravilha.senai.atmosfera_4_0.domain.gateway.DashGateway;
 import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/dashboard")
 @AllArgsConstructor

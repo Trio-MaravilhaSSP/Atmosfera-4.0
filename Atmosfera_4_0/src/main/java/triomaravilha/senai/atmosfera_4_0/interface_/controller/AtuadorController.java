@@ -12,6 +12,7 @@ import triomaravilha.senai.atmosfera_4_0.interface_.dto.AtuadorRequest;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/atuador")
 @AllArgsConstructor
@@ -35,7 +36,7 @@ public class AtuadorController {
     public ResponseEntity<AtuadorResponse> save(@RequestBody AtuadorRequest atuadorRequest){
         AtuadorResponse at = atuador.save(atuadorRequest);
         return ResponseEntity.created(
-                URI.create("/atuador" + at.id())
+                URI.create("/atuador/" + at.id())
         ).body(at);
     }
 

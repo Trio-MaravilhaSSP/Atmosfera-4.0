@@ -11,6 +11,7 @@ import triomaravilha.senai.atmosfera_4_0.interface_.dto.DispositivoRequest;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/dispositivo")
 @RequiredArgsConstructor
@@ -34,7 +35,7 @@ public class DispositivoController {
         DispositivoResponse dispositivoResponse = dispositivo.save(dispositivoRequest);
 
         return ResponseEntity.created(
-                URI.create("/dispositivo" + dispositivoResponse.id())
+                URI.create("/dispositivo/" + dispositivoResponse.id())
         ).body(dispositivoResponse);
     }
 

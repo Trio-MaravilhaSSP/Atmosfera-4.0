@@ -10,6 +10,7 @@ import triomaravilha.senai.atmosfera_4_0.interface_.dto.RegistroRequest;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/registro")
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class RegistroController {
         RegistroResponse registroResponse = registroGateway.save(registroRequest);
 
         return ResponseEntity.created(
-                URI.create("/registro" + registroResponse.id())
+                URI.create("/registro/" + registroResponse.id())
         ).body(registroResponse);
     }
 
