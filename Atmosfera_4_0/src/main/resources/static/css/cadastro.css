@@ -1,0 +1,247 @@
+.secao-conta .conteiner {
+    --tamanho-botao-conta: 112px;
+    --altura-botao-conta: 46px;
+    width: min(90%, 700px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.secao-conta .formulario {
+    width: 100%;
+    padding: 20px 20px 40px;
+    background: var(--cor-fundo-card);
+    border: 1px solid var(--cadastro-borda-card, rgba(89, 0, 5, 0.08));
+    border-radius: 20px;
+    box-shadow: var(--cadastro-sombra-card, 0 12px 32px rgba(38, 0, 3, 0.18));
+}
+
+.secao-conta form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    color: var(--cor-texto-comum);
+}
+
+.secao-conta form h1 {
+    margin: 0 0 8px;
+    color: var(--cor-texto-destaque);
+    font-size: var(--size-font-title);
+    line-height: 1.2;
+    text-align: center;
+}
+
+.secao-conta .campoFormulario {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 8px 12px;
+    align-items: center;
+}
+
+.secao-conta .campoFormulario label,
+.secao-conta .campoFormulario input {
+    min-width: 0;
+}
+
+.secao-conta .campoFormulario label {
+    color: var(--cor-texto-destaque);
+    font-size: var(--size-font-subtitle2);
+    font-weight: 600;
+}
+
+.secao-conta .campoFormulario input {
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    color: var(--cor-texto-comum);
+    font: inherit;
+    background: var(--cor-fundo-card);
+    border: none;
+    border-bottom: 3px solid var(--cadastro-borda-campo, #c9c9c9);
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.secao-conta .campoFormulario input:focus {
+    outline: none;
+    border-bottom-color: var(--cor-destaque-red);
+    box-shadow: 0 0 0 3px var(--cadastro-sombra-foco, rgba(218, 0, 13, 0.12));
+}
+
+.secao-conta .campoFormulario input.campoInvalido {
+    border-bottom-color: var(--cor-destaque-red);
+}
+
+.secao-conta .mensagemErro {
+    grid-column: 2;
+    color: var(--cor-destaque-red);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.secao-conta .setorSenha {
+    display: flex;
+    gap: 8px;
+}
+
+.secao-conta .setorSenha input {
+    flex: 1;
+}
+
+.secao-conta .setorSenha button {
+    flex: 0 0 auto;
+    min-height: 0;
+    padding: 8px;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+.secao-conta .setorSenha button:hover {
+    box-shadow: none;
+}
+
+.secao-conta .setorSenha img {
+    display: block;
+    width: 24px;
+    height: 24px;
+}
+
+body.dark {
+    --cadastro-borda-card: rgba(255, 130, 138, 0.25);
+    --cadastro-sombra-card: 0 12px 32px rgba(0, 0, 0, 0.45);
+    --cadastro-borda-campo: #888;
+    --cadastro-sombra-foco: rgba(255, 130, 138, 0.2);
+}
+
+body.dark .secao-conta .setorSenha img {
+    filter: invert(1);
+}
+
+.secao-conta .botoes {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.secao-conta .botoes button {
+    flex: 0 0 30%;
+    min-height: 44px;
+    margin: 0;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--cor-destaque-red);
+    border-radius: var(--border-rad-tooltip-button);
+    transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.secao-conta .botoes button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px var(--box-shadow);
+}
+
+.secao-conta .limpar {
+    color: var(--cor-texto-destaque);
+    background: var(--cor-fundo-card);
+}
+
+.secao-conta .enviar {
+    color: var(--cor-texto-option);
+    background: var(--cor-destaque-red);
+}
+
+.secao-conta .statusCadastro {
+    min-height: 1.4em;
+    color: var(--cor-texto-comum);
+    text-align: center;
+}
+
+#sec-cadastro .botoes-cadastro {
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.secao-conta .botoes-conta button {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    width: var(--tamanho-botao-conta);
+    min-height: var(--altura-botao-conta);
+}
+
+#sec-cadastro .botoes-cadastro .limpar:first-child {
+    margin-right: auto;
+}
+
+#sec-cadastro .botoes-cadastro .limpar:first-child {
+    color: var(--cor-texto-option);
+    background: var(--cor-destaque-red);
+}
+
+#sec-cadastro .botoes-cadastro .acesso-login-botao,
+#sec-cadastro .botoes-cadastro .enviar {
+    color: var(--cor-texto-destaque);
+    background: var(--cor-fundo-card);
+}
+
+.Perfil .Cadastro-link {
+    align-self: flex-end;
+    min-height: 44px;
+    margin-top: 12px;
+    padding: 8px 16px;
+    color: var(--cor-texto-option);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--cor-destaque-red);
+    border: 1px solid var(--cor-destaque-red);
+    border-radius: var(--border-rad-tooltip-button);
+}
+
+.Perfil .Cadastro-link:hover {
+    transform: translateY(-2px);
+}
+
+.secao-conta .botoes-login {
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.secao-conta .botoes-login button:first-child {
+    margin-right: auto;
+    color: var(--cor-texto-option);
+    background: var(--cor-destaque-red);
+}
+
+.secao-conta .botoes-login .enviar {
+    color: var(--cor-texto-destaque);
+    background: var(--cor-fundo-card);
+}
+
+@media (max-width: 680px) {
+    .secao-conta .conteiner {
+        width: calc(100% - 32px);
+    }
+
+    .secao-conta .formulario {
+        padding: 24px 20px;
+    }
+
+    .secao-conta .campoFormulario {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .secao-conta .mensagemErro {
+        grid-column: 1;
+    }
+
+    .secao-conta form h1 {
+        margin-bottom: 10px;
+        font-size: var(--size-font-subtitle);
+    }
+
+    .Perfil .Cadastro-link {
+        align-self: center;
+    }
+}

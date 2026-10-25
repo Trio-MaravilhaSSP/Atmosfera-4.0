@@ -73,6 +73,7 @@
                         content: url('../images/icons/destination-icon-active.png');
                     }
                 }
+
             }
         }
     }
@@ -145,6 +146,16 @@
         &>* {
             position: relative;
             z-index: 1;
+        }
+    }
+
+    &.tela-autenticacao-ativa {
+        aside {
+            display: none;
+        }
+
+        main {
+            width: 100%;
         }
     }
 }
