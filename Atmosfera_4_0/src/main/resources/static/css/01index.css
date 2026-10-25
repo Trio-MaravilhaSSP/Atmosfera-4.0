@@ -1,0 +1,221 @@
+@import url('./00root.css');
+
+@import url('./02header.css');
+@import url('./03dashboard.css');
+
+@import url('./inicio.css');
+@import url('./relatorio.css');
+@import url('./perfil.css');
+@import url('./temperatura.css');
+@import url('./wifi.css');
+@import url('./altitude.css');
+@import url('./mapa.css');
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../font/Inter.ttf') format('truetype');
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    /* Leve encolhida ao sair */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Estilização padrão para várias tags */
+.BeautyUnderline {
+    display: inline-block;
+    position: relative;
+    padding-bottom: 1px;
+
+    cursor: default;
+
+    &::after {
+        content: '';
+
+        position: absolute;
+        bottom: 0;
+        left: 0;
+
+        width: 90%;
+        height: 2px;
+
+        background-color: var(--cor-texto-option);
+
+        transform-origin: left;
+        transform: scaleX(0);
+
+        transition: transform 0.3s ease-in-out;
+    }
+
+    &:hover::after {
+        transform: scaleX(1);
+    }
+}
+
+.Data-Options {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
+    width: max-content;
+    height: 50px;
+
+    display: flex;
+    flex-direction: row;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    .Botao-Atualizar {
+        position: relative;
+
+        width: 60px;
+        height: 50px;
+
+        background: var(--cor-fundo-select);
+        border: none;
+        border-radius: var(--border-rad-tooltip-button);
+
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
+
+    .Select {
+        position: relative;
+        z-index: 999;
+
+        width: 180px;
+        height: 50px;
+
+        .dropdown-selected {
+            width: inherit;
+            height: inherit;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+
+            cursor: pointer;
+
+            background: var(--cor-fundo-select);
+            color: var(--cor-texto-option);
+            font-size: var(--size-font-subtitle);
+
+            border: 1px solid var(--cor-texto-comum);
+            border-radius: var(--border-rad-tooltip-button);
+        }
+
+        /* O Menu Suspenso (Dropdown) com Estilo de Modal/Tooltip */
+        .dropdown-options {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+
+            width: 100%;
+            max-height: 400px;
+
+            overflow-y: scroll;
+            scrollbar-color: var(--cor-texto-destaque) var(--cor-fundo-main, #1e1e1e);
+
+            display: none;
+            opacity: 0;
+
+            text-align: center;
+
+            background: var(--cor-fundo-card);
+            box-shadow: var(--box-shadow);
+
+            font-size: var(--size-font-subtitle2);
+
+            border: 1px solid var(--cor-texto-comum);
+            border-radius: var(--border-rad-tooltip-button);
+
+            .option {
+                padding: 10px 16px;
+                color: var(--cor-texto-comum);
+                cursor: pointer;
+                transition: background 0.2s ease, color 0.2s ease;
+
+                &:hover {
+                    background: var(--cor-fundo-main);
+                    color: var(--cor-texto-destaque);
+                }
+            }
+
+            &.Select-active {
+                display: block !important;
+                opacity: 1 !important;
+                animation: fadeIn 0.2s forwards ease-in-out;
+            }
+        }
+
+        &:hover {
+            cursor: pointer;
+            transform: scale(1.05);
+        }
+    }
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+}
+
+
+body.dark {
+    --box-shadow: 2px 4px 4px 1px rgba(87, 87, 87, 0.4);
+    --cor-texto-destaque: #ff828a;
+    --cor-texto-comum: #ccc;
+    --cor-texto-link: #6969e2;
+    --cor-fundo-card: #454545;
+    --cor-fundo-main: #1e1e1e;
+    --cor-fundo-body: #000;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--cor-fundo-body);
+
+    * {
+        transition: all ease-in-out 0.3s;
+    }
+}

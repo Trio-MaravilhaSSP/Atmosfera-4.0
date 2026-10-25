@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENAI - Atmosfera 4.0</title>
+
+    <link rel="shortcut icon" href="../static/images/Senai_Perfil.png" type="image/x-icon">
+    <link rel="stylesheet" href="../static/css/01index.css" />
+
+    <script src="../static/js/chartWifiUrl.js"></script>
+</head>
+
+<body class="light">
+    <header>
+        <navbar>
+
+            <div class="Logo">
+                <img src="../static/images/Senai_Logo.png" alt="Senai_Logo" width="256" height="66" />
+            </div>
+
+            <div class="Options">
+
+                <div class="Option" onclick="changeWindow('inicio')">
+                    <img src="../static/images/icons/home-icon.png" alt="Home_Icon" />
+                    <p class="BeautyUnderline">Início</p>
+                </div>
+
+                <div class="Option" onclick="changeWindow('relatorio')">
+                    <img src="../static/images/icons/file-icon.png" alt="Relatorio_Icon" />
+                    <p class="BeautyUnderline">Relatórios</p>
+                </div>
+
+                <div class="Option" onclick="changeWindow('perfil')">
+                    <img src="../static/images/icons/user-icon.png" alt="Perfil_Icon" />
+                    <p class="BeautyUnderline">Perfil</p>
+                </div>
+
+                <div class="Option" onclick="toggleTooltipConfig()">
+                    <img src="../static/images/icons/cogwheel-icon.png" alt="Config_Icon" />
+                    <p class="BeautyUnderline">Configurações</p>
+                </div>
+
+            </div>
+
+        </navbar>
+
+        <div class="Tooltip-Config">
+            <div class="Overlay" onclick="toggleTooltipConfig()"></div>
+
+            <div class="Tooltip-Conteudo">
+
+                <div class="Tema">
+                    <p id="Tooltip-P-Tema"></p>
+
+                    <button onclick="trocarTema()">Trocar</button>
+                </div>
+
+                <div class="Image">
+                    <p id="Tooltip-P-Image"></p>
+
+                    <button id="Tooltip-Btn-Image" onclick="toggleBackgroundImage()"></button>
+                </div>
+
+                <a class="BeautyUnderline" href="https://www.sp.senai.br/unidade/conectividade/" target="_blank">Mais
+                    Sobre Nós</a>
+
+            </div>
+        </div>
+    </header>
+
+    <div class="Dashboard-Container">
+
+        <aside>
+
+            <div class="Options">
+
+                <div class="Option" onclick="changeWindow('temperatura')">
+                    <img class="Aside-Temp" src="../static/images/icons/thermometer-icon-inactive.png"
+                        alt="Temp_Icon" />
+                    <p class="BeautyUnderline">Temp</p>
+                </div>
+
+                <div class="Option" onclick="changeWindow('wifi')">
+                    <img class="Aside-Wifi" src="../static/images/icons/wifi-icon-inactive.png" alt="Wifi_Icon" />
+                    <p class="BeautyUnderline">Wifi</p>
+                </div>
+
+                <div class="Option" onclick="changeWindow('altitude')">
+                    <img class="Aside-Alti" src="../static/images/icons/altitude-icon-inactive.png"
+                        alt="Altitude_Icon" />
+                    <p class="BeautyUnderline">Altitude</p>
+                </div>
+
+                <div class="Option" onclick="changeWindow('mapa')">
+                    <img class="Aside-Mapa" src="../static/images/icons/destination-icon-inactive.png"
+                        alt="Mapa_Icon" />
+                    <p class="BeautyUnderline">Mapa</p>
+                </div>
+
+            </div>
+
+        </aside>
+
+        <main class="imageOn">
+
+            <section id="sec-inicio" class="section-content ">
+
+                <div class="Inicio">
+
+                    <div class="Card TempUmi">
+                        <div class="Temp preConteudo">
+                            <h1>Temperatura</h1>
+
+                            <div class="Conteudo Left">
+                                <p id="renderizarTemp">26.2 °C</p>
+
+                                <img class="Icon" src="../static/images/thermometer-light.png" alt="Temp_Icon" />
+                            </div>
+                        </div>
+
+                        <div class="Umidade preConteudo">
+                            <h1>Umidade</h1>
+
+                            <div class="Conteudo Right">
+                                <p id="renderizarUmidade">82%</p>
+
+                                <img class="Icon" src="../static/images/drop-light.png" alt="Umidade_Icon" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="Card">
+                        <img class="Icon" src="../static/images/sinal-light.png" alt="Disp_Icon" />
+
+                        <div class="Conteudo">
+                            <h1>Dispositivos</h1>
+
+                            <div class="Text">
+                                <p id="renderizarDisp">24/24</p>
+                                <p id="statusDisp">Todos Online</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="Card">
+                        <div class="Img-Atuador">
+                            <img class="Icon" src="../static/images/switch-light.png" alt="Atua_Icon" />
+                            <img class="Icon" id="inverso" src="../static/images/switch-light.png" alt="Atua_Icon" />
+                        </div>
+
+                        <div class="Conteudo">
+                            <h1>Atuadores Ativos</h1>
+
+                            <div class="Text">
+                                <p id="renderizarAtua">5/24</p>
+                                <p id="exemploAtua">Ar-Condicionado Lab 0: ATIVO</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="Card">
+                        <img class="Icon" src="../static/images/warning-light.png" alt="Alert_Icon" />
+
+                        <div class="Conteudo">
+                            <h1>Alertas Críticos</h1>
+
+                            <div class="Text">
+                                <p id="renderizarAlert"><b>1 Pendente</b></p>
+                                <p>3 Avisos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section id="sec-relatorio" class="section-content">
+
+                <div class="Relatorio">
+                    <div class="Card">
+                        <div class="Moldura">
+                            <img class="Icon" src="../static/images/file-light.png" alt="Relat_icon">
+                        </div>
+
+                        <div class="Text">
+                            <p class="BeautyUnderline">Escolha o Local e o Tempo<br>em seguida gere seu PDF.</p>
+                        </div>
+                    </div>
+
+                    <div class="Options">
+                        <div class="Escolha">
+                            <button onclick="aindaNaoImplementado()"><span class="BeautyUnderline">Escolher
+                                    Local</span></button>
+                            <button onclick="aindaNaoImplementado()"><span class="BeautyUnderline">Escolher
+                                    Tempo</span></button>
+                        </div>
+
+                        <button onclick="aindaNaoImplementado()"><span class="BeautyUnderline">Gerar
+                                Relatório</span></button>
+                    </div>
+                </div>
+
+            </section>
+
+            <section id="sec-perfil" class="section-content">
+
+                <div class="Perfil">
+                    <div class="Card">
+                        <h1 class="BeautyUnderline">Olá!</h1>
+
+                        <div class="Conteudo">
+                            <div class="Moldura">
+                                <img src="../static/images/Senai_Perfil.png" alt="Perfil_icon">
+                            </div>
+
+                            <div class="Text">
+                                <p class="BeautyUnderline"><b>Nome:</b> [nome_usuario]</p>
+                                <p class="BeautyUnderline"><b>Email:</b> [email_usuario]</p>
+                                <p class="BeautyUnderline"><b>Tipo de Conta:</b> [tipo_conta]</p>
+                                <p class="BeautyUnderline"><b>Turma:</b> [turma_usuario]</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section id="sec-temperatura" class="section-content">
+
+                <div class="Data-Options">
+                    <button class="Botao-Atualizar" onclick="atualizarValor()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="icon-reload">
+                            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                            <path d="M21 3v5h-5"></path>
+                        </svg>
+                    </button>
+
+                    <div class="Select" id="select-local">
+                        <div class="dropdown-selected" onclick="toggleSelect(0)">
+                            <span id="selected-value">Auto</span>
+                        </div>
+
+                        <div class="dropdown-options" data-id="0">
+                            <div class="option" onclick="selectOption('auto', 'Auto')">Auto</div>
+                            <div class="option" onclick="selectOption('lab0', 'Laboratório 0')">Laboratório 0</div>
+                            <div class="option" onclick="selectOption('lab2', 'Laboratório 1')">Laboratório 1</div>
+                            <div class="option" onclick="selectOption('lab1', 'Laboratório 2')">Laboratório 2</div>
+                            <div class="option" onclick="selectOption('lab3', 'Laboratório 3')">Laboratório 3</div>
+                            <div class="option" onclick="selectOption('lab4', 'Laboratório 4')">Laboratório 4</div>
+                            <div class="option" onclick="selectOption('lab5', 'Laboratório 5')">Laboratório 5</div>
+                            <div class="option" onclick="selectOption('lab6', 'Laboratório 6')">Laboratório 6</div>
+                            <div class="option" onclick="selectOption('lab7', 'Laboratório 7')">Laboratório 7</div>
+                            <div class="option" onclick="selectOption('lab8', 'Laboratório 8')">Laboratório 8</div>
+                            <div class="option" onclick="selectOption('lab9', 'Laboratório 9')">Laboratório 9</div>
+                            <div class="option" onclick="selectOption('lab10', 'Laboratório10')">Laboratório 10</div>
+                            <div class="option" onclick="selectOption('lab11', 'Laboratório11')">Laboratório 11</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="Temperatura">
+                    <div class="Grafico">
+                        <p>Aqui virá um gráfico tendências</p>
+                    </div>
+
+                    <div class="Legenda">
+                        <p>Aqui virá uma legenda para o gráfico de tendências</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-wifi" class="section-content">
+
+                <div class="Data-Options">
+                    <button class="Botao-Atualizar" onclick="atualizarValor()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="icon-reload">
+                            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                            <path d="M21 3v5h-5"></path>
+                        </svg>
+                    </button>
+
+                    <div class="Select" id="select-local">
+                        <div class="dropdown-selected" onclick="toggleSelect(1)">
+                            <span id="selected-value">Auto</span>
+                        </div>
+
+                        <div class="dropdown-options" data-id="1">
+                            <div class="option" onclick="selectOption('auto', 'Auto')">Auto</div>
+                            <div class="option" onclick="selectOption('lab0', 'Laboratório 0')">Laboratório 0</div>
+                            <div class="option" onclick="selectOption('lab2', 'Laboratório 1')">Laboratório 1</div>
+                            <div class="option" onclick="selectOption('lab1', 'Laboratório 2')">Laboratório 2</div>
+                            <div class="option" onclick="selectOption('lab3', 'Laboratório 3')">Laboratório 3</div>
+                            <div class="option" onclick="selectOption('lab4', 'Laboratório 4')">Laboratório 4</div>
+                            <div class="option" onclick="selectOption('lab5', 'Laboratório 5')">Laboratório 5</div>
+                            <div class="option" onclick="selectOption('lab6', 'Laboratório 6')">Laboratório 6</div>
+                            <div class="option" onclick="selectOption('lab7', 'Laboratório 7')">Laboratório 7</div>
+                            <div class="option" onclick="selectOption('lab8', 'Laboratório 8')">Laboratório 8</div>
+                            <div class="option" onclick="selectOption('lab9', 'Laboratório 9')">Laboratório 9</div>
+                            <div class="option" onclick="selectOption('lab10', 'Laboratório10')">Laboratório 10</div>
+                            <div class="option" onclick="selectOption('lab11', 'Laboratório11')">Laboratório 11</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="Wifi">
+                    <div class="Luminosidade">
+                        <div class="Grafico">
+                            <p>Aqui virá um gráfico de barras</p>
+                        </div>
+
+                        <div class="Legenda">
+                            <p>Aqui virá uma legenda para o gráfico de barras</p>
+                        </div>
+                    </div>
+
+                    <div class="Sinal">
+                        <div class="Grafico">
+                            <canvas id="meuManometro"></canvas>
+                            <div class="Texto-central" id="valorTexto">-50 dBm</div>
+                        </div>
+
+                        <div class="Legenda">
+                            <p>Aqui virá uma legenda para o gráfico de manômetro</p>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <section id="sec-altitude" class="section-content active">
+
+                <div class="Data-Options">
+                    <button class="Botao-Atualizar" onclick="atualizarValor()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="icon-reload">
+                            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                            <path d="M21 3v5h-5"></path>
+                        </svg>
+                    </button>
+
+                    <div class="Select" id="select-local">
+                        <div class="dropdown-selected" onclick="toggleSelect(2)">
+                            <span id="selected-value">Auto</span>
+                        </div>
+
+                        <div class="dropdown-options" data-id="2">
+                            <div class="option" onclick="selectOption('auto', 'Auto')">Auto</div>
+                            <div class="option" onclick="selectOption('lab0', 'Laboratório 0')">Laboratório 0</div>
+                            <div class="option" onclick="selectOption('lab2', 'Laboratório 1')">Laboratório 1</div>
+                            <div class="option" onclick="selectOption('lab1', 'Laboratório 2')">Laboratório 2</div>
+                            <div class="option" onclick="selectOption('lab3', 'Laboratório 3')">Laboratório 3</div>
+                            <div class="option" onclick="selectOption('lab4', 'Laboratório 4')">Laboratório 4</div>
+                            <div class="option" onclick="selectOption('lab5', 'Laboratório 5')">Laboratório 5</div>
+                            <div class="option" onclick="selectOption('lab6', 'Laboratório 6')">Laboratório 6</div>
+                            <div class="option" onclick="selectOption('lab7', 'Laboratório 7')">Laboratório 7</div>
+                            <div class="option" onclick="selectOption('lab8', 'Laboratório 8')">Laboratório 8</div>
+                            <div class="option" onclick="selectOption('lab9', 'Laboratório 9')">Laboratório 9</div>
+                            <div class="option" onclick="selectOption('lab10', 'Laboratório10')">Laboratório 10</div>
+                            <div class="option" onclick="selectOption('lab11', 'Laboratório11')">Laboratório 11</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="Altitude">
+                    <div class="Grafico">
+                        <p>Aqui virá um gráfico de barras duplas</p>
+                    </div>
+
+                    <div class="Legenda">
+                        <p>Aqui virá uma legenda para o gráfico de barras duplas</p>
+                    </div>
+                </div>
+
+            </section>
+
+            <section id="sec-mapa" class="section-content">
+
+                <div class="Dados">
+                    <p>Aqui serão renderizados os dados selecionados do mapa</p>
+                </div>
+
+                <div class="Mapa">
+                    <p>Aqui terá um mapa 2D-3D interativo com pinos representando as salas</p>
+                </div>
+
+            </section>
+        </main>
+
+    </div>
+
+</body>
+<script src="../static/js/index.js"></script>
+<script src="../static/js/chartWifi.js"></script>
+
+</html>

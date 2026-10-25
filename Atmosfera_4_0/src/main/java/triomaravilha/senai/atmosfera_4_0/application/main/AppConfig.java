@@ -3,7 +3,6 @@ package triomaravilha.senai.atmosfera_4_0.application.main;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import triomaravilha.senai.atmosfera_4_0.application.mappers.AtuadorMapper;
 import triomaravilha.senai.atmosfera_4_0.application.service.adapter.AtuadorAdapter;
 import triomaravilha.senai.atmosfera_4_0.application.service.adapter.DispositivoAdapter;
 import triomaravilha.senai.atmosfera_4_0.application.service.adapter.RegistroAdapter;

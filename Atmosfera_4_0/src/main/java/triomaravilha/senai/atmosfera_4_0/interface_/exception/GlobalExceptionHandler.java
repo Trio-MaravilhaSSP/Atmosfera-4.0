@@ -6,7 +6,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -47,17 +46,18 @@ public class GlobalExceptionHandler {
     }
 
     //HttpMessageNotReadableException Sem nada pra mandar, Json Ruim
-    @ExceptionHandler(
-            HttpMessageNotReadableException.class
-    )
+    @ExceptionHandler(HttpMessageNotReadableException.class)
     public ProblemDetail handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
-        return buildProblem(
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.BAD_REQUEST,
-                "Json  não apresenta os dados necessários",
-                ex.getMessage(),
-                request.getRequestURI()
+                "O corpo da requisição (JSON) está malformado ou os dados são incompatíveis."
         );
+        problemDetail.setTitle("Requisição ilegível");
+        return problemDetail;
     }
+
+    // ... outros métodos de ExceptionHandler que você já possuir (deixe-os como estão)
+
 
     //DataIntegrityViolationException
     @ExceptionHandler(
@@ -103,18 +103,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    //HttpMessageNotReadableException
-    @ExceptionHandler(
-            HttpMessageNotReadableException.class
-    )
-    public ProblemDetail httpMessageNotReadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
-        return buildProblem(
-                HttpStatus.BAD_REQUEST,
-                "Json não está correto",
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-    }
 
 
     @ExceptionHandler(InternalError.class)
