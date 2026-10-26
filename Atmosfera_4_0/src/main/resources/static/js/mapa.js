@@ -3,50 +3,71 @@
 // =============================================================
 
 import {
-    carregarDadosGerais,
-    parseDataJson
+    carregarDadosGerais
 } from './chartAll.js';
 
-// =============================================================
-// 1. CARREGADOR DE CARDS DO MAPA
-// =============================================================
+// Função auxiliar para converter graus do vento em direção (ex: 135° -> SE)
+function formatarDirecaoVento(graus) {
+    if (graus === null || graus === undefined || isNaN(graus)) return '--';
+    const direcoes = ['N', 'NE', 'L', 'SE', 'S', 'SO', 'O', 'NO'];
+    const idx = Math.round(((Number(graus) % 360) / 45)) % 8;
+    return `${direcoes[idx]} (${graus}°)`;
+}
+
 export async function loadCards(andarId = "0") {
     try {
-        // Carrega todos os bancos em paralelo de forma otimizada
+        // 1. Carrega os dados base
         const { dispositivos, wifi, temp, alti } = await carregarDadosGerais();
 
+        // 2. Busca os dados de vento com fallback seguro
+        let vento = [];
+        try {
+            const respVento = await fetch("http://localhost:8080/registro/vento");
+            // const respVento = await fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/vento.json");
+            if (respVento.ok) {
+                vento = await respVento.json();
+            }
+        } catch (err) {
+            console.warn("⚠️ Não foi possível carregar o endpoint do vento:", err);
+        }
 
-        // 1. Filtra dispositivos pertencentes ao andar/localização selecionada
-        // (compara string ou número para garantir)
-        const dispositivosDoAndar = dispositivos.filter(d => String(d.localizacao) === String(andarId));
+        // 3. Filtra os dispositivos do andar (usando == para ignorar string/number)
+        const dispositivosDoAndar = dispositivos.filter(d => d.localizacao == andarId);
 
         const planilha = document.getElementById('Jojo');
         if (!planilha) return;
         planilha.innerHTML = '';
 
-        // 2. Renderiza os cards cruzando o dispositivo com as últimas medições dos JSONs
+        // 4. Renderiza cada dispositivo
         dispositivosDoAndar.forEach(disp => {
-            // Obtém todos os registros associados ao ID do dispositivo
+            // Filtra medições pelo ID do dispositivo (comparações com == para evitar erros de tipo)
             const dadosWifi = wifi.filter(w => w.dispositivo == disp.id && w.data);
             const dadosTemp = temp.filter(t => t.dispositivo == disp.id && t.data);
             const dadosAlti = alti.filter(a => a.dispositivo == disp.id && a.data);
+            const dadosVento = vento.filter(v => v.dispositivo == disp.id && v.data);
 
-            // Resgata o registro mais recente de cada métrica
+            // Pega os últimos registros
             const ultWifi = dadosWifi.length > 0 ? dadosWifi[dadosWifi.length - 1] : null;
             const ultTemp = dadosTemp.length > 0 ? dadosTemp[dadosTemp.length - 1] : null;
             const ultAlti = dadosAlti.length > 0 ? dadosAlti[dadosAlti.length - 1] : null;
+            const ultVento = dadosVento.length > 0 ? dadosVento[dadosVento.length - 1] : null;
 
-            // Extração de valores reais com fallback
+            // Extrai e formata os valores
             const sinal = ultWifi ? ultWifi.sinal : null;
-            const lux = ultWifi ? ultWifi.luminosidade : '--';
+            const lux = (ultWifi && ultWifi.luminosidade !== undefined) ? `${ultWifi.luminosidade} Lux` : '--';
             const temperatura = ultTemp ? `${ultTemp.temperatura} °C` : '--';
             const umidade = ultTemp ? `${ultTemp.umidade}%` : '--';
             const pressao = ultAlti ? `${ultAlti.pressao} hPa` : '--';
             const altitude = ultAlti ? `${ultAlti.altitude} m` : '--';
 
-            // Valores de vento (fixos ou expansíveis via vento.json se houver)
-            const veloVento = '--';
-            const direVento = '--';
+            // ATENÇÃO: Chaves exatas do teu JSON (velocidade_vento e direcao_vento)
+            const veloVento = (ultVento && ultVento.velocidade_vento !== undefined)
+                ? `${ultVento.velocidade_vento} km/h`
+                : '--';
+
+            const direVento = (ultVento && ultVento.direcao_vento !== undefined)
+                ? formatarDirecaoVento(ultVento.direcao_vento)
+                : '--';
 
             // Cores baseadas no nível de sinal (dBm)
             let badgeColor = 'text-slate-400';

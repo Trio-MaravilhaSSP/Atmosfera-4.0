@@ -59,9 +59,14 @@ function changeIcon(indicadorTema) {
 function changeWindow(secao) {
     const secaoAtual = document.querySelector('section.active');
     const proximaSecao = document.querySelector(`#sec-${secao}`);
+    const dashboard = document.querySelector('.Dashboard-Container');
+
+    if (!proximaSecao) return;
 
     // Se a seção clicada já for a atual, cancela a execução
     if (secaoAtual === proximaSecao) return;
+
+    dashboard.classList.toggle('tela-autenticacao-ativa', secao === 'cadastro' || secao === 'login');
 
     // ETAPA 1: Se existir uma seção ativa, faz o Fade-Out dela primeiro
     if (secaoAtual) {

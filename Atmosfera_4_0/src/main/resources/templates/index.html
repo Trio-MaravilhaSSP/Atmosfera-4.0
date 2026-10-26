@@ -34,6 +34,11 @@
                     <p class="BeautyUnderline">Relatórios</p>
                 </div>
 
+                <div class="Option" onclick="changeWindow('dispositivos')">
+                    <img src="../static/images/icons/monitor-icon.png" alt="Dispositivos_Icon" />
+                    <p class="BeautyUnderline">Dispositivos</p>
+                </div>
+
                 <div class="Option" onclick="changeWindow('perfil')">
                     <img src="../static/images/icons/user-icon.png" alt="Perfil_Icon" />
                     <p class="BeautyUnderline">Perfil</p>
@@ -210,6 +215,233 @@
 
             </section>
 
+            <section id="sec-dispositivos" class="section-content">
+
+                <div class="Dispositivos">
+                    <!-- HEADER -->
+                    <div class="header">
+                        <h1 class="header-title">Simulador de Dispositivo IoT (Página Robô)</h1>
+                        <span class="header-subtitle">Configure e inicie um dispositivo virtual para o envio periódico
+                            de
+                            dados</span>
+                    </div>
+
+                    <!-- DASHBOARD GRID -->
+                    <div class="dashboard-grid">
+
+                        <!-- LEFT COLUMN: CONFIGURATION -->
+                        <div class="panel">
+                            <div>
+                                <h2 class="panel-title">Configuração do Dispositivo Simulado</h2>
+
+                                <!-- DEVICE NAME -->
+                                <div class="section-box">
+                                    <label class="section-label" for="deviceName">
+                                        <img src="../static/images/icons/chip.png" alt="Chip Icon" class="icon-small"
+                                            onerror="this.style.display='none'">
+                                        Nome do Dispositivo
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" id="deviceName" class="input-text"
+                                            placeholder="[Nome do Dispositivo]" value="Robô Sensor Principal">
+                                    </div>
+                                </div>
+
+                                <!-- MEASUREMENT PARAMETERS (MIN/MAX) -->
+                                <div class="section-box">
+                                    <span class="section-label">Parâmetros de Medição (Mín/Máx)</span>
+                                    <div class="params-grid">
+
+                                        <!-- Temperature -->
+                                        <div class="param-item">
+                                            <img src="../static/images/thermometer-light.png" alt="Thermometer Icon"
+                                                class="icon-small" onerror="this.style.display='none'">
+                                            <div class="param-inputs">
+                                                <div class="param-field">
+                                                    <span>Mín (°C)</span>
+                                                    <input type="number" id="tempMin" class="input-number" value="1"
+                                                        step="0.1">
+                                                </div>
+                                                <div class="param-field">
+                                                    <span>Máx (°C)</span>
+                                                    <input type="number" id="tempMax" class="input-number" value="40"
+                                                        step="0.1">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Humidity -->
+                                        <div class="param-item">
+                                            <img src="../static/images/drop-light.png" alt="Drop Icon" class="icon-small"
+                                                onerror="this.style.display='none'">
+                                            <div class="param-inputs">
+                                                <div class="param-field">
+                                                    <span>Mín (%)</span>
+                                                    <input type="number" id="umidMin" class="input-number" value="61"
+                                                        step="1">
+                                                </div>
+                                                <div class="param-field">
+                                                    <span>Máx (%)</span>
+                                                    <input type="number" id="umidMax" class="input-number" value="95"
+                                                        step="1">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Pressure -->
+                                        <div class="param-item">
+                                            <img src="../static/images/icons/gauge.png" alt="Gauge Icon" class="icon-small"
+                                                onerror="this.style.display='none'">
+                                            <div class="param-inputs">
+                                                <div class="param-field">
+                                                    <span>Mín (hPa)</span>
+                                                    <input type="number" id="pressMin" class="input-number" value="20"
+                                                        step="1">
+                                                </div>
+                                                <div class="param-field">
+                                                    <span>Máx (hPa)</span>
+                                                    <input type="number" id="pressMax" class="input-number" value="100"
+                                                        step="1">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Altitude -->
+                                        <div class="param-item">
+                                            <img src="../static/images/icons/altitude.png" alt="Mountain Icon"
+                                                class="icon-small" onerror="this.style.display='none'">
+                                            <div class="param-inputs">
+                                                <div class="param-field">
+                                                    <span>Mín (m)</span>
+                                                    <input type="number" id="altiMin" class="input-number" value="15"
+                                                        step="1">
+                                                </div>
+                                                <div class="param-field">
+                                                    <span>Máx (m)</span>
+                                                    <input type="number" id="altiMax" class="input-number" value="120"
+                                                        step="1">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- ACTUATOR STATES (LEDS) -->
+                                <div class="section-box">
+                                    <span class="section-label">Estado dos Atuadores (LEDs)</span>
+                                    <div class="leds-grid">
+                                        <div class="led-item">
+                                            <span class="led-title">LED 1</span>
+                                            <label class="switch">
+                                                <input type="checkbox" id="led1" checked>
+                                                <span class="slider"></span>
+                                            </label>
+                                            <span class="led-subtext">LIGADO/DESLIGADO</span>
+                                        </div>
+
+                                        <div class="led-item">
+                                            <span class="led-title">LED 2</span>
+                                            <label class="switch">
+                                                <input type="checkbox" id="led2">
+                                                <span class="slider"></span>
+                                            </label>
+                                            <span class="led-subtext">LIGADO/DESLIGADO</span>
+                                        </div>
+
+                                        <div class="led-item">
+                                            <span class="led-title">LED 3</span>
+                                            <label class="switch">
+                                                <input type="checkbox" id="led3">
+                                                <span class="slider"></span>
+                                            </label>
+                                            <span class="led-subtext">LIGADO/DESLIGADO</span>
+                                        </div>
+
+                                        <div class="led-item">
+                                            <span class="led-title">LED 4</span>
+                                            <label class="switch">
+                                                <input type="checkbox" id="led4">
+                                                <span class="slider"></span>
+                                            </label>
+                                            <span class="led-subtext">LIGADO/DESLIGADO</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SIMULATION CONTROL BUTTON (START) -->
+                            <div class="section-box" style="margin-bottom: 0;">
+                                <span class="section-label">Controle de Simulação</span>
+                                <button type="button" id="btnStart" class="btn btn-start">
+                                    <span>▷</span> INICIAR SIMULAÇÃO
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT COLUMN: LAST RECORD DETAILS -->
+                        <div class="panel">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h2 class="panel-title" style="margin-bottom: 0;">Detalhes do Último Registro
+                                        Enviado
+                                    </h2>
+                                    <span id="statusBadge" class="status-badge stopped">Aguardando</span>
+                                </div>
+
+                                <!-- TIMESTAMP DISPLAY -->
+                                <div class="timestamp-box" style="margin-top: 16px;">
+                                    <div class="timestamp-label">Data/Hora Envio:</div>
+                                    <div id="displayTimestamp" class="timestamp-value">15/10/2023 15:00:00</div>
+                                </div>
+
+                                <!-- READINGS DISPLAY CARDS -->
+                                <div class="readings-grid">
+
+                                    <!-- Temperature Display -->
+                                    <div class="reading-card">
+                                        <div class="card-header">
+                                            <img src="../static/images/thermometer-light.png" alt="Thermometer"
+                                                class="icon-large" onerror="this.style.display='none'">
+                                        </div>
+                                        <span class="card-label">Temperatura:</span>
+                                        <span id="displayTemp" class="card-value">24.2 °C</span>
+                                    </div>
+
+                                    <!-- Humidity Display -->
+                                    <div class="reading-card">
+                                        <div class="card-header">
+                                            <img src="../static/images/drop-light.png" alt="Drop" class="icon-large"
+                                                onerror="this.style.display='none'">
+                                        </div>
+                                        <span class="card-label">Umidade:</span>
+                                        <span id="displayUmid" class="card-value">65 %</span>
+                                    </div>
+
+                                    <!-- LEDs Status Display -->
+                                    <div class="reading-card">
+                                        <div class="card-header">
+                                            <img src="../static/images/icons/chip.png" alt="Chip" class="icon-large"
+                                                onerror="this.style.display='none'">
+                                        </div>
+                                        <span class="card-label">LEDs:</span>
+                                        <span id="displayLeds" class="card-value">1-ON...</span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- SIMULATION CONTROL BUTTON (STOP) -->
+                            <div>
+                                <button type="button" id="btnStop" class="btn btn-stop" disabled>
+                                    <span>■</span> PARAR SIMULAÇÃO
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <section id="sec-perfil" class="section-content">
 
                 <div class="Perfil">
@@ -229,10 +461,107 @@
                                 <p class="BeautyUnderline"><b>Turma:</b> [turma_usuario]</p>
                             </div>
                         </div>
+
+                        <button class="Cadastro-link" type="button" onclick="changeWindow('cadastro')">
+                            Cadastrar pessoa
+                        </button>
                     </div>
 
                 </div>
 
+            </section>
+
+            <section id="sec-cadastro" class="section-content secao-conta">
+                <div class="conteiner">
+                    <div class="formulario">
+                        <form id="Cadastro">
+                            <h1>Cadastro</h1>
+
+                            <div class="campoFormulario">
+                                <label for="nome">Nome:</label>
+                                <input type="text" id="nome" name="nome"
+                                    aria-describedby="mensagemErroNome" autocomplete="name" required>
+                                <span id="mensagemErroNome" class="mensagemErro" hidden></span>
+                            </div>
+
+                            <div class="campoFormulario">
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" name="email"
+                                    aria-describedby="mensagemErroEmail" autocomplete="email" required>
+                                <span id="mensagemErroEmail" class="mensagemErro" hidden></span>
+                            </div>
+
+                            <div class="campoFormulario">
+                                <label for="turma">Turma:</label>
+                                <input type="text" id="turma" name="turma"
+                                    aria-describedby="mensagemErroTurma" autocomplete="off" required>
+                                <span id="mensagemErroTurma" class="mensagemErro" hidden></span>
+                            </div>
+
+                            <div class="campoFormulario">
+                                <label for="senha">Senha:</label>
+                                <div class="setorSenha">
+                                    <input type="password" id="senha" name="senha"
+                                        aria-describedby="mensagemErroSenha" autocomplete="new-password" required>
+                                    <button type="button" id="exibirSenha" aria-label="Mostrar senha"
+                                        aria-pressed="false">
+                                        <img src="../static/images/icons/olho-fechado.svg" alt="">
+                                    </button>
+                                </div>
+                                <span id="mensagemErroSenha" class="mensagemErro" hidden></span>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="botoes botoes-cadastro botoes-conta">
+                        <button class="limpar" id="limparForm" type="button">limpar</button>
+                        <button class="limpar acesso-login-botao" type="button"
+                            onclick="changeWindow('login')">Login</button>
+                        <button class="enviar" id="enviarForm" type="submit" form="Cadastro">Cadastrar</button>
+                    </div>
+
+                    <p id="statusCadastro" class="statusCadastro" role="status" aria-live="polite"></p>
+                </div>
+            </section>
+
+            <section id="sec-login" class="section-content secao-conta">
+                <div class="conteiner">
+                    <div class="formulario">
+                        <form id="formLogin">
+                            <h1>Login</h1>
+
+                            <div class="campoFormulario">
+                                <label for="emailLogin">Email:</label>
+                                <input type="email" id="emailLogin" name="email"
+                                    aria-describedby="mensagemErroEmailLogin"
+                                    autocomplete="email" required>
+                                <span id="mensagemErroEmailLogin" class="mensagemErro" hidden></span>
+                            </div>
+
+                            <div class="campoFormulario">
+                                <label for="senhaLogin">Senha:</label>
+                                <div class="setorSenha">
+                                    <input type="password" id="senhaLogin" name="senha"
+                                        aria-describedby="mensagemErroSenhaLogin"
+                                        autocomplete="current-password" required>
+                                    <button type="button" class="exibirSenhaLogin"
+                                        aria-label="Mostrar senha" aria-pressed="false">
+                                        <img src="../static/images/icons/olho-fechado.svg" alt="">
+                                    </button>
+                                </div>
+                                <span id="mensagemErroSenhaLogin" class="mensagemErro" hidden></span>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="botoes botoes-login botoes-conta">
+                        <button class="limpar" type="reset" form="formLogin">Limpar</button>
+                        <button class="limpar" type="button" onclick="changeWindow('cadastro')">Voltar</button>
+                        <button class="enviar" type="submit" form="formLogin">Entrar</button>
+                    </div>
+
+                    <p id="statusLogin" class="statusCadastro" role="status" aria-live="polite"></p>
+                </div>
             </section>
 
             <section id="sec-temperatura" class="section-content">
@@ -532,8 +861,10 @@
 
 </body>
 <script src="../static/js/index.js"></script>
+<script src="../static/js/cadastro.js"></script>
 <script src="../static/js/chartAll.js" type="module"></script>
 <script src="../static/js/chartInicio.js" type="module"></script>
+<script src="../static/js/chartDisp.js"></script>
 <script src="../static/js/chartTemp.js" type="module"></script>
 <script src="../static/js/chartWifi.js" type="module"></script>
 <script src="../static/js/chartAlti.js" type="module"></script>
