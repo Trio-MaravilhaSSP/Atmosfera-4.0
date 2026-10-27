@@ -231,6 +231,3 @@ export async function initGraficoAlt(dispositivoId = 'auto', exibir = 'Auto') {
 
 // Expõe a função globalmente para compatibilidade com eventos onclick do HTML
 window.initGraficoAlt = initGraficoAlt;
-
-// Auto-inicialização automática ao carregar o módulo
-initGraficoAlt('auto', 'Auto');

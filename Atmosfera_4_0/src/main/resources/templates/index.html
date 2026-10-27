@@ -86,24 +86,25 @@
 
             <div class="Options">
 
-                <div class="Option" onclick="changeWindow('temperatura')">
+                <div class="Option" onclick="changeWindow('temperatura'), initGraficoTemp('auto', 'Auto')">
                     <img class="Aside-Temp" src="../static/images/icons/thermometer-icon-inactive.png"
                         alt="Temp_Icon" />
                     <p class="BeautyUnderline">Temp</p>
                 </div>
 
-                <div class="Option" onclick="changeWindow('wifi')">
-                    <img class="Aside-Wifi" src="../static/images/icons/wifi-icon-inactive.png" alt="Wifi_Icon" />
+                <div class="Option" onclick="changeWindow('wifi'), initGraficoWifi('auto', 'Auto')">
+                    <img class="Aside-Wifi" src="../static/images/icons/wifi-icon-inactive.png" 
+                        alt="Wifi_Icon" />
                     <p class="BeautyUnderline">Wifi</p>
                 </div>
 
-                <div class="Option" onclick="changeWindow('altitude')">
+                <div class="Option" onclick="changeWindow('altitude'), initGraficoAlt('auto', 'Auto')">
                     <img class="Aside-Alti" src="../static/images/icons/altitude-icon-inactive.png"
                         alt="Altitude_Icon" />
                     <p class="BeautyUnderline">Altitude</p>
                 </div>
 
-                <div class="Option" onclick="changeWindow('mapa')">
+                <div class="Option" onclick="changeWindow('mapa'), loadCards('0')">
                     <img class="Aside-Mapa" src="../static/images/icons/destination-icon-inactive.png"
                         alt="Mapa_Icon" />
                     <p class="BeautyUnderline">Mapa</p>
@@ -272,8 +273,8 @@
 
                                         <!-- Humidity -->
                                         <div class="param-item">
-                                            <img src="../static/images/drop-light.png" alt="Drop Icon" class="icon-small"
-                                                onerror="this.style.display='none'">
+                                            <img src="../static/images/drop-light.png" alt="Drop Icon"
+                                                class="icon-small" onerror="this.style.display='none'">
                                             <div class="param-inputs">
                                                 <div class="param-field">
                                                     <span>Mín (%)</span>
@@ -290,8 +291,8 @@
 
                                         <!-- Pressure -->
                                         <div class="param-item">
-                                            <img src="../static/images/icons/gauge.png" alt="Gauge Icon" class="icon-small"
-                                                onerror="this.style.display='none'">
+                                            <img src="../static/images/icons/gauge.png" alt="Gauge Icon"
+                                                class="icon-small" onerror="this.style.display='none'">
                                             <div class="param-inputs">
                                                 <div class="param-field">
                                                     <span>Mín (hPa)</span>
@@ -479,30 +480,30 @@
 
                             <div class="campoFormulario">
                                 <label for="nome">Nome:</label>
-                                <input type="text" id="nome" name="nome"
-                                    aria-describedby="mensagemErroNome" autocomplete="name" required>
+                                <input type="text" id="nome" name="nome" aria-describedby="mensagemErroNome"
+                                    autocomplete="name" required>
                                 <span id="mensagemErroNome" class="mensagemErro" hidden></span>
                             </div>
 
                             <div class="campoFormulario">
                                 <label for="email">Email:</label>
-                                <input type="email" id="email" name="email"
-                                    aria-describedby="mensagemErroEmail" autocomplete="email" required>
+                                <input type="email" id="email" name="email" aria-describedby="mensagemErroEmail"
+                                    autocomplete="email" required>
                                 <span id="mensagemErroEmail" class="mensagemErro" hidden></span>
                             </div>
 
                             <div class="campoFormulario">
                                 <label for="turma">Turma:</label>
-                                <input type="text" id="turma" name="turma"
-                                    aria-describedby="mensagemErroTurma" autocomplete="off" required>
+                                <input type="text" id="turma" name="turma" aria-describedby="mensagemErroTurma"
+                                    autocomplete="off" required>
                                 <span id="mensagemErroTurma" class="mensagemErro" hidden></span>
                             </div>
 
                             <div class="campoFormulario">
                                 <label for="senha">Senha:</label>
                                 <div class="setorSenha">
-                                    <input type="password" id="senha" name="senha"
-                                        aria-describedby="mensagemErroSenha" autocomplete="new-password" required>
+                                    <input type="password" id="senha" name="senha" aria-describedby="mensagemErroSenha"
+                                        autocomplete="new-password" required>
                                     <button type="button" id="exibirSenha" aria-label="Mostrar senha"
                                         aria-pressed="false">
                                         <img src="../static/images/icons/olho-fechado.svg" alt="">
@@ -533,8 +534,7 @@
                             <div class="campoFormulario">
                                 <label for="emailLogin">Email:</label>
                                 <input type="email" id="emailLogin" name="email"
-                                    aria-describedby="mensagemErroEmailLogin"
-                                    autocomplete="email" required>
+                                    aria-describedby="mensagemErroEmailLogin" autocomplete="email" required>
                                 <span id="mensagemErroEmailLogin" class="mensagemErro" hidden></span>
                             </div>
 
@@ -542,10 +542,10 @@
                                 <label for="senhaLogin">Senha:</label>
                                 <div class="setorSenha">
                                     <input type="password" id="senhaLogin" name="senha"
-                                        aria-describedby="mensagemErroSenhaLogin"
-                                        autocomplete="current-password" required>
-                                    <button type="button" class="exibirSenhaLogin"
-                                        aria-label="Mostrar senha" aria-pressed="false">
+                                        aria-describedby="mensagemErroSenhaLogin" autocomplete="current-password"
+                                        required>
+                                    <button type="button" class="exibirSenhaLogin" aria-label="Mostrar senha"
+                                        aria-pressed="false">
                                         <img src="../static/images/icons/olho-fechado.svg" alt="">
                                     </button>
                                 </div>

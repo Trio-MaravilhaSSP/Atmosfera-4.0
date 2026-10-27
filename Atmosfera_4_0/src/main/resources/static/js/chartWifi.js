@@ -317,6 +317,3 @@ export async function initGraficoWifi(dispositivoId, exibir) {
 
 // Expõe a função globalmente para compatibilidade com os 'onclick' do HTML
 window.initGraficoWifi = initGraficoWifi;
-
-// Auto-inicializa no carregamento do módulo
-initGraficoWifi('auto', 'Auto');
