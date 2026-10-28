@@ -34,9 +34,9 @@ if (!cache.dispositivos || !cache.wifi || !cache.temp || !cache.alti) {
          const [disp, atua, wifi, temp, alti] = await Promise.all([
              fetch(baseUrl + "dispositivo").then(r => r.json()),
              fetch(baseUrl + "atuador").then(r => r.json()),
-             fetch(baseUrl + "registro/sinal").then(r => r.json()),
-             fetch(baseUrl + "registro/temperatura").then(r => r.json()),
-             fetch(baseUrl + "registro/altitude").then(r => r.json())
+             fetch(baseUrl + "dashboard/sinal").then(r => r.json()),
+             fetch(baseUrl + "dashboard/temperatura").then(r => r.json()),
+             fetch(baseUrl + "dashboard/altitude").then(r => r.json())
          ]);
 
          cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
