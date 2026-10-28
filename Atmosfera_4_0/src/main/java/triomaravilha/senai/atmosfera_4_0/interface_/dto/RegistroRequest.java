@@ -1,12 +1,7 @@
 package triomaravilha.senai.atmosfera_4_0.interface_.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import triomaravilha.senai.atmosfera_4_0.application.mappers.RegistroMapper;
-import triomaravilha.senai.atmosfera_4_0.domain.entity.Dispositivo;
-import triomaravilha.senai.atmosfera_4_0.infra.model.RegistroModel;
+import triomaravilha.senai.atmosfera_4_0.infra.persistence.model.RegistroModel;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;

@@ -1,6 +1,7 @@
-package triomaravilha.senai.atmosfera_4_0.infra.model;
+package triomaravilha.senai.atmosfera_4_0.infra.persistence.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class RegistroModel {
     private Long id;
 
     @Column(name = "id_dispositivo_fk", nullable = false)
+    @NotNull(message = "O dispositivo é obrigatório")
     private int id_dispositivo_fk;
 
     @Column
@@ -55,6 +57,5 @@ public class RegistroModel {
 
     @Column
     private int intensidade_wifi;
-
 
 }
