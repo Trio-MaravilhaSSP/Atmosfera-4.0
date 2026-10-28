@@ -54,7 +54,7 @@ export async function loadCards(andarId = "0") {
 
             // Extrai e formata os valores
             const sinal = ultWifi ? ultWifi.sinal : null;
-            const lux = (ultWifi && ultWifi.luminosidade !== undefined) ? `${ultWifi.luminosidade} Lux` : '--';
+            const lux = (ultWifi && ultWifi.luminosidade !== undefined) ? `${ultWifi.luminosidade}` : '--';
             const temperatura = ultTemp ? `${ultTemp.temperatura} °C` : '--';
             const umidade = ultTemp ? `${ultTemp.umidade}%` : '--';
             const pressao = ultAlti ? `${ultAlti.pressao} hPa` : '--';
@@ -214,6 +214,3 @@ export function simularRecarregamento(event) {
 // Expõe globalmente para botões HTML (ex: onclick="simularRecarregamento(event)")
 window.loadCards = loadCards;
 window.simularRecarregamento = simularRecarregamento;
-
-// Inicializa no andar 1 por padrão
-loadCards("0");

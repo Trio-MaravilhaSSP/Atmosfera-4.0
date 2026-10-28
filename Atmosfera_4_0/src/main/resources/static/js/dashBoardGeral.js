@@ -59,43 +59,15 @@ function dbmParaPorcentagem(dbm) {
 
 //Função para o teste local sem o backend
 // Carrega os dados dos JSONs
-// async function carregarTodosBancos() {
-//     if (!cacheDispositivos || !cacheAtuadores || !cacheWifi || !cacheTemp || !cacheAlti) {
-//         const baseUrl = "http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/";
-//         const [dispResp, atuaResp, wifiResp, tempResp, altiResp] = await Promise.all([
-//             fetch(baseUrl + "dispositivo.json"),
-//             fetch(baseUrl + "atuador.json"),
-//             fetch(baseUrl + "wifi.json"),
-//             fetch(baseUrl + "temp.json"),
-//             fetch(baseUrl + "alti.json")
-//         ]);
-
-//         cacheDispositivos = await dispResp.json();
-//         cacheAtuadores = await atuaResp.json();
-//         cacheWifi = await wifiResp.json();
-//         cacheTemp = await tempResp.json();
-//         cacheAlti = await altiResp.json();
-//     }
-//     return {
-//         bancoDispositivos: cacheDispositivos,
-//         bancoAtuadores: cacheAtuadores,
-//         bancoWifi: cacheWifi,
-//         bancoTemp: cacheTemp,
-//         bancoAlti: cacheAlti
-//     };
-// }
-
-// Função para o teste com o backend
-// Carrega os dados dos JSONs
 async function carregarTodosBancos() {
     if (!cacheDispositivos || !cacheAtuadores || !cacheWifi || !cacheTemp || !cacheAlti) {
-        const baseUrl = "http://localhost:8080/";
+        const baseUrl = "http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/";
         const [dispResp, atuaResp, wifiResp, tempResp, altiResp] = await Promise.all([
-            fetch(baseUrl + "dispositivo"),
-            fetch(baseUrl + "atuador"),
-            fetch(baseUrl + "registro/sinal"),
-            fetch(baseUrl + "registro/temperatura"),
-            fetch(baseUrl + "registro/altitude")
+            fetch(baseUrl + "dispositivo.json"),
+            fetch(baseUrl + "atuador.json"),
+            fetch(baseUrl + "wifi.json"),
+            fetch(baseUrl + "temp.json"),
+            fetch(baseUrl + "alti.json")
         ]);
 
         cacheDispositivos = await dispResp.json();
@@ -112,6 +84,34 @@ async function carregarTodosBancos() {
         bancoAlti: cacheAlti
     };
 }
+
+// Função para o teste com o backend
+// Carrega os dados dos JSONs
+// async function carregarTodosBancos() {
+//     if (!cacheDispositivos || !cacheAtuadores || !cacheWifi || !cacheTemp || !cacheAlti) {
+//         const baseUrl = "http://localhost:8080/";
+//         const [dispResp, atuaResp, wifiResp, tempResp, altiResp] = await Promise.all([
+//             fetch(baseUrl + "dispositivo"),
+//             fetch(baseUrl + "atuador"),
+//             fetch(baseUrl + "dashboard/sinal"),
+//             fetch(baseUrl + "dashboard/temperatura"),
+//             fetch(baseUrl + "dashboard/altitude")
+//         ]);
+
+//         cacheDispositivos = await dispResp.json();
+//         cacheAtuadores = await atuaResp.json();
+//         cacheWifi = await wifiResp.json();
+//         cacheTemp = await tempResp.json();
+//         cacheAlti = await altiResp.json();
+//     }
+//     return {
+//         bancoDispositivos: cacheDispositivos,
+//         bancoAtuadores: cacheAtuadores,
+//         bancoWifi: cacheWifi,
+//         bancoTemp: cacheTemp,
+//         bancoAlti: cacheAlti
+//     };
+// }
 
 // =============================================================
 // CONTROLE DO DROPDOWN SELECT

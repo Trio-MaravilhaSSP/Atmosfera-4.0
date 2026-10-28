@@ -255,6 +255,3 @@ export async function initGraficoTemp(dispositivoId = 'auto', exibir = 'Auto') {
 
 // Expõe a função globalmente para ser chamada via HTML (ex: onclick)
 window.initGraficoTemp = initGraficoTemp;
-
-// Inicialização automática
-initGraficoTemp('auto', 'Auto');

@@ -18,6 +18,15 @@ function toggleTooltipConfig() {
     textTooltip();
 }
 
+function toggleSelect(dataId) {
+    // Selects the specific dropdown options container matching the data-id attribute
+    const dropdown = document.querySelector(`.dropdown-options[data-id="${dataId}"]`);
+
+    if (dropdown) {
+        dropdown.classList.toggle("Select-active");
+    }
+}
+
 function trocarTema() {
     const body = document.body;
 
