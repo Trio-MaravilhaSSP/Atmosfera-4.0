@@ -22,8 +22,8 @@ export async function loadCards(andarId = "0") {
         // 2. Busca os dados de vento com fallback seguro
         let vento = [];
         try {
-            // const respVento = await fetch("http://localhost:8080/registro/vento");
-            const respVento = await fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/vento.json");
+            const respVento = await fetch("http://localhost:8080/registro/vento");
+            // const respVento = await fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/vento.json");
             if (respVento.ok) {
                 vento = await respVento.json();
             }
