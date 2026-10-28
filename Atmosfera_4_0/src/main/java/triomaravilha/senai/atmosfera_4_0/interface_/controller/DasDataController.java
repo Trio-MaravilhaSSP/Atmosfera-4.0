@@ -3,7 +3,7 @@ package triomaravilha.senai.atmosfera_4_0.interface_.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import triomaravilha.senai.atmosfera_4_0.application.dto.DashResponse;
+import triomaravilha.senai.atmosfera_4_0.application.dto.Dash.*;
 
 import triomaravilha.senai.atmosfera_4_0.domain.gateway.DashGateway;
 
@@ -30,17 +30,22 @@ public class DasDataController {
     }
 
     @GetMapping("/temperatura")
-    public ResponseEntity<List<Float>> getTemperatura() {
+    public ResponseEntity<List<DashTempResponse>> getTemperatura() {
         return ResponseEntity.ok(dash.getTemps());
     }
 
     @GetMapping("/altitude")
-    public ResponseEntity<List<Float>> getAltitude() {
+    public ResponseEntity<List<DashAltResponse>> getAltitude() {
         return ResponseEntity.ok(dash.getAlt());
     }
 
     @GetMapping("/sinal")
-    public ResponseEntity<List<Float>> getSinal() {
-        return ResponseEntity.ok(dash.getSinal());
+    public ResponseEntity<List<DashWifiResponse>> getSinal() {
+        return ResponseEntity.ok(dash.getWif());
+    }
+
+    @GetMapping("/vento")
+    public ResponseEntity<List<DashVentoResponse>> getVento() {
+        return ResponseEntity.ok(dash.getVento());
     }
 }

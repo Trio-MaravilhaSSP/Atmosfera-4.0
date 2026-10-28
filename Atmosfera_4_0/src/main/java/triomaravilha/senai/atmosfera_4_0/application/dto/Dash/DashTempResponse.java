@@ -1,4 +1,13 @@
 package triomaravilha.senai.atmosfera_4_0.application.dto.Dash;
 
-public class DashTempResponse {
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
+public record DashTempResponse (
+        Long id,
+        int dispositivo,
+        LocalDateTime dataHora,
+        float temperatura,
+        float umidade
+){
 }

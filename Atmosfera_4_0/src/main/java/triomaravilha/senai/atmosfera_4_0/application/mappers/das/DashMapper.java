@@ -1,4 +1,4 @@
-package triomaravilha.senai.atmosfera_4_0.application.mappers;
+package triomaravilha.senai.atmosfera_4_0.application.mappers.das;
 
 import triomaravilha.senai.atmosfera_4_0.application.dto.Dash.DashResponse;
 import triomaravilha.senai.atmosfera_4_0.domain.entity.DasData;
@@ -10,6 +10,7 @@ public interface DashMapper {
 
         return new DashResponse(
                 dashResponse.id_Registro(),
+                dashResponse.dispositivo(),
                 dashResponse.sala(),
                 dashResponse.data(),
                 dashResponse.temperatura(),
@@ -17,7 +18,10 @@ public interface DashMapper {
                 dashResponse.sinal(),
                 dashResponse.altitude(),
                 dashResponse.luminosidade(),
-                dashResponse.pressao()
+                dashResponse.pressao(),
+                dashResponse.velVento(),
+                dashResponse.direcaoVento()
+
         );
     }
 

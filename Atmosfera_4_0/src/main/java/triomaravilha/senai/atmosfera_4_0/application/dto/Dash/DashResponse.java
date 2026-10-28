@@ -1,9 +1,10 @@
-package triomaravilha.senai.atmosfera_4_0.application.dto;
+package triomaravilha.senai.atmosfera_4_0.application.dto.Dash;
 
 import java.time.LocalDateTime;
 
 public record DashResponse(
         Long id_registro,
+        int dispositivo,
         Long sala,
         LocalDateTime data,
         float temperatura,
@@ -11,6 +12,8 @@ public record DashResponse(
         float sinal,
         float altitude,
         float luminosidade,
-        float pressao
+        float pressao,
+        float velVento,
+        int direcaoVento
 ) {
 }
