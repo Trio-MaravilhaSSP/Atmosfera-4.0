@@ -1,6 +1,6 @@
 package triomaravilha.senai.atmosfera_4_0.application.mappers;
 
-import triomaravilha.senai.atmosfera_4_0.application.dto.DashResponse;
+import triomaravilha.senai.atmosfera_4_0.application.dto.Dash.DashResponse;
 import triomaravilha.senai.atmosfera_4_0.domain.entity.DasData;
 
 public interface DashMapper {
