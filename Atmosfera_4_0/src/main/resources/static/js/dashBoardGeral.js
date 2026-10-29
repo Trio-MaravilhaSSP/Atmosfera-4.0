@@ -93,9 +93,9 @@ async function carregarTodosBancos() {
         const [dispResp, atuaResp, wifiResp, tempResp, altiResp] = await Promise.all([
             fetch(baseUrl + "dispositivo"),
             fetch(baseUrl + "atuador"),
-            fetch(baseUrl + "registro/sinal"),
-            fetch(baseUrl + "registro/temperatura"),
-            fetch(baseUrl + "registro/altitude")
+            fetch(baseUrl + "dashboard/sinal"),
+            fetch(baseUrl + "dashboard/temperatura"),
+            fetch(baseUrl + "dashboard/altitude")
         ]);
 
         cacheDispositivos = await dispResp.json();

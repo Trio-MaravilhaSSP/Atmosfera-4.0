@@ -7,6 +7,7 @@ if (formularioCadastro) {
     const botaoExibirSenha = document.getElementById("exibirSenha");
     const iconeSenha = botaoExibirSenha.querySelector("img");
     const statusCadastro = document.getElementById("statusCadastro");
+    statusCadastro.style.color = '#ff0514'
     const camposFormulario = formularioCadastro.querySelectorAll("input");
     const formatoTurma = /^[0-4][A-Z]{3,6}-[A-Z]$/;
     const mensagemErroTurma = "Insira o código da turma. Exemplo: 1AAA-A.";

@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/atuador")
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 public class AtuadorController {
 
     private final AtuadorGateway atuador;
@@ -35,7 +36,7 @@ public class AtuadorController {
     public ResponseEntity<AtuadorResponse> save(@RequestBody AtuadorRequest atuadorRequest){
         AtuadorResponse at = atuador.save(atuadorRequest);
         return ResponseEntity.created(
-                URI.create("/atuador" + at.id())
+                URI.create("/atuador/" + at.id())
         ).body(at);
     }
 

@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/dispositivo")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class DispositivoController {
 
     private final DispositivoGateway dispositivo;

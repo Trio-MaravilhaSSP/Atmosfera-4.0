@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/registro")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class RegistroController {
     private final RegistroGateway registroGateway;
 

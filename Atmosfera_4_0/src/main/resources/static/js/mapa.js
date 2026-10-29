@@ -22,7 +22,7 @@ export async function loadCards(andarId = "0") {
         // 2. Busca os dados de vento com fallback seguro
         let vento = [];
         try {
-            const respVento = await fetch("http://localhost:8080/registro/vento");
+            const respVento = await fetch("http://localhost:8080/dashboard/vento");
             // const respVento = await fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/vento.json");
             if (respVento.ok) {
                 vento = await respVento.json();
@@ -54,7 +54,7 @@ export async function loadCards(andarId = "0") {
 
             // Extrai e formata os valores
             const sinal = ultWifi ? ultWifi.sinal : null;
-            const lux = (ultWifi && ultWifi.luminosidade !== undefined) ? `${ultWifi.luminosidade} Lux` : '--';
+            const lux = (ultWifi && ultWifi.luminosidade !== undefined) ? `${ultWifi.luminosidade}` : '--';
             const temperatura = ultTemp ? `${ultTemp.temperatura} °C` : '--';
             const umidade = ultTemp ? `${ultTemp.umidade}%` : '--';
             const pressao = ultAlti ? `${ultAlti.pressao} hPa` : '--';
@@ -214,6 +214,3 @@ export function simularRecarregamento(event) {
 // Expõe globalmente para botões HTML (ex: onclick="simularRecarregamento(event)")
 window.loadCards = loadCards;
 window.simularRecarregamento = simularRecarregamento;
-
-// Inicializa no andar 1 por padrão
-loadCards("0");
