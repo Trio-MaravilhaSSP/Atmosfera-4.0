@@ -4,11 +4,46 @@
 
 import { carregarDadosGerais } from './chartAll.js';
 
-export async function atualizarSecaoInicio() {
-    try {
-        const { dispositivos, atuadores, temp, wifi } = await carregarDadosGerais();
+// Helper inteligente para extrair o ID do dispositivo de qualquer DTO da API
+function obterIdDispositivo(item) {
+    if (!item) return null;
+    
+    // Se o item já for um número ou string representando o ID
+    if (typeof item === 'number' || typeof item === 'string') return item;
 
-        // Helper rápido para alterar texto do DOM
+    // Se o item for um objeto retornado pelo Spring Boot
+    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
+        return item.dispositivo.id;
+    }
+
+    return item.dispositivo ?? item.id_dispositivo ?? item.dispositivoId ?? item.idDispositivoFK ?? item.id_dispositivo_fk ?? item.id;
+}
+
+// Helper para obter o registro mais recente garantindo a ordenação por data
+function obterUltimoRegistro(registros) {
+    if (!registros || registros.length === 0) return null;
+    return [...registros].sort((a, b) => {
+        const dataA = a.data ? new Date(a.data).getTime() : 0;
+        const dataB = b.data ? new Date(b.data).getTime() : 0;
+        return dataA - dataB;
+    }).pop();
+}
+
+export async function atualizarSecaoInicio() {
+    console.log("🔍 [DIAGNOSTICO] Iniciando atualizarSecaoInicio()...");
+
+    try {
+        const dados = await carregarDadosGerais();
+        console.log("📦 [DIAGNOSTICO] Retorno de carregarDadosGerais():", dados);
+
+        if (!dados) {
+            console.error("❌ [ERRO] carregarDadosGerais() retornou null/undefined!");
+            return;
+        }
+
+        const { dispositivos, atuadores, temp, wifi } = dados;
+
+        // Helpers de escrita amigáveis
         const setTexto = (id, val) => {
             const el = document.getElementById(id);
             if (el) el.innerText = val;
@@ -28,9 +63,11 @@ export async function atualizarSecaoInicio() {
             let totalValidos = 0;
 
             dispositivos.forEach(disp => {
-                const registrosDisp = temp.filter(t => t.dispositivo == disp.id && t.data);
-                if (registrosDisp.length > 0) {
-                    const ultimo = registrosDisp[registrosDisp.length - 1];
+                // Mapeia verificando tanto disp.id quanto as FKs da temperatura
+                const registrosDisp = temp.filter(t => obterIdDispositivo(t) == disp.id);
+                const ultimo = obterUltimoRegistro(registrosDisp);
+
+                if (ultimo) {
                     if (ultimo.temperatura != null) somaTemp += Number(ultimo.temperatura);
                     if (ultimo.umidade != null) somaUmid += Number(ultimo.umidade);
                     totalValidos++;
@@ -47,6 +84,9 @@ export async function atualizarSecaoInicio() {
                 setTexto('renderizarTemp', '-- °C');
                 setTexto('renderizarUmidade', '--%');
             }
+        } else {
+            setTexto('renderizarTemp', '-- °C');
+            setTexto('renderizarUmidade', '--%');
         }
 
         // -------------------------------------------------------------
@@ -66,43 +106,52 @@ export async function atualizarSecaoInicio() {
 
         if (ativos.length > 0) {
             const primeiroAtivo = ativos[0];
-            const dispAssociado = dispositivos.find(d => d.id == primeiroAtivo.id_dispositivo_fk);
-            const nomeDisp = dispAssociado ? dispAssociado.nome : `Disp ${primeiroAtivo.id_dispositivo_fk}`;
+            const fkAtuador = obterIdDispositivo(primeiroAtivo);
+            const dispAssociado = dispositivos.find(d => d.id == fkAtuador);
+            
+            // Usa 'nomeDispositivo' vindo do seu DTO Java (ou 'nome' como fallback)
+            const nomeDisp = dispAssociado 
+                ? (dispAssociado.nomeDispositivo || dispAssociado.nome) 
+                : `Disp ${fkAtuador}`;
+
             setTexto('exemploAtua', `${nomeDisp}: ATIVO`);
         } else {
             setTexto('exemploAtua', 'Nenhum atuador ativo');
         }
 
         // -------------------------------------------------------------
-        // 4. ALERTAS CRÍTICOS (EXEMPLO DE LEITURA BASEADA EM SINAL/TEMP)
+        // 4. ALERTAS CRÍTICOS (SINAL E TEMPERATURA)
         // -------------------------------------------------------------
         let pendentes = 0;
         let avisos = 0;
 
-        // Regra de exemplo: checa sinais fracos e temperaturas muito elevadas
-        dispositivos.forEach(disp => {
-            const regWifi = wifi.filter(w => w.dispositivo == disp.id);
-            const regTemp = temp.filter(t => t.dispositivo == disp.id);
+        if (dispositivos) {
+            dispositivos.forEach(disp => {
+                const regWifi = wifi ? wifi.filter(w => obterIdDispositivo(w) == disp.id) : [];
+                const regTemp = temp ? temp.filter(t => obterIdDispositivo(t) == disp.id) : [];
 
-            const ultWifi = regWifi.length > 0 ? regWifi[regWifi.length - 1] : null;
-            const ultTemp = regTemp.length > 0 ? regTemp[regTemp.length - 1] : null;
+                const ultWifi = obterUltimoRegistro(regWifi);
+                const ultTemp = obterUltimoRegistro(regTemp);
 
-            if (ultWifi && ultWifi.sinal < -85) pendentes++; // Sinal muito fraco
-            else if (ultWifi && ultWifi.sinal < -75) avisos++;
+                if (ultWifi && ultWifi.sinal < -85) pendentes++;
+                else if (ultWifi && ultWifi.sinal < -75) avisos++;
 
-            if (ultTemp && ultTemp.temperatura > 40) pendentes++; // Temperatura crítica
-        });
+                if (ultTemp && ultTemp.temperatura > 40) pendentes++;
+            });
+        }
 
         setHTML('renderizarAlert', `<b>${pendentes} Pendente${pendentes !== 1 ? 's' : ''}</b>`);
         setTexto('statusAvisos', `${avisos} Aviso${avisos !== 1 ? 's' : ''}`);
 
+        console.log("✅ [DIAGNOSTICO] atualizarSecaoInicio() executado com sucesso!");
+
     } catch (erro) {
-        console.error("Erro ao carregar dados do painel Início:", erro);
+        console.error("💥 [EXCEÇÃO CRÍTICA] Erro inesperado em atualizarSecaoInicio():", erro);
     }
 }
 
-// Expõe a função globalmente se necessário
+// Expõe globalmente
 window.atualizarSecaoInicio = atualizarSecaoInicio;
 
-// Inicializa automaticamente no carregamento
-atualizarSecaoInicio();
+// Executa ao carregar
+atualizarSecaoInicio();  

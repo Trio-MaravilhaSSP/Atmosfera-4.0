@@ -38,14 +38,23 @@ function formatarHoraMinuto(date, incluirMinutos = false) {
 
 function parseDataJson(dataStr) {
     if (!dataStr) return null;
+
+    // Converte formato ISO "YYYY-MM-DDTHH:MM:SS" para Date de forma direta
+    // Se falhar ou estiver em outro formato com espaço, trata as partes manualmente
+    let dataParsed = new Date(dataStr);
+    if (!isNaN(dataParsed.getTime())) {
+        return dataParsed;
+    }
+
+    // Fallback manual para strings customizadas (ex: "YYYY-MM-DD HH:MM:SS" ou "DD/MM/YYYY HH:MM:SS")
     const partes = dataStr.split(/[:\-\sT\/]/);
     return new Date(
-        partes[0],
-        partes[1] - 1,
-        partes[2],
-        partes[3] || 0,
-        partes[4] || 0,
-        partes[5] || 0
+        partes[0],          // Ano
+        partes[1] - 1,      // Mês (JavaScript conta meses de 0 a 11)
+        partes[2],          // Dia
+        partes[3] || 0,     // Hora
+        partes[4] || 0,     // Minuto
+        partes[5] || 0      // Segundo
     );
 }
 
@@ -89,7 +98,7 @@ function dbmParaPorcentagem(dbm) {
 // Carrega os dados dos JSONs
 async function carregarTodosBancos() {
     if (!cacheDispositivos || !cacheAtuadores || !cacheWifi || !cacheTemp || !cacheAlti) {
-        const baseUrl = "http://localhost:8080/";
+        const baseUrl = "http://10.83.139.51:8080/";
         const [dispResp, atuaResp, wifiResp, tempResp, altiResp] = await Promise.all([
             fetch(baseUrl + "dispositivo"),
             fetch(baseUrl + "atuador"),

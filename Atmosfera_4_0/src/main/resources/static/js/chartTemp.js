@@ -2,41 +2,50 @@
 // chartTemp.js — Módulo do Gráfico de Temperatura e Umidade (1h)
 // =============================================================
 
-import { 
-    carregarDadosGerais, 
-    parseDataJson, 
-    arredondarHoras, 
-    formatarHoraMinuto, 
+import {
+    carregarDadosGerais,
+    parseDataJson,
+    arredondarHoras,
+    formatarHoraMinuto,
     formatarDataHoraCompleta,
     popularDropdownDispositivos
 } from './chartAll.js';
 
-// Instância local do gráfico do Chart.js
 let graficoTendencia = null;
 let intervalAutoTemp = null;
 let indiceDispositivoAutoTemp = 0;
 
-// =============================================================
-// 1. ATUALIZADOR PRINCIPAL DO GRÁFICO DE TEMPERATURA E UMIDADE
-// =============================================================
+function obterIdDispositivo(item) {
+    if (!item) return null;
+    if (typeof item === 'number' || typeof item === 'string') return item;
+    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
+        return item.dispositivo.id;
+    }
+    return item.dispositivo ?? item.dispositivoId ?? item.id_dispositivo ?? item.idDispositivoFK ?? item.id;
+}
+
+function obterNomeDispositivo(disp) {
+    if (!disp) return 'Dispositivo';
+    return disp.nomeDispositivo || disp.nome || `Dispositivo ${disp.id}`;
+}
+
 export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = false) {
     try {
-        const { dispositivos, temp } = await carregarDadosGerais();
+        const dadosGerais = await carregarDadosGerais();
+        if (!dadosGerais) return;
+
+        const { dispositivos, temp } = dadosGerais;
 
         let dispositivo;
-        if (typeof dispositivoIdOuObjeto === 'object') {
+        if (typeof dispositivoIdOuObjeto === 'object' && dispositivoIdOuObjeto !== null) {
             dispositivo = dispositivoIdOuObjeto;
         } else {
-            dispositivo = dispositivos.find(d => d.id == dispositivoIdOuObjeto);
+            dispositivo = dispositivos ? dispositivos.find(d => d.id == dispositivoIdOuObjeto) : null;
         }
 
-        if (!dispositivo) {
-            console.error("Dispositivo não encontrado (Temp):", dispositivoIdOuObjeto);
-            return;
-        }
+        if (!dispositivo) return;
 
-        // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
-        const nomeExibicao = dispositivo.nome || `Dispositivo ${dispositivo.id}`;
+        const nomeExibicao = obterNomeDispositivo(dispositivo);
 
         const elementoSeletor = document.querySelector('[data-seVa-0]');
         if (elementoSeletor) {
@@ -48,27 +57,30 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
             indicadorTitulo.innerText = nomeExibicao;
         }
 
-        // Filtrar dados do temp.json usando a FK 'dispositivo'
-        const dadosDoDispositivo = temp.filter(item => item.dispositivo == dispositivo.id && item.data);
+        const dadosDoDispositivo = temp ? temp.filter(item => {
+            const mesmoDisp = obterIdDispositivo(item) == dispositivo.id;
+            const temData = parseDataJson(item) !== null;
+            return mesmoDisp && temData;
+        }) : [];
 
         if (dadosDoDispositivo.length === 0) {
-            console.warn(`Nenhum dado de temperatura encontrado para o dispositivo ${dispositivo.id}`);
             if (graficoTendencia) graficoTendencia.destroy();
             return;
         }
 
-        // Descobre o registro mais recente
         let dataMaisRecente = null;
         dadosDoDispositivo.forEach(item => {
-            const d = parseDataJson(item.data);
-            if (!dataMaisRecente || d > dataMaisRecente) {
+            const d = parseDataJson(item);
+            if (d && (!dataMaisRecente || d.getTime() > dataMaisRecente.getTime())) {
                 dataMaisRecente = d;
             }
         });
 
-        // --- 2. DEFINIR JANELA DE 24 HORAS (INTERVALO DE 1 HORA) ---
+        if (!dataMaisRecente) return;
+
+        // --- DEFINIR JANELA EXATA DE 24 HORAS DE 1 EM 1 HORA ---
         const fimCiclo = arredondarHoras(dataMaisRecente);
-        const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
+        const inicioCiclo = new Date(fimCiclo.getTime() - (23 * 60 * 60 * 1000)); // 24 slots exatos (0 a 23h)
 
         const metrica24h = `${formatarDataHoraCompleta(inicioCiclo)} até ${formatarDataHoraCompleta(fimCiclo)}`;
         const elIntervalo24h = document.querySelector('#intervalo24h');
@@ -76,29 +88,25 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
             elIntervalo24h.innerText = metrica24h;
         }
 
-        // --- 3. GERAR OS SLOTS DE 1 EM 1 HORA (24 SLOTS NO TOTAL) ---
+        // --- GERAR OS 24 SLOTS FIXOS DE 1 EM 1 HORA ---
         const timelineMap = new Map();
-        let ponteiroTempo = new Date(inicioCiclo);
 
-        while (ponteiroTempo <= fimCiclo) {
-            const labelHora = formatarHoraMinuto(ponteiroTempo, false);
-            timelineMap.set(ponteiroTempo.getTime(), {
+        for (let i = 0; i < 24; i++) {
+            const slotData = new Date(inicioCiclo.getTime() + (i * 60 * 60 * 1000));
+            const labelHora = formatarHoraMinuto(slotData, false);
+            timelineMap.set(slotData.getTime(), {
                 horaFormatada: labelHora,
                 somasTemp: 0,
                 qtdTemp: 0,
                 somasUmid: 0,
-                qtdUmid: 0,
-                temperatura: null,
-                umidade: null
+                qtdUmid: 0
             });
-            ponteiroTempo.setHours(ponteiroTempo.getHours() + 1); // Avança de 1 em 1 hora
         }
 
-        // --- 4. AGRUPAR DADOS DE 1 EM 1 HORA E CALCULAR MÉDIAS ---
+        // --- AGRUPAR DADOS NO SLOT CORRESPONDENTE ---
         dadosDoDispositivo.forEach(item => {
-            const dataMedicao = parseDataJson(item.data);
-
-            if (dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
+            const dataMedicao = parseDataJson(item);
+            if (dataMedicao) {
                 const chaveMs = arredondarHoras(dataMedicao).getTime();
 
                 if (timelineMap.has(chaveMs)) {
@@ -116,7 +124,6 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
             }
         });
 
-        // --- 5. PREPARAR DADOS CONSOLIDADOS PARA O CHART.JS ---
         const slots = Array.from(timelineMap.values()).map(slot => {
             return {
                 horaFormatada: slot.horaFormatada,
@@ -129,7 +136,6 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
         const dadosTemperatura = slots.map(s => s.temperatura);
         const dadosUmidade = slots.map(s => s.umidade);
 
-        // --- 6. RENDERIZAÇÃO DO GRÁFICO ---
         const ctxTemp = document.getElementById('graficoTempUmi');
         if (!ctxTemp) return;
 
@@ -177,11 +183,9 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
                     x: {
                         grid: { display: false },
                         ticks: {
-                            maxRotation: 0,
-                            callback: function (val) {
-                                // Exibe todas as 24 horas no eixo X
-                                return this.getLabelForValue(val);
-                            }
+                            autoSkip: false,           // FORÇA O CHART.JS A EXIBIR TODOS OS LABELS
+                            maxRotation: 45,           // ROTAÇÃO SUAVE PARA NÃO AMASSAR O TEXTO
+                            minRotation: 0
                         },
                         title: {
                             display: true,
@@ -208,50 +212,49 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
         });
 
     } catch (error) {
-        console.error("Erro ao renderizar o gráfico de Temperatura:", error);
+        console.error("💥 [EXCEÇÃO CRÍTICA] Erro no gráfico de Temperatura:", error);
     }
 }
 
-// =============================================================
-// 2. INICIALIZADOR PRINCIPAL (DROPDOWN / MODO AUTO)
-// =============================================================
 export async function initGraficoTemp(dispositivoId = 'auto', exibir = 'Auto') {
-    if (intervalAutoTemp) {
-        clearInterval(intervalAutoTemp);
-        intervalAutoTemp = null;
+    try {
+        if (intervalAutoTemp) {
+            clearInterval(intervalAutoTemp);
+            intervalAutoTemp = null;
+        }
+
+        const dropOptions = document.querySelector('.dropdown-options');
+        if (dropOptions) dropOptions.classList.remove('Select-active');
+
+        const dadosGerais = await carregarDadosGerais();
+        const dispositivos = dadosGerais ? dadosGerais.dispositivos : [];
+
+        if (typeof popularDropdownDispositivos === 'function') {
+            popularDropdownDispositivos(dispositivos, 'initGraficoTemp', '#select-temp .dropdown-options');
+        }
+
+        if (dispositivoId === 'auto' || dispositivoId === -2) {
+            if (!dispositivos || dispositivos.length === 0) return;
+
+            const rodarCicloAuto = async () => {
+                const dispAtual = dispositivos[indiceDispositivoAutoTemp];
+                await atualizarGraficoTemp(dispAtual, true);
+                indiceDispositivoAutoTemp = (indiceDispositivoAutoTemp + 1) % dispositivos.length;
+            };
+
+            await rodarCicloAuto();
+            intervalAutoTemp = setInterval(rodarCicloAuto, 15000);
+            return;
+        }
+
+        const elSeletor = document.querySelector('[data-seVa-0]');
+        if (elSeletor) elSeletor.innerText = exibir;
+
+        await atualizarGraficoTemp(dispositivoId, false);
+
+    } catch (erroInit) {
+        console.error("💥 Erro no initGraficoTemp():", erroInit);
     }
-
-    const dropOptions = document.querySelector('.dropdown-options');
-    if (dropOptions) dropOptions.classList.remove('Select-active');
-
-    const { dispositivos } = await carregarDadosGerais();
-
-    // Popula o menu suspenso dinamicamente com as opções
-    if (typeof popularDropdownDispositivos === 'function') {
-        popularDropdownDispositivos(dispositivos, 'initGraficoTemp', '#select-temp .dropdown-options');
-    }
-
-    // MODO AUTOMÁTICO ('auto' ou -2)
-    if (dispositivoId === 'auto' || dispositivoId === -2) {
-        if (!dispositivos || dispositivos.length === 0) return;
-
-        const rodarCicloAuto = async () => {
-            const dispAtual = dispositivos[indiceDispositivoAutoTemp];
-            await atualizarGraficoTemp(dispAtual, true);
-            indiceDispositivoAutoTemp = (indiceDispositivoAutoTemp + 1) % dispositivos.length;
-        };
-
-        await rodarCicloAuto();
-        intervalAutoTemp = setInterval(rodarCicloAuto, 15000);
-        return;
-    }
-
-    // MODO SELEÇÃO MANUAL DE DISPOSITIVO
-    const elSeletor = document.querySelector('[data-seVa-0]');
-    if (elSeletor) elSeletor.innerText = exibir;
-
-    await atualizarGraficoTemp(dispositivoId, false);
 }
 
-// Expõe a função globalmente para ser chamada via HTML (ex: onclick)
 window.initGraficoTemp = initGraficoTemp;

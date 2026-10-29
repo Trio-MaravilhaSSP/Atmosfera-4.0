@@ -2,11 +2,11 @@
 // chartAlti.js — Módulo do Gráfico de Altitude e Pressão
 // =============================================================
 
-import { 
-    carregarDadosGerais, 
-    parseDataJson, 
-    arredondarHoras, 
-    formatarHoraMinuto, 
+import {
+    carregarDadosGerais,
+    parseDataJson,
+    arredondarHoras,
+    formatarHoraMinuto,
     formatarDataHoraCompleta,
     popularDropdownDispositivos
 } from './chartAll.js';
@@ -16,27 +16,50 @@ let graficoAltPress = null;
 let intervalAutoAltPress = null;
 let indiceDispositivoAutoAltPress = 0;
 
+// Helper para obter o ID do dispositivo de forma flexível
+function obterIdDispositivo(item) {
+    if (!item) return null;
+    if (typeof item === 'number' || typeof item === 'string') return item;
+    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
+        return item.dispositivo.id;
+    }
+    return item.dispositivo ?? item.dispositivoId ?? item.id_dispositivo ?? item.idDispositivoFK ?? item.id;
+}
+
+// Helper para ler o nome do dispositivo do DTO Java (nomeDispositivo ou nome)
+function obterNomeDispositivo(disp) {
+    if (!disp) return 'Dispositivo';
+    return disp.nomeDispositivo || disp.nome || `Dispositivo ${disp.id}`;
+}
+
 // =============================================================
 // 1. ATUALIZADOR PRINCIPAL DO GRÁFICO DE ALTITUDE E PRESSÃO
 // =============================================================
 export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto = false) {
     try {
-        const { dispositivos, alti } = await carregarDadosGerais();
+        const dadosGerais = await carregarDadosGerais();
+
+        if (!dadosGerais) {
+            console.error("❌ [ERRO ALTI] Não foi possível obter os dados de carregarDadosGerais().");
+            return;
+        }
+
+        const { dispositivos, alti } = dadosGerais;
 
         let dispositivo;
-        if (typeof dispositivoIdOuObjeto === 'object') {
+        if (typeof dispositivoIdOuObjeto === 'object' && dispositivoIdOuObjeto !== null) {
             dispositivo = dispositivoIdOuObjeto;
         } else {
-            dispositivo = dispositivos.find(d => d.id == dispositivoIdOuObjeto);
+            dispositivo = dispositivos ? dispositivos.find(d => d.id == dispositivoIdOuObjeto) : null;
         }
 
         if (!dispositivo) {
-            console.error("Dispositivo não encontrado (Altitude/Pressão):", dispositivoIdOuObjeto);
+            console.error("❌ [ERRO ALTI] Dispositivo não encontrado para ID/Objeto:", dispositivoIdOuObjeto);
             return;
         }
 
         // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
-        const nomeExibicao = dispositivo.nome || `Dispositivo ${dispositivo.id}`;
+        const nomeExibicao = obterNomeDispositivo(dispositivo);
 
         const elementoSeletor = document.querySelector('[data-seVa-2]');
         if (elementoSeletor) {
@@ -48,27 +71,37 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
             indicadorTitulo.innerText = nomeExibicao;
         }
 
-        // Filtrar dados do alti.json usando a FK 'dispositivo'
-        const dadosDoDispositivo = alti.filter(item => item.dispositivo == dispositivo.id && item.data);
+        // Filtrar dados verificando a FK e presença de data válida via parseDataJson
+        const dadosDoDispositivo = alti ? alti.filter(item => {
+            const mesmoDisp = obterIdDispositivo(item) == dispositivo.id;
+            const dataValida = parseDataJson(item) !== null;
+            return mesmoDisp && dataValida;
+        }) : [];
 
         if (dadosDoDispositivo.length === 0) {
-            console.warn(`Nenhum dado de Altitude/Pressão encontrado para o dispositivo ${dispositivo.id}`);
+            console.warn(`⚠️ [AVISO ALTI] Nenhum dado de Altitude/Pressão encontrado para o dispositivo ID ${dispositivo.id}`);
             if (graficoAltPress) graficoAltPress.destroy();
             return;
         }
 
-        // Descobre o registro mais recente
+        // Descobre o registro mais recente convertendo para timestamp
         let dataMaisRecente = null;
         dadosDoDispositivo.forEach(item => {
-            const d = parseDataJson(item.data);
-            if (!dataMaisRecente || d > dataMaisRecente) {
+            const d = parseDataJson(item);
+            if (d && (!dataMaisRecente || d.getTime() > dataMaisRecente.getTime())) {
                 dataMaisRecente = d;
             }
         });
 
-        // --- 2. DEFINIR JANELA DE 24 HORAS (INTERVALO DE 1 HORA) ---
+        if (!dataMaisRecente) {
+            console.error(`❌ [ERRO ALTI] Nenhuma data válida encontrada no histórico do dispositivo ID ${dispositivo.id}`);
+            if (graficoAltPress) graficoAltPress.destroy();
+            return;
+        }
+
+        // --- 2. DEFINIR JANELA DE 24 HORAS DE 1 EM 1 HORA ---
         const fimCiclo = arredondarHoras(dataMaisRecente);
-        const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
+        const inicioCiclo = new Date(fimCiclo.getTime() - (23 * 60 * 60 * 1000)); // 24 slots exatos (0 a 23h)
 
         const metrica24h = `${formatarDataHoraCompleta(inicioCiclo)} até ${formatarDataHoraCompleta(fimCiclo)}`;
         const elIntervalo24h = document.querySelector('#intervalo24h');
@@ -76,41 +109,61 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
             elIntervalo24h.innerText = metrica24h;
         }
 
-        // --- 3. GERAR OS SLOTS DE 1 EM 1 HORA (24 SLOTS NO TOTAL) ---
+        // --- 3. GERAR OS 24 SLOTS FIXOS DE 1 EM 1 HORA ---
         const timelineMap = new Map();
-        let ponteiroTempo = new Date(inicioCiclo);
 
-        while (ponteiroTempo <= fimCiclo) {
-            const labelHora = formatarHoraMinuto(ponteiroTempo, false);
-            timelineMap.set(ponteiroTempo.getTime(), {
+        for (let i = 0; i < 24; i++) {
+            const slotData = new Date(inicioCiclo.getTime() + (i * 60 * 60 * 1000));
+            const labelHora = formatarHoraMinuto(slotData, false);
+            timelineMap.set(slotData.getTime(), {
                 horaFormatada: labelHora,
-                altitude: null,
-                pressao: null
+                somasAltitude: 0,
+                qtdAltitude: 0,
+                somasPressao: 0,
+                qtdPressao: 0
             });
-            ponteiroTempo.setHours(ponteiroTempo.getHours() + 1);
         }
 
-        // --- 4. ALOCAR OS DADOS ARREDONDANDO PARA A HORA MAIS PRÓXIMA ---
+        // --- 4. AGRUPAR DADOS NO SLOT CORRESPONDENTE ---
         dadosDoDispositivo.forEach(item => {
-            const dataMedicao = parseDataJson(item.data);
-            if (dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
+            const dataMedicao = parseDataJson(item);
+            if (dataMedicao) {
                 const chaveMs = arredondarHoras(dataMedicao).getTime();
+
                 if (timelineMap.has(chaveMs)) {
-                    timelineMap.get(chaveMs).altitude = item.altitude;
-                    timelineMap.get(chaveMs).pressao = item.pressao;
+                    const slot = timelineMap.get(chaveMs);
+
+                    if (item.altitude !== undefined && item.altitude !== null) {
+                        slot.somasAltitude += Number(item.altitude);
+                        slot.qtdAltitude += 1;
+                    }
+                    if (item.pressao !== undefined && item.pressao !== null) {
+                        slot.somasPressao += Number(item.pressao);
+                        slot.qtdPressao += 1;
+                    }
                 }
             }
         });
 
-        // --- 5. PREPARAR DADOS PARA O CHART.JS ---
-        const slots = Array.from(timelineMap.values());
+        // --- 5. PREPARAR DADOS CONSOLIDADOS PARA O CHART.JS ---
+        const slots = Array.from(timelineMap.values()).map(slot => {
+            return {
+                horaFormatada: slot.horaFormatada,
+                altitude: slot.qtdAltitude > 0 ? Number((slot.somasAltitude / slot.qtdAltitude).toFixed(1)) : null,
+                pressao: slot.qtdPressao > 0 ? Number((slot.somasPressao / slot.qtdPressao).toFixed(2)) : null
+            };
+        });
+
         const labels = slots.map(s => s.horaFormatada);
         const dadosAltitude = slots.map(s => s.altitude);
         const dadosPressao = slots.map(s => s.pressao);
 
         // --- 6. RENDERIZAÇÃO DO GRÁFICO DE BARRAS DUPLAS ---
         const ctxAltPress = document.getElementById('graficoAltitude');
-        if (!ctxAltPress) return;
+        if (!ctxAltPress) {
+            console.error("❌ [DOM ERRO] Canvas com ID 'graficoAltitude' não foi encontrado no HTML!");
+            return;
+        }
 
         if (graficoAltPress) {
             graficoAltPress.destroy();
@@ -156,7 +209,9 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
                     x: {
                         grid: { display: false },
                         ticks: {
-                            maxRotation: 0,
+                            autoSkip: false,           // FORÇA A EXIBIÇÃO DE TODOS OS LABELS DE 1H
+                            maxRotation: 45,
+                            minRotation: 0,
                             callback: function (val) {
                                 return this.getLabelForValue(val);
                             }
@@ -184,7 +239,7 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
         });
 
     } catch (error) {
-        console.error("Erro ao renderizar o gráfico de Altitude e Pressão:", error);
+        console.error("💥 [EXCEÇÃO CRÍTICA] Erro no gráfico de Altitude e Pressão:", error);
     }
 }
 
@@ -192,42 +247,51 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
 // 2. INICIALIZADOR PRINCIPAL (DROPDOWN / MODO AUTO)
 // =============================================================
 export async function initGraficoAlt(dispositivoId = 'auto', exibir = 'Auto') {
-    if (intervalAutoAltPress) {
-        clearInterval(intervalAutoAltPress);
-        intervalAutoAltPress = null;
+    try {
+        if (intervalAutoAltPress) {
+            clearInterval(intervalAutoAltPress);
+            intervalAutoAltPress = null;
+        }
+
+        const dropOptions = document.querySelector('.dropdown-options');
+        if (dropOptions) dropOptions.classList.remove('Select-active');
+
+        const dadosGerais = await carregarDadosGerais();
+        const dispositivos = dadosGerais ? dadosGerais.dispositivos : [];
+
+        // Popula o menu suspenso dinamicamente
+        if (typeof popularDropdownDispositivos === 'function') {
+            popularDropdownDispositivos(dispositivos, 'initGraficoAlt', '#select-alti .dropdown-options');
+        }
+
+        // MODO AUTOMÁTICO ('auto' ou -2)
+        if (dispositivoId === 'auto' || dispositivoId === -2) {
+            if (!dispositivos || dispositivos.length === 0) {
+                console.warn("⚠️ [AVISO ALTI] Nenhum dispositivo disponível para o modo automático.");
+                return;
+            }
+
+            const rodarCicloAuto = async () => {
+                const dispAtual = dispositivos[indiceDispositivoAutoAltPress];
+                await atualizarGraficoAltPress(dispAtual, true);
+                indiceDispositivoAutoAltPress = (indiceDispositivoAutoAltPress + 1) % dispositivos.length;
+            };
+
+            await rodarCicloAuto();
+            intervalAutoAltPress = setInterval(rodarCicloAuto, 15000);
+            return;
+        }
+
+        // MODO SELEÇÃO MANUAL DE DISPOSITIVO
+        const elSeletor = document.querySelector('[data-seVa-2]');
+        if (elSeletor) elSeletor.innerText = exibir;
+
+        await atualizarGraficoAltPress(dispositivoId, false);
+
+    } catch (erroInit) {
+        console.error("💥 [EXCEÇÃO CRÍTICA] Erro no initGraficoAlt():", erroInit);
     }
-
-    const dropOptions = document.querySelector('.dropdown-options');
-    if (dropOptions) dropOptions.classList.remove('Select-active');
-
-    const { dispositivos } = await carregarDadosGerais();
-
-    // Popula o menu suspenso dinamicamente com as opções
-    if (typeof popularDropdownDispositivos === 'function') {
-        popularDropdownDispositivos(dispositivos, 'initGraficoAlt', '#select-alti .dropdown-options');
-    }
-
-    // MODO AUTOMÁTICO ('auto' ou -2)
-    if (dispositivoId === 'auto' || dispositivoId === -2) {
-        if (!dispositivos || dispositivos.length === 0) return;
-
-        const rodarCicloAuto = async () => {
-            const dispAtual = dispositivos[indiceDispositivoAutoAltPress];
-            await atualizarGraficoAltPress(dispAtual, true);
-            indiceDispositivoAutoAltPress = (indiceDispositivoAutoAltPress + 1) % dispositivos.length;
-        };
-
-        await rodarCicloAuto();
-        intervalAutoAltPress = setInterval(rodarCicloAuto, 15000);
-        return;
-    }
-
-    // MODO SELEÇÃO MANUAL DE DISPOSITIVO
-    const elSeletor = document.querySelector('[data-seVa-2]');
-    if (elSeletor) elSeletor.innerText = exibir;
-
-    await atualizarGraficoAltPress(dispositivoId, false);
 }
 
-// Expõe a função globalmente para compatibilidade com eventos onclick do HTML
+// Expõe a função globalmente
 window.initGraficoAlt = initGraficoAlt;

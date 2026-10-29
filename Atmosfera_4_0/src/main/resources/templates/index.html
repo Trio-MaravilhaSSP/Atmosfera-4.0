@@ -86,24 +86,24 @@
 
             <div class="Options">
 
-                <div class="Option" onclick="changeWindow('temperatura')">
+                <div class="Option" onclick="changeWindow('temperatura'), initGraficoTemp('auto', 'Auto')">
                     <img class="Aside-Temp" src="../static/images/icons/thermometer-icon-inactive.png"
                         alt="Temp_Icon" />
                     <p class="BeautyUnderline">Temp</p>
                 </div>
 
-                <div class="Option" onclick="changeWindow('wifi')">
+                <div class="Option" onclick="changeWindow('wifi'), initGraficoWifi('auto', 'Auto')">
                     <img class="Aside-Wifi" src="../static/images/icons/wifi-icon-inactive.png" alt="Wifi_Icon" />
                     <p class="BeautyUnderline">Wifi</p>
                 </div>
 
-                <div class="Option" onclick="changeWindow('altitude')">
+                <div class="Option" onclick="changeWindow('altitude'), initGraficoAlt('auto', 'Auto')">
                     <img class="Aside-Alti" src="../static/images/icons/altitude-icon-inactive.png"
                         alt="Altitude_Icon" />
                     <p class="BeautyUnderline">Altitude</p>
                 </div>
 
-                <div class="Option" onclick="changeWindow('mapa')">
+                <div class="Option" onclick="changeWindow('mapa'), loadCards('0')">
                     <img class="Aside-Mapa" src="../static/images/icons/destination-icon-inactive.png"
                         alt="Mapa_Icon" />
                     <p class="BeautyUnderline">Mapa</p>

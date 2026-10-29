@@ -19,6 +19,22 @@ let luminosidadeChart = null;
 let intervalAuto = null;
 let indiceDispositivoAuto = 0;
 
+// Helper para obter o ID do dispositivo de forma flexível
+function obterIdDispositivo(item) {
+    if (!item) return null;
+    if (typeof item === 'number' || typeof item === 'string') return item;
+    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
+        return item.dispositivo.id;
+    }
+    return item.dispositivo ?? item.dispositivoId ?? item.id_dispositivo ?? item.idDispositivoFK ?? item.id;
+}
+
+// Helper para ler o nome do dispositivo do DTO Java (nomeDispositivo ou nome)
+function obterNomeDispositivo(disp) {
+    if (!disp) return 'Dispositivo';
+    return disp.nomeDispositivo || disp.nome || `Dispositivo ${disp.id}`;
+}
+
 // =============================================================
 // 1. MANÔMETRO DE SINAL (dBm)
 // =============================================================
@@ -70,7 +86,11 @@ export function renderizarManometro(valorSinalDbm) {
     const elementoCanvas = document.getElementById('graficoSinal');
     const valorTexto = document.getElementById('valorTexto');
 
-    if (!elementoCanvas) return;
+    if (!elementoCanvas) {
+        console.error("❌ [DOM ERRO] Canvas com ID 'graficoSinal' não foi encontrado no HTML!");
+        return;
+    }
+
     if (valorTexto) valorTexto.innerText = `${valorSinalDbm} dBm`;
 
     if (manometroChart) {
@@ -105,7 +125,10 @@ export function renderizarManometro(valorSinalDbm) {
 // =============================================================
 export function renderizarGraficoLuminosidade(historicoLuminosidade) {
     const elementoCanvas = document.getElementById('graficoLuminosidade');
-    if (!elementoCanvas) return;
+    if (!elementoCanvas) {
+        console.error("❌ [DOM ERRO] Canvas com ID 'graficoLuminosidade' não foi encontrado no HTML!");
+        return;
+    }
 
     const labels = historicoLuminosidade.map(item => item.horaFormatada);
     const valores = historicoLuminosidade.map(item => item.luminosidade);
@@ -137,6 +160,8 @@ export function renderizarGraficoLuminosidade(historicoLuminosidade) {
             maintainAspectRatio: false,
             scales: {
                 x: {
+                    autoSkip: false,
+                    stepSize: 1,
                     grid: { display: false },
                     ticks: {
                         maxRotation: 0,
@@ -158,42 +183,62 @@ export function renderizarGraficoLuminosidade(historicoLuminosidade) {
 // =============================================================
 export async function atualizarGraficoWifi(dispositivoIdOuObjeto, modoAuto = false) {
     try {
-        const { dispositivos, wifi } = await carregarDadosGerais();
+        const dadosGerais = await carregarDadosGerais();
+
+        if (!dadosGerais) {
+            console.error("❌ [ERRO WIFI] Não foi possível obter os dados de carregarDadosGerais().");
+            return;
+        }
+
+        const { dispositivos, wifi } = dadosGerais;
 
         let dispositivo;
-        if (typeof dispositivoIdOuObjeto === 'object') {
+        if (typeof dispositivoIdOuObjeto === 'object' && dispositivoIdOuObjeto !== null) {
             dispositivo = dispositivoIdOuObjeto;
         } else {
-            dispositivo = dispositivos.find(d => d.id == dispositivoIdOuObjeto);
+            dispositivo = dispositivos ? dispositivos.find(d => d.id == dispositivoIdOuObjeto) : null;
         }
 
         if (!dispositivo) {
-            console.error("Dispositivo não encontrado:", dispositivoIdOuObjeto);
+            console.error("❌ [ERRO WIFI] Dispositivo não encontrado para ID/Objeto:", dispositivoIdOuObjeto);
             return;
         }
 
         // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
-        const nomeExibicao = dispositivo.nome || `Dispositivo ${dispositivo.id}`;
+        const nomeExibicao = obterNomeDispositivo(dispositivo);
 
         const elementoSeletor = document.querySelector('[data-seVa-1]');
         if (elementoSeletor) {
             elementoSeletor.innerHTML = modoAuto ? `Auto <br> (${nomeExibicao})` : nomeExibicao;
         }
 
-        // Filtra os dados da tabela wifi.json usando a FK 'dispositivo'
-        const dadosDoDispositivo = wifi.filter(item => item.dispositivo == dispositivo.id && item.data);
+        // Filtra os dados da tabela wifi verificando FK e presença de data/dataHora via parseDataJson
+        const dadosDoDispositivo = wifi ? wifi.filter(item => {
+            const mesmoDisp = obterIdDispositivo(item) == dispositivo.id;
+            const dataValida = parseDataJson(item) !== null;
+            return mesmoDisp && dataValida;
+        }) : [];
 
         if (dadosDoDispositivo.length === 0) {
-            console.warn(`Sem registros para o dispositivo ${dispositivo.id}`);
+            console.warn(`⚠️ [AVISO WIFI] Nenhum dado com data válida encontrado para o dispositivo ID ${dispositivo.id}`);
+            renderizarManometro(-90);
+            renderizarGraficoLuminosidade([]);
             return;
         }
 
         // --- 2. DETERMINAR JANELA DE TEMPO (ÚLTIMAS 24 HORAS) ---
         let dataMaisRecente = null;
         dadosDoDispositivo.forEach(item => {
-            const d = parseDataJson(item.data);
-            if (!dataMaisRecente || d > dataMaisRecente) dataMaisRecente = d;
+            const d = parseDataJson(item);
+            if (d && (!dataMaisRecente || d.getTime() > dataMaisRecente.getTime())) {
+                dataMaisRecente = d;
+            }
         });
+
+        if (!dataMaisRecente) {
+            console.error(`❌ [ERRO WIFI] Nenhuma data válida encontrada no histórico do dispositivo ID ${dispositivo.id}`);
+            return;
+        }
 
         const fimCiclo = arredondarHoras(dataMaisRecente);
         const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
@@ -224,8 +269,8 @@ export async function atualizarGraficoWifi(dispositivoIdOuObjeto, modoAuto = fal
 
         // --- 4. AGRUPAR DADOS DE 1 EM 1 HORA E CALCULAR MÉDIAS ---
         dadosDoDispositivo.forEach(item => {
-            const dataMedicao = parseDataJson(item.data);
-            if (dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
+            const dataMedicao = parseDataJson(item);
+            if (dataMedicao && dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
                 const chaveMs = arredondarHoras(dataMedicao).getTime();
 
                 if (timelineMap.has(chaveMs)) {
@@ -270,49 +315,58 @@ export async function atualizarGraficoWifi(dispositivoIdOuObjeto, modoAuto = fal
         renderizarGraficoLuminosidade(slots);
 
     } catch (error) {
-        console.error("Erro ao atualizar os gráficos de WiFi:", error);
+        console.error("💥 [EXCEÇÃO CRÍTICA] Erro ao atualizar os gráficos de WiFi:", error);
     }
 }
 
 // =============================================================
 // 4. INICIALIZADOR PRINCIPAL (DROPDOWN / MODO AUTO)
 // =============================================================
-export async function initGraficoWifi(dispositivoId, exibir) {
-    if (intervalAuto) {
-        clearInterval(intervalAuto);
-        intervalAuto = null;
+export async function initGraficoWifi(dispositivoId = 'auto', exibir = 'Auto') {
+    try {
+        if (intervalAuto) {
+            clearInterval(intervalAuto);
+            intervalAuto = null;
+        }
+
+        const dropOptions = document.querySelector('.dropdown-options');
+        if (dropOptions) dropOptions.classList.remove('Select-active');
+
+        const dadosGerais = await carregarDadosGerais();
+        const dispositivos = dadosGerais ? dadosGerais.dispositivos : [];
+
+        // Popula o menu suspenso dinamicamente se a função utilitária existir
+        if (typeof popularDropdownDispositivos === 'function') {
+            popularDropdownDispositivos(dispositivos, 'initGraficoWifi', '#select-wifi .dropdown-options');
+        }
+
+        // MODO AUTOMÁTICO ('auto')
+        if (dispositivoId === 'auto' || dispositivoId === -2) {
+            if (!dispositivos || dispositivos.length === 0) {
+                console.warn("⚠️ [AVISO WIFI] Nenhum dispositivo disponível para o modo automático.");
+                return;
+            }
+
+            const rodarCicloAuto = async () => {
+                const dispAtual = dispositivos[indiceDispositivoAuto];
+                await atualizarGraficoWifi(dispAtual, true);
+                indiceDispositivoAuto = (indiceDispositivoAuto + 1) % dispositivos.length;
+            };
+
+            await rodarCicloAuto();
+            intervalAuto = setInterval(rodarCicloAuto, 15000);
+            return;
+        }
+
+        // MODO SELEÇÃO MANUAL DE DISPOSITIVO
+        const elSeletor = document.querySelector('[data-seVa-1]');
+        if (elSeletor) elSeletor.innerText = exibir;
+
+        await atualizarGraficoWifi(dispositivoId, false);
+
+    } catch (erroInit) {
+        console.error("💥 [EXCEÇÃO CRÍTICA] Erro na inicialização do initGraficoWifi():", erroInit);
     }
-
-    const dropOptions = document.querySelector('.dropdown-options');
-    if (dropOptions) dropOptions.classList.remove('Select-active');
-
-    const { dispositivos } = await carregarDadosGerais();
-
-    // Popula o menu suspenso dinamicamente se a função utilitária existir
-    if (typeof popularDropdownDispositivos === 'function') {
-        popularDropdownDispositivos(dispositivos, 'initGraficoWifi', '#select-wifi .dropdown-options');
-    }
-
-    // MODO AUTOMÁTICO ('auto')
-    if (dispositivoId === 'auto') {
-        if (!dispositivos || dispositivos.length === 0) return;
-
-        const rodarCicloAuto = async () => {
-            const dispAtual = dispositivos[indiceDispositivoAuto];
-            await atualizarGraficoWifi(dispAtual, true);
-            indiceDispositivoAuto = (indiceDispositivoAuto + 1) % dispositivos.length;
-        };
-
-        await rodarCicloAuto();
-        intervalAuto = setInterval(rodarCicloAuto, 15000);
-        return;
-    }
-
-    // MODO SELEÇÃO MANUAL DE DISPOSITIVO
-    const elSeletor = document.querySelector('[data-seVa-1]');
-    if (elSeletor) elSeletor.innerText = exibir;
-
-    await atualizarGraficoWifi(dispositivoId, false);
 }
 
 // Expõe a função globalmente para compatibilidade com os 'onclick' do HTML

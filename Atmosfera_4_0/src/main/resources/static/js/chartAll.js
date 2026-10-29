@@ -29,25 +29,49 @@ export async function carregarDadosGerais() {
 
 // Função para o teste com o backend
 export async function carregarDadosGerais() {
-if (!cache.dispositivos || !cache.wifi || !cache.temp || !cache.alti) {
-         const baseUrl = "http://localhost:8080/";
-         const [disp, atua, wifi, temp, alti] = await Promise.all([
-             fetch(baseUrl + "dispositivo").then(r => r.json()),
-             fetch(baseUrl + "atuador").then(r => r.json()),
-             fetch(baseUrl + "dashboard/sinal").then(r => r.json()),
-             fetch(baseUrl + "dashboard/temperatura").then(r => r.json()),
-             fetch(baseUrl + "dashboard/altitude").then(r => r.json())
-         ]);
+    if (!cache.dispositivos || !cache.wifi || !cache.temp || !cache.alti) {
+        const baseUrl = "http://10.83.139.51:8080/";
+        const [disp, atua, wifi, temp, alti] = await Promise.all([
+            fetch(baseUrl + "dispositivo").then(r => r.json()),
+            fetch(baseUrl + "atuador").then(r => r.json()),
+            fetch(baseUrl + "dashboard/sinal").then(r => r.json()),
+            fetch(baseUrl + "dashboard/temperatura").then(r => r.json()),
+            fetch(baseUrl + "dashboard/altitude").then(r => r.json())
+        ]);
 
-         cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
-     }
-     return cache;
- }
+        cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
+    }
+    return cache;
+}
 
-export function parseDataJson(dataStr) {
-    if (!dataStr) return null;
-    const partes = dataStr.split(/[:\-\sT\/]/);
-    return new Date(partes[0], partes[1] - 1, partes[2], partes[3] || 0, partes[4] || 0, partes[5] || 0);
+export function parseDataJson(dado) {
+    if (!dado) return null;
+
+    // Se passou o objeto inteiro (ex: item), extrai a propriedade de data automaticamente
+    if (typeof dado === 'object') {
+        dado = dado.dataHora ?? dado.data ?? dado.data_hora ?? null;
+        if (!dado) return null;
+    }
+
+    // Se já for uma instância de Date
+    if (dado instanceof Date) return dado;
+
+    // Converte formato ISO nativamente ("2026-10-09T15:40:04")
+    const dataParsed = new Date(dado);
+    if (!isNaN(dataParsed.getTime())) {
+        return dataParsed;
+    }
+
+    // Fallback manual para formatos sem 'T' (ex: "2026-10-09 15:40:04")
+    const partes = String(dado).split(/[:\-\sT\/]/);
+    return new Date(
+        partes[0],
+        partes[1] - 1,
+        partes[2],
+        partes[3] || 0,
+        partes[4] || 0,
+        partes[5] || 0
+    );
 }
 
 export function arredondarHoras(date) {
