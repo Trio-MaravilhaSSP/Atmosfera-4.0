@@ -323,6 +323,24 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        
+                                        <!-- Luminosidade -->
+                                        <div class="param-item">
+                                            <img src="../static/images/icons/altitude.png" alt="Mountain Icon"
+                                                class="icon-small" onerror="this.style.display='none'">
+                                            <div class="param-inputs">
+                                                <div class="param-field">
+                                                    <span>Mín (lux)</span>
+                                                    <input type="number" id="luxMin" class="input-number" value="15"
+                                                        step="1">
+                                                </div>
+                                                <div class="param-field">
+                                                    <span>Máx (lux)</span>
+                                                    <input type="number" id="luxMax" class="input-number" value="120"
+                                                        step="1">
+                                                </div>
+                                            </div>
+                                        </div>
 
                                     </div>
                                 </div>
@@ -332,36 +350,9 @@
                                     <span class="section-label">Estado dos Atuadores (LEDs)</span>
                                     <div class="leds-grid">
                                         <div class="led-item">
-                                            <span class="led-title">LED 1</span>
+                                            <span class="led-title">Status</span>
                                             <label class="switch">
                                                 <input type="checkbox" id="led1" checked>
-                                                <span class="slider"></span>
-                                            </label>
-                                            <span class="led-subtext">LIGADO/DESLIGADO</span>
-                                        </div>
-
-                                        <div class="led-item">
-                                            <span class="led-title">LED 2</span>
-                                            <label class="switch">
-                                                <input type="checkbox" id="led2">
-                                                <span class="slider"></span>
-                                            </label>
-                                            <span class="led-subtext">LIGADO/DESLIGADO</span>
-                                        </div>
-
-                                        <div class="led-item">
-                                            <span class="led-title">LED 3</span>
-                                            <label class="switch">
-                                                <input type="checkbox" id="led3">
-                                                <span class="slider"></span>
-                                            </label>
-                                            <span class="led-subtext">LIGADO/DESLIGADO</span>
-                                        </div>
-
-                                        <div class="led-item">
-                                            <span class="led-title">LED 4</span>
-                                            <label class="switch">
-                                                <input type="checkbox" id="led4">
                                                 <span class="slider"></span>
                                             </label>
                                             <span class="led-subtext">LIGADO/DESLIGADO</span>
@@ -869,6 +860,7 @@
 <script src="../static/js/chartWifi.js" type="module"></script>
 <script src="../static/js/chartAlti.js" type="module"></script>
 <script src="../static/js/config/mapaInterativo.js"></script>
+<script src="../static/js/robo.js" type="module"></script>
 <script src="../static/js/mapa.js" type="module"></script>
 
 </html>
