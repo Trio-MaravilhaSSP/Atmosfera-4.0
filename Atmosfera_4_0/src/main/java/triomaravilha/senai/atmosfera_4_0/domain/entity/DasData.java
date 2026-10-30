@@ -8,19 +8,29 @@ public record DasData (
         int dispositivo,
         Long sala,
         LocalDateTime data,
-        float temperatura,
-        float umidade,
-        float sinal,
-        float altitude,
-        float luminosidade,
-        float pressao,
-        float velVento,
-        int direcaoVento
+        Float temperatura,
+        Float umidade,
+        Integer sinal,
+        Float altitude,
+        Float luminosidade,
+        Float pressao,
+        Float velVento,
+        Integer direcaoVento
 ){
     public DasData{
+
+        if (temperatura == null) temperatura = new Float(0.0);
+        if (umidade == null) umidade = new Float(0.0);
+        if (sinal == null)  sinal = new Integer(0);
+        if (altitude == null)  altitude = new Float(0.0);
+        if (luminosidade == null)  luminosidade = new Float(0.0);
+        if (pressao == null)  pressao = new Float(0.0);
+        if (velVento == null)  velVento = new Float(0.0);
+        if(direcaoVento == null) direcaoVento = new Integer(0);
+
+
         temperatura = arredondar(temperatura, 2);
         umidade = arredondar(umidade,0);
-        sinal = arredondar(sinal, 0);
         altitude = arredondar(altitude,0);
         luminosidade = arredondar(luminosidade,0);
         pressao = arredondar(pressao,4);
