@@ -1,0 +1,192 @@
+header {
+    width: 100%;
+    height: 97px;
+
+    navbar {
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 97px;
+
+        display: flex;
+        flex-direction: row;
+
+        justify-content: space-between;
+
+        background: var(--cor-destaque-red);
+
+        .Logo {
+            height: 100%;
+            width: max-content;
+
+            padding: 15px 0 0 20px;
+
+            align-self: flex-start;
+        }
+
+        .Options {
+            height: 100%;
+            width: max-content;
+
+            display: flex;
+            flex-direction: row;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 70px;
+            margin-right: 20px;
+
+            .Option {
+                height: 90%;
+                width: max-content;
+
+                padding: 0 5px;
+
+                display: flex;
+                flex-direction: row;
+
+                align-items: center;
+                justify-content: center;
+
+                gap: 9px;
+
+                font-size: var(--size-font-title);
+
+                img {
+                    width: 64px;
+                    height: 64px;
+                }
+
+                p {
+                    color: var(--cor-texto-option);
+                    font-size: var(--size-font-subtitle);
+
+                    cursor: pointer !important;
+                }
+
+                &:hover {
+                    background-color: #00000025;
+                    border-radius: var(--border-rad-common);
+                    cursor: pointer;
+                    transform: scale(1.05) translateX(10px);
+                }
+            }
+        }
+    }
+
+    .Tooltip-Config {
+        position: relative;
+        display: none;
+
+        .Overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 998;
+
+            width: 100%;
+            height: 100%;
+
+            background: var(--escurecer-tela);
+
+            &:hover {
+                cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ff4d4d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E") 12 12, pointer;
+            }
+        }
+
+        .Tooltip-Conteudo {
+            position: absolute;
+            top: 122px;
+            right: 120px;
+            z-index: 999;
+
+            width: 500px;
+            height: 174px;
+
+            padding: 20px;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: start;
+            gap: 20px;
+
+            border-radius: var(--border-rad-tooltip);
+            color: var(--cor-texto-comum);
+
+            box-shadow: var(--box-shadow);
+            background: var(--cor-fundo-card);
+
+            button {
+                width: 107px;
+                height: 31px;
+
+                align-self: center;
+
+                background: var(--cor-fundo-card);
+                border: 2px solid var(--cor-texto-comum);
+                border-radius: var(--border-rad-tooltip-button);
+
+                font-size: var(--size-font-subtitle2);
+                color: var(--cor-texto-comum);
+
+                &:hover {
+                    cursor: pointer !important;
+                }
+            }
+
+            .Tema>*:hover,
+            .Image>*:hover {
+                transform: scale(1.05) translateX(10px);
+                cursor: default;
+            }
+
+            .Tema {
+                width: 100%;
+
+                display: flex;
+                flex-direction: row;
+
+                justify-content: space-between;
+
+                p {
+                    font-size: var(--size-font-title);
+                }
+            }
+
+            .Image {
+                width: 100%;
+
+                display: flex;
+                flex-direction: row;
+
+                justify-content: space-between;
+
+                p {
+                    font-size: var(--size-font-title);
+                }
+            }
+
+            a {
+                position: absolute;
+                bottom: 2px;
+
+                text-decoration: none;
+                color: var(--cor-texto-link);
+                font-size: var(--size-font-subtitle2);
+
+                &:hover {
+                    transform: scale(1.05) translateX(10px);
+                    cursor: pointer;
+                }
+                &::after {
+                    background-color: var(--cor-texto-link);
+                }
+            }
+        }
+    }
+}

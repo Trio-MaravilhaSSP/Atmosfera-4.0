@@ -1,0 +1,151 @@
+/* :root {
+    --border-rad-common: 15px;
+    --border-rad-tooltip: 15px 0px 15px 15px;
+    --border-rad-tooltip-button: 10px;
+
+    --box-shadow: 2px 4px 4px 1px rgba(255, 255, 255, 0.4);
+
+    --escurecer-tela: rgba(0, 0, 0, 0.5);
+
+    --size-font-title: 32px;
+    --size-font-subtitle: 24px;
+    --size-font-subtitle2: 20px;
+
+    --cor-texto-option: #fff;
+    --cor-texto-comum: #575757;
+    --cor-texto-link: #0000ee;
+
+    --cor-destaque-red: #DA000D;
+    --cor-destaque-wine: #590005;
+
+    --cor-fundo-card: #fff;
+    --cor-fundo-main: #d9d9d9;
+
+    --cor-fundo-body: #d9d9d9;
+    --image-fundo-body: url('../images/Senai_Background.png');
+} 
+
+=== ROOT APENAS PARA EXEMPLO ===
+
+*/
+
+.Inicio {
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 550px));
+    gap: 0px 128px;
+
+    align-items: center;
+    justify-content: center;
+
+    .TempUmi {
+        justify-content: space-between !important;
+
+        .Temp {
+            border-right: 2px solid var(--cor-texto-comum);
+        }
+
+        .preConteudo {
+            min-width: 50%;
+
+            text-align: center;
+
+            h1 {
+                margin-bottom: 25px;
+            }
+
+            .Left {
+                flex-direction: row !important;
+            }
+
+            .Right {
+                flex-direction: row-reverse !important;
+            }
+        }
+
+        .Conteudo {
+            width: 100% !important;
+            justify-content: space-between !important;
+
+            p {
+                font-size: var(--size-font-title) !important;
+            }
+        }
+    }
+
+    .Card {
+        height: 223px;
+
+        padding: 30px;
+
+        display: flex;
+        flex-direction: row;
+
+        align-items: center;
+
+        border-radius: var(--border-rad-common);
+        color: var(--cor-texto-comum);
+
+        box-shadow: var(--box-shadow);
+        background: var(--cor-fundo-card);
+
+        &:hover {
+            transform: scale(1.05) translateX(10px);
+        }
+
+        img {
+            width: 92.87px;
+            height: 92.87px;
+        }
+
+        .Img-Atuador {
+            height: min-content;
+
+            display: flex;
+            flex-direction: column;
+
+            justify-content: center;
+            align-items: center;
+
+            #inverso {
+                margin-top: -41px;
+                transform: rotate(180deg);
+            }
+        }
+
+        .Conteudo {
+            flex: 1;
+
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+
+            justify-content: start;
+            align-items: center;
+
+            .Text {
+                height: 70%;
+                width: inherit;
+
+                display: flex;
+                flex-direction: column;
+
+                justify-content: flex-end;
+                text-align: center;
+
+                gap: 30px;
+
+                p {
+                    font-size: var(--size-font-subtitle);
+                }
+
+                #statusDisp {
+                    font-size: var(--size-font-subtitle2);
+                }
+            }
+        }
+    }
+}

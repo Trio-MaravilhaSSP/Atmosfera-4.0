@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: Atmosfera_4_0
+  datasource:
+    url: jdbc:mysql://localhost:3306/atmosfera
+    username: root
+    password: 25164036Ka!
+    driver-class-name: com.mysql.cj.jdbc.Driver

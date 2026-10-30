@@ -1,0 +1,164 @@
+.Dashboard-Container {
+    display: flex;
+    flex-direction: row;
+
+    flex: 1;
+
+    width: 100%;
+    height: 100%;
+
+    aside {
+        width: 8.2%;
+
+        padding: 60px 0 0 20px;
+        border-right: 2px solid var(--cor-destaque-wine);
+
+        .Options {
+            width: 80%;
+            height: 90%;
+
+            padding: 20px 0;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: space-between;
+
+            background: var(--cor-destaque-wine);
+            border-radius: var(--border-rad-common);
+
+            .Option {
+                width: 85%;
+
+                display: flex;
+                flex-direction: column;
+
+                align-items: center;
+                justify-content: center;
+
+                gap: 9px;
+
+                img {
+                    width: 64px;
+                    height: 64px;
+                }
+
+                p {
+                    color: var(--cor-texto-option);
+                    font-size: var(--size-font-subtitle);
+
+                    cursor: pointer !important;
+                }
+
+                &:hover {
+                    padding: 5px;
+                    border-radius: var(--border-rad-common);
+                    background-color: #00000025;
+                    transform: scale(1.05) translateY(-10px);
+
+                    .Aside-Temp {
+                        content: url('../images/icons/thermometer-icon-active.png');
+                    }
+
+                    .Aside-Wifi {
+                        content: url('../images/icons/wifi-icon-active.png');
+                    }
+
+                    .Aside-Alti {
+                        content: url('../images/icons/altitude-icon-active.png');
+                    }
+
+                    .Aside-Mapa {
+                        content: url('../images/icons/destination-icon-active.png');
+                    }
+                }
+
+            }
+        }
+    }
+
+    main.imageOff {
+        --box-shadow: 2px 4px 4px 1px rgba(87, 87, 87, 0.4);
+
+        background-color: var(--cor-fundo-main);
+    }
+
+    main {
+        position: relative;
+        overflow: hidden;
+
+        width: 91.8%;
+
+        display: flex;
+        flex-direction: row;
+        background-color: #000;
+
+        section {
+            width: 100%;
+            height: 100%;
+        }
+
+        .section-content {
+            display: none;
+
+            justify-content: center;
+            align-items: center;
+        }
+
+
+
+        .active {
+            display: flex !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s forwards ease-in-out;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.3s forwards ease-in-out;
+        }
+
+
+
+        &.imageOff::before {
+            display: none;
+        }
+
+        &.imageOn::before {
+            content: '';
+
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+
+            width: 100%;
+            height: 100%;
+
+            opacity: 0.50;
+            background-image: var(--image-fundo-body);
+            background-size: cover;
+            background-position: center;
+        }
+        &.imageOnDark::before {
+            opacity: 0.25;
+        }
+
+        &>* {
+            position: relative;
+            z-index: 1;
+        }
+    }
+
+    &.tela-autenticacao-ativa {
+        aside {
+            display: none;
+        }
+
+        main {
+            width: 100%;
+        }
+    }
+}
