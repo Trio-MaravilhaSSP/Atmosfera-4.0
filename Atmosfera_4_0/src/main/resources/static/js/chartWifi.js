@@ -9,13 +9,14 @@ import {
     formatarHoraMinuto,
     formatarDataHoraCompleta,
     dbmParaPorcentagem,
-    popularDropdownDispositivos
+    popularDropdownDispositivos,
+    obterIdDispositivo,
+    obterNomeDispositivo,
+    obterSinalWifi
 } from './chartAll.js';
 
-// Instâncias locais dos gráficos do Chart.js
 let manometroChart = null;
 let luminosidadeChart = null;
-
 let intervalAuto = null;
 let indiceDispositivoAuto = 0;
 
@@ -26,25 +27,6 @@ if (typeof Chart !== 'undefined') {
     Chart.defaults.font.family = 'Inter';
 }
 
-// Helper para obter o ID do dispositivo de forma flexível
-function obterIdDispositivo(item) {
-    if (!item) return null;
-    if (typeof item === 'number' || typeof item === 'string') return item;
-    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
-        return item.dispositivo.id;
-    }
-    return item.dispositivo ?? item.dispositivoId ?? item.id_dispositivo ?? item.idDispositivoFK ?? item.id;
-}
-
-// Helper para ler o nome do dispositivo do DTO Java (nomeDispositivo ou nome)
-function obterNomeDispositivo(disp) {
-    if (!disp) return 'Dispositivo';
-    return disp.nomeDispositivo || disp.nome || `Dispositivo ${disp.id}`;
-}
-
-// =============================================================
-// 1. MANÔMETRO DE SINAL (dBm)
-// =============================================================
 const gaugeNeedle = {
     id: 'gaugeNeedle',
     afterDatasetDraw(chart) {
@@ -123,9 +105,6 @@ export function renderizarManometro(valorSinalDbm) {
     });
 }
 
-// =============================================================
-// 2. BARRAS DE LUMINOSIDADE (LUX)
-// =============================================================
 export function renderizarGraficoLuminosidade(historicoLuminosidade) {
     const elementoCanvas = document.getElementById('graficoLuminosidade');
     if (!elementoCanvas) return;
@@ -176,9 +155,6 @@ export function renderizarGraficoLuminosidade(historicoLuminosidade) {
     });
 }
 
-// =============================================================
-// 3. ATUALIZADOR PRINCIPAL DO MÓDULO WIFI & LUMINOSIDADE
-// =============================================================
 export async function atualizarGraficoWifi(dispositivoIdOuObjeto, modoAuto = false) {
     try {
         const { dispositivos, wifi } = await carregarDadosGerais();
@@ -195,28 +171,32 @@ export async function atualizarGraficoWifi(dispositivoIdOuObjeto, modoAuto = fal
             return;
         }
 
-        // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
-        const nomeExibicao = dispositivo.nome || `Dispositivo ${dispositivo.id}`;
+        const nomeExibicao = obterNomeDispositivo(dispositivo);
 
         const elementoSeletor = document.querySelector('[data-seVa-1]');
         if (elementoSeletor) {
             elementoSeletor.innerHTML = modoAuto ? `Auto <br> (${nomeExibicao})` : nomeExibicao;
         }
 
-        // Filtra os dados da tabela wifi.json usando a FK 'dispositivo'
-        const dadosDoDispositivo = wifi.filter(item => item.dispositivo == dispositivo.id && item.data);
+        const dadosDoDispositivo = wifi.filter(item => {
+            return obterIdDispositivo(item) == dispositivo.id && parseDataJson(item) !== null;
+        });
 
         if (dadosDoDispositivo.length === 0) {
             console.warn(`Sem registros para o dispositivo ${dispositivo.id}`);
             return;
         }
 
-        // --- 2. DETERMINAR JANELA DE TEMPO (ÚLTIMAS 24 HORAS) ---
         let dataMaisRecente = null;
         dadosDoDispositivo.forEach(item => {
-            const d = parseDataJson(item.data);
-            if (!dataMaisRecente || d > dataMaisRecente) dataMaisRecente = d;
+            const d = parseDataJson(item);
+            if (d && (!dataMaisRecente || d > dataMaisRecente)) dataMaisRecente = d;
         });
+
+        if (!dataMaisRecente) {
+            console.warn("Sem data válida para WiFi/Sinal.");
+            return;
+        }
 
         const fimCiclo = arredondarHoras(dataMaisRecente);
         const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
@@ -227,7 +207,6 @@ export async function atualizarGraficoWifi(dispositivoIdOuObjeto, modoAuto = fal
             elIntervalo24h.innerText = metrica24h;
         }
 
-        // --- 3. CRIAR OS 24 SLOTS HORÁRIOS ---
         const timelineMap = new Map();
         let ponteiroTempo = new Date(inicioCiclo);
 
@@ -245,10 +224,9 @@ export async function atualizarGraficoWifi(dispositivoIdOuObjeto, modoAuto = fal
             ponteiroTempo.setHours(ponteiroTempo.getHours() + 1);
         }
 
-        // --- 4. AGRUPAR DADOS DE 1 EM 1 HORA E CALCULAR MÉDIAS ---
         dadosDoDispositivo.forEach(item => {
-            const dataMedicao = parseDataJson(item.data);
-            if (dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
+            const dataMedicao = parseDataJson(item);
+            if (dataMedicao && dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
                 const chaveMs = arredondarHoras(dataMedicao).getTime();
 
                 if (timelineMap.has(chaveMs)) {
@@ -258,15 +236,16 @@ export async function atualizarGraficoWifi(dispositivoIdOuObjeto, modoAuto = fal
                         slot.somasLuminosidade += Number(item.luminosidade);
                         slot.qtdLuminosidade += 1;
                     }
-                    if (item.sinal !== undefined && item.sinal !== null) {
-                        slot.somasSinal += Number(item.sinal);
+
+                    const valSinal = obterSinalWifi(item);
+                    if (valSinal !== null) {
+                        slot.somasSinal += Number(valSinal);
                         slot.qtdSinal += 1;
                     }
                 }
             }
         });
 
-        // Consolida os valores das médias calculadas em cada hora
         const slots = Array.from(timelineMap.values()).map(slot => {
             return {
                 horaFormatada: slot.horaFormatada,
@@ -275,7 +254,6 @@ export async function atualizarGraficoWifi(dispositivoIdOuObjeto, modoAuto = fal
             };
         });
 
-        // --- 5. ATUALIZAR INDICADORES COM O ÚLTIMO SLOT COM DADOS ---
         const slotsComDados = slots.filter(s => s.sinal !== null);
         const ultimoSlot = slotsComDados.length > 0 ? slotsComDados[slotsComDados.length - 1] : null;
 
@@ -289,7 +267,6 @@ export async function atualizarGraficoWifi(dispositivoIdOuObjeto, modoAuto = fal
             elLumi.innerText = `${luxExibicao} Lux`;
         }
 
-        // --- 6. ATUALIZAR GRÁFICO DE LUMINOSIDADE (BARRAS DE 1H) ---
         renderizarGraficoLuminosidade(slots);
 
     } catch (error) {
@@ -297,9 +274,6 @@ export async function atualizarGraficoWifi(dispositivoIdOuObjeto, modoAuto = fal
     }
 }
 
-// =============================================================
-// 4. INICIALIZADOR PRINCIPAL (DROPDOWN / MODO AUTO)
-// =============================================================
 export async function initGraficoWifi(dispositivoId, exibir) {
     if (intervalAuto) {
         clearInterval(intervalAuto);
@@ -311,12 +285,10 @@ export async function initGraficoWifi(dispositivoId, exibir) {
 
     const { dispositivos } = await carregarDadosGerais();
 
-    // Popula o menu suspenso dinamicamente se a função utilitária existir
     if (typeof popularDropdownDispositivos === 'function') {
         popularDropdownDispositivos(dispositivos, 'initGraficoWifi', '#select-wifi .dropdown-options');
     }
 
-    // MODO AUTOMÁTICO ('auto')
     if (dispositivoId === 'auto') {
         if (!dispositivos || dispositivos.length === 0) return;
 
@@ -331,12 +303,10 @@ export async function initGraficoWifi(dispositivoId, exibir) {
         return;
     }
 
-    // MODO SELEÇÃO MANUAL DE DISPOSITIVO
     const elSeletor = document.querySelector('[data-seVa-1]');
     if (elSeletor) elSeletor.innerText = exibir;
 
     await atualizarGraficoWifi(dispositivoId, false);
 }
 
-// Expõe a função globalmente para compatibilidade com os 'onclick' do HTML
 window.initGraficoWifi = initGraficoWifi;

@@ -1,6 +1,5 @@
 // chartAll.js
 
-// Caches globais compartilhados no módulo
 let cache = {
     dispositivos: null,
     atuadores: null,
@@ -9,48 +8,112 @@ let cache = {
     alti: null
 };
 
-
 export async function carregarDadosGerais() {
+    console.log("🔄 Executando carregarDadosGerais...");
+
     try {
-        // Função para o teste com o backend
-        if (!cache.dispositivos || !cache.wifi || !cache.temp || !cache.alti) {
-            const baseUrl = "http://10.83.138.31:8080/";
-            const [disp, atua, wifi, temp, alti] = await Promise.all([
-                fetch(baseUrl + "dispositivo").then(r => r.json()),
-                fetch(baseUrl + "atuador").then(r => r.json()),
-                fetch(baseUrl + "dashboard/sinal").then(r => r.json()),
-                fetch(baseUrl + "dashboard/temperatura").then(r => r.json()),
-                fetch(baseUrl + "dashboard/altitude").then(r => r.json())
-            ]);
+        const baseUrl = "http://10.83.138.31:8080";
 
-            cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
-            // console.log(disp, atua, wifi, temp, alti)
-        }
+        const [disp, atua, wifi, temp, alti] = await Promise.all([
+            fetch(`${baseUrl}/dispositivo`).then(r => {
+                if (!r.ok) throw new Error(`Erro /dispositivo: ${r.status}`);
+                return r.json();
+            }),
+            fetch(`${baseUrl}/atuador`).then(r => {
+                if (!r.ok) throw new Error(`Erro /atuador: ${r.status}`);
+                return r.json();
+            }),
+            fetch(`${baseUrl}/dashboard/sinal`).then(r => {
+                if (!r.ok) throw new Error(`Erro /dashboard/sinal: ${r.status}`);
+                return r.json();
+            }),
+            fetch(`${baseUrl}/dashboard/temperatura`).then(r => {
+                if (!r.ok) throw new Error(`Erro /dashboard/temperatura: ${r.status}`);
+                return r.json();
+            }),
+            fetch(`${baseUrl}/dashboard/altitude`).then(r => {
+                if (!r.ok) throw new Error(`Erro /dashboard/altitude: ${r.status}`);
+                return r.json();
+            })
+        ]);
+
+        console.log("✅ Dados da API recebidos com sucesso:", { disp, atua, wifi, temp, alti });
+        cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
         return cache;
-    } catch (e) {
-        // Função para o teste sem o backend
-        if (!cache.dispositivos || !cache.wifi || !cache.temp || !cache.alti) {
-            const baseUrl = "http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/";
-            const [disp, atua, wifi, temp, alti] = await Promise.all([
-                fetch(baseUrl + "dispositivo.json").then(r => r.json()),
-                fetch(baseUrl + "atuador.json").then(r => r.json()),
-                fetch(baseUrl + "wifi.json").then(r => r.json()),
-                fetch(baseUrl + "temp.json").then(r => r.json()),
-                fetch(baseUrl + "alti.json").then(r => r.json())
-            ]);
 
-            cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
-            console.error("Erro: " + e)
-            console.warn("Devido ao erro de requisição de dados, estão sendo requisitado dandos exemplares fixos!")
+    } catch (e) {
+        console.error("❌ Falha na requisição principal:", e);
+
+        if (!cache.dispositivos) {
+            console.warn("⚠️ Buscando dados nos arquivos JSON locais...");
+            const baseUrlLocal = "http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/";
+
+            try {
+                const [disp, atua, wifi, temp, alti] = await Promise.all([
+                    fetch(baseUrlLocal + "dispositivo.json").then(r => r.json()),
+                    fetch(baseUrlLocal + "atuador.json").then(r => r.json()),
+                    fetch(baseUrlLocal + "wifi.json").then(r => r.json()),
+                    fetch(baseUrlLocal + "temp.json").then(r => r.json()),
+                    fetch(baseUrlLocal + "alti.json").then(r => r.json())
+                ]);
+                cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
+            } catch (errLocal) {
+                console.error("❌ Erro ao carregar ficheiros locais:", errLocal);
+                cache = { dispositivos: [], atuadores: [], wifi: [], temp: [], alti: [] };
+            }
         }
         return cache;
     }
 }
 
-export function parseDataJson(dataStr) {
-    if (!dataStr) return null;
-    const partes = dataStr.split(/[:\-\sT\/]/);
-    return new Date(partes[0], partes[1] - 1, partes[2], partes[3] || 0, partes[4] || 0, partes[5] || 0);
+// Extrai o ID do dispositivo com suporte a objeto ou valor primitivo
+export function obterIdDispositivo(item) {
+    if (!item) return null;
+    if (typeof item === 'number' || typeof item === 'string') return item;
+    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
+        return item.dispositivo.id;
+    }
+    return item.dispositivo ?? item.dispositivoId ?? item.id_dispositivo ?? item.id;
+}
+
+// Extrai o nome do dispositivo respeitando a resposta do Java (nomeDispositivo)
+export function obterNomeDispositivo(disp) {
+    if (!disp) return 'Dispositivo';
+    return disp.nomeDispositivo || disp.nome || `Dispositivo ${disp.id}`;
+}
+
+// Extrai o nível do sinal com fallback seguro (intensidadeWifi ou sinal)
+export function obterSinalWifi(item) {
+    if (!item) return -90;
+    return item.intensidadeWifi ?? item.sinal ?? -90;
+}
+
+// Realiza o parse flexível da data (suporta dataHora ou data)
+export function parseDataJson(dado) {
+    if (!dado) return null;
+
+    if (typeof dado === 'object' && !(dado instanceof Date)) {
+        dado = dado.dataHora ?? dado.data ?? dado.timestamp ?? null;
+        if (!dado) return null;
+    }
+
+    if (dado instanceof Date) return dado;
+
+    const dataParsed = new Date(dado);
+    if (!isNaN(dataParsed.getTime())) return dataParsed;
+
+    const partes = String(dado).split(/[:\-\sT\/]/);
+    if (partes.length >= 3) {
+        return new Date(
+            partes[0],
+            (partes[1] || 1) - 1,
+            partes[2] || 1,
+            partes[3] || 0,
+            partes[4] || 0,
+            partes[5] || 0
+        );
+    }
+    return null;
 }
 
 export function arredondarHoras(date) {
@@ -79,16 +142,7 @@ export function dbmParaPorcentagem(dbm) {
     return ((dbm - minDbm) / (maxDbm - minDbm)) * 100;
 }
 
-// chartAll.js
-
-/**
- * Preenche o elemento HTML do Dropdown com os dispositivos vindos do dispositivo.json
- * @param {Array} listaDispositivos - Array de objetos do dispositivo.json
- * @param {String} nomeFuncaoCallback - Nome da função JS a ser chamada no onclick (ex: 'initGraficoWifi')
- */
-// chartAll.js
 export function popularDropdownDispositivos(listaDispositivos, nomeFuncaoCallback, seletorContainer) {
-    // Procura APENAS o dropdown do card específico
     const dropOptions = document.querySelector(seletorContainer);
     if (!dropOptions || !listaDispositivos) return;
 
@@ -99,7 +153,7 @@ export function popularDropdownDispositivos(listaDispositivos, nomeFuncaoCallbac
     `;
 
     listaDispositivos.forEach(dispositivo => {
-        const nomeFormatado = dispositivo.nome || `Dispositivo ${dispositivo.id}`;
+        const nomeFormatado = obterNomeDispositivo(dispositivo);
 
         htmlOptions += `
             <div class="option" onclick="${nomeFuncaoCallback}('${dispositivo.id}', '${nomeFormatado}')">

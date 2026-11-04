@@ -8,10 +8,11 @@ import {
     arredondarHoras, 
     formatarHoraMinuto, 
     formatarDataHoraCompleta,
-    popularDropdownDispositivos
+    popularDropdownDispositivos,
+    obterIdDispositivo,
+    obterNomeDispositivo
 } from './chartAll.js';
 
-// Instância local do gráfico do Chart.js
 let graficoAltPress = null;
 let intervalAutoAltPress = null;
 let indiceDispositivoAutoAltPress = 0;
@@ -23,25 +24,6 @@ if (typeof Chart !== 'undefined') {
     Chart.defaults.font.family = 'Inter';
 }
 
-// Helper para obter o ID do dispositivo de forma flexível
-function obterIdDispositivo(item) {
-    if (!item) return null;
-    if (typeof item === 'number' || typeof item === 'string') return item;
-    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
-        return item.dispositivo.id;
-    }
-    return item.dispositivo ?? item.dispositivoId ?? item.id_dispositivo ?? item.idDispositivoFK ?? item.id;
-}
-
-// Helper para ler o nome do dispositivo do DTO Java (nomeDispositivo ou nome)
-function obterNomeDispositivo(disp) {
-    if (!disp) return 'Dispositivo';
-    return disp.nomeDispositivo || disp.nome || `Dispositivo ${disp.id}`;
-}
-
-// =============================================================
-// 1. ATUALIZADOR PRINCIPAL DO GRÁFICO DE ALTITUDE E PRESSÃO
-// =============================================================
 export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto = false) {
     try {
         const { dispositivos, alti } = await carregarDadosGerais();
@@ -58,8 +40,7 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
             return;
         }
 
-        // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
-        const nomeExibicao = dispositivo.nome || `Dispositivo ${dispositivo.id}`;
+        const nomeExibicao = obterNomeDispositivo(dispositivo);
 
         const elementoSeletor = document.querySelector('[data-seVa-2]');
         if (elementoSeletor) {
@@ -71,8 +52,9 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
             indicadorTitulo.innerText = nomeExibicao;
         }
 
-        // Filtrar dados do alti.json usando a FK 'dispositivo'
-        const dadosDoDispositivo = alti.filter(item => item.dispositivo == dispositivo.id && item.data);
+        const dadosDoDispositivo = alti.filter(item => {
+            return obterIdDispositivo(item) == dispositivo.id && parseDataJson(item) !== null;
+        });
 
         if (dadosDoDispositivo.length === 0) {
             console.warn(`Nenhum dado de Altitude/Pressão encontrado para o dispositivo ${dispositivo.id}`);
@@ -80,16 +62,20 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
             return;
         }
 
-        // Descobre o registro mais recente
         let dataMaisRecente = null;
         dadosDoDispositivo.forEach(item => {
-            const d = parseDataJson(item.data);
-            if (!dataMaisRecente || d > dataMaisRecente) {
+            const d = parseDataJson(item);
+            if (d && (!dataMaisRecente || d > dataMaisRecente)) {
                 dataMaisRecente = d;
             }
         });
 
-        // --- 2. DEFINIR JANELA DE 24 HORAS (INTERVALO DE 1 HORA) ---
+        if (!dataMaisRecente) {
+            console.warn("Sem data válida para Altitude/Pressão.");
+            if (graficoAltPress) graficoAltPress.destroy();
+            return;
+        }
+
         const fimCiclo = arredondarHoras(dataMaisRecente);
         const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
 
@@ -99,7 +85,6 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
             elIntervalo24h.innerText = metrica24h;
         }
 
-        // --- 3. GERAR OS SLOTS DE 1 EM 1 HORA (24 SLOTS NO TOTAL) ---
         const timelineMap = new Map();
         let ponteiroTempo = new Date(inicioCiclo);
 
@@ -113,10 +98,9 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
             ponteiroTempo.setHours(ponteiroTempo.getHours() + 1);
         }
 
-        // --- 4. ALOCAR OS DADOS ARREDONDANDO PARA A HORA MAIS PRÓXIMA ---
         dadosDoDispositivo.forEach(item => {
-            const dataMedicao = parseDataJson(item.data);
-            if (dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
+            const dataMedicao = parseDataJson(item);
+            if (dataMedicao && dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
                 const chaveMs = arredondarHoras(dataMedicao).getTime();
                 if (timelineMap.has(chaveMs)) {
                     timelineMap.get(chaveMs).altitude = item.altitude;
@@ -125,13 +109,11 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
             }
         });
 
-        // --- 5. PREPARAR DADOS PARA O CHART.JS ---
         const slots = Array.from(timelineMap.values());
         const labels = slots.map(s => s.horaFormatada);
         const dadosAltitude = slots.map(s => s.altitude);
         const dadosPressao = slots.map(s => s.pressao);
 
-        // --- 6. RENDERIZAÇÃO DO GRÁFICO DE BARRAS DUPLAS ---
         const ctxAltPress = document.getElementById('graficoAltitude');
         if (!ctxAltPress) return;
 
@@ -211,9 +193,6 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
     }
 }
 
-// =============================================================
-// 2. INICIALIZADOR PRINCIPAL (DROPDOWN / MODO AUTO)
-// =============================================================
 export async function initGraficoAlt(dispositivoId = 'auto', exibir = 'Auto') {
     if (intervalAutoAltPress) {
         clearInterval(intervalAutoAltPress);
@@ -225,12 +204,10 @@ export async function initGraficoAlt(dispositivoId = 'auto', exibir = 'Auto') {
 
     const { dispositivos } = await carregarDadosGerais();
 
-    // Popula o menu suspenso dinamicamente com as opções
     if (typeof popularDropdownDispositivos === 'function') {
         popularDropdownDispositivos(dispositivos, 'initGraficoAlt', '#select-alti .dropdown-options');
     }
 
-    // MODO AUTOMÁTICO ('auto' ou -2)
     if (dispositivoId === 'auto' || dispositivoId === -2) {
         if (!dispositivos || dispositivos.length === 0) return;
 
@@ -245,12 +222,10 @@ export async function initGraficoAlt(dispositivoId = 'auto', exibir = 'Auto') {
         return;
     }
 
-    // MODO SELEÇÃO MANUAL DE DISPOSITIVO
     const elSeletor = document.querySelector('[data-seVa-2]');
     if (elSeletor) elSeletor.innerText = exibir;
 
     await atualizarGraficoAltPress(dispositivoId, false);
 }
 
-// Expõe a função globalmente para compatibilidade com eventos onclick do HTML
 window.initGraficoAlt = initGraficoAlt;

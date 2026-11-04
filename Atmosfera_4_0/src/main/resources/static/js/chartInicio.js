@@ -28,7 +28,7 @@ export async function atualizarSecaoInicio() {
             let totalValidos = 0;
 
             dispositivos.forEach(disp => {
-                const registrosDisp = temp.filter(t => t.dispositivo == disp.id && t.data);
+                const registrosDisp = temp.filter(t => t.dispositivo == disp.id && t.dataHora);
                 if (registrosDisp.length > 0) {
                     const ultimo = registrosDisp[registrosDisp.length - 1];
                     if (ultimo.temperatura != null) somaTemp += Number(ultimo.temperatura);
