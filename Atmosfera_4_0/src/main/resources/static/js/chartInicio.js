@@ -6,7 +6,7 @@ import { carregarDadosGerais } from './chartAll.js';
 
 export async function atualizarSecaoInicio() {
     try {
-        const { dispositivos, atuadores, temp, wifi } = await carregarDadosGerais();
+        const { dispositivos, atuadores, wifi, temp } = await carregarDadosGerais();
 
         // Helper rápido para alterar texto do DOM
         const setTexto = (id, val) => {

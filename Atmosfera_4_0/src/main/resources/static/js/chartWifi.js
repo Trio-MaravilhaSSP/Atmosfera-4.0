@@ -19,6 +19,29 @@ let luminosidadeChart = null;
 let intervalAuto = null;
 let indiceDispositivoAuto = 0;
 
+if (typeof Chart !== 'undefined') {
+    if (localStorage.getItem("tema") == 'dark') Chart.defaults.color = '#ccc';
+    else Chart.defaults.color = '#575757';
+
+    Chart.defaults.font.family = 'Inter';
+}
+
+// Helper para obter o ID do dispositivo de forma flexível
+function obterIdDispositivo(item) {
+    if (!item) return null;
+    if (typeof item === 'number' || typeof item === 'string') return item;
+    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
+        return item.dispositivo.id;
+    }
+    return item.dispositivo ?? item.dispositivoId ?? item.id_dispositivo ?? item.idDispositivoFK ?? item.id;
+}
+
+// Helper para ler o nome do dispositivo do DTO Java (nomeDispositivo ou nome)
+function obterNomeDispositivo(disp) {
+    if (!disp) return 'Dispositivo';
+    return disp.nomeDispositivo || disp.nome || `Dispositivo ${disp.id}`;
+}
+
 // =============================================================
 // 1. MANÔMETRO DE SINAL (dBm)
 // =============================================================

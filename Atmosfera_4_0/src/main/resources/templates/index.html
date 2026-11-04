@@ -219,13 +219,6 @@
             <section id="sec-dispositivos" class="section-content">
 
                 <div class="Dispositivos">
-                    <!-- HEADER -->
-                    <div class="header">
-                        <h1 class="header-title">Simulador de Dispositivo IoT (Página Robô)</h1>
-                        <span class="header-subtitle">Configure e inicie um dispositivo virtual para o envio periódico
-                            de
-                            dados</span>
-                    </div>
 
                     <!-- DASHBOARD GRID -->
                     <div class="dashboard-grid">
@@ -243,8 +236,9 @@
                                         Nome do Dispositivo
                                     </label>
                                     <div class="input-group">
-                                        <input type="text" id="deviceName" class="input-text"
-                                            placeholder="[Nome do Dispositivo]" value="Robô Sensor Principal">
+                                        <select id="deviceName" class="input-text">
+                                            <option value="Athurmorgan">Dispositivo 1</option>
+                                        </select>
                                     </div>
                                 </div>
 
@@ -260,12 +254,12 @@
                                             <div class="param-inputs">
                                                 <div class="param-field">
                                                     <span>Mín (°C)</span>
-                                                    <input type="number" id="tempMin" class="input-number" value="1"
+                                                    <input type="number" id="tempMin" class="input-number" value="10"
                                                         step="0.1">
                                                 </div>
                                                 <div class="param-field">
                                                     <span>Máx (°C)</span>
-                                                    <input type="number" id="tempMax" class="input-number" value="40"
+                                                    <input type="number" id="tempMax" class="input-number" value="30"
                                                         step="0.1">
                                                 </div>
                                             </div>
@@ -278,7 +272,7 @@
                                             <div class="param-inputs">
                                                 <div class="param-field">
                                                     <span>Mín (%)</span>
-                                                    <input type="number" id="umidMin" class="input-number" value="61"
+                                                    <input type="number" id="umidMin" class="input-number" value="60"
                                                         step="1">
                                                 </div>
                                                 <div class="param-field">
@@ -291,17 +285,17 @@
 
                                         <!-- Pressure -->
                                         <div class="param-item">
-                                            <img src="../static/images/icons/gauge.png" alt="Gauge Icon"
-                                                class="icon-small" onerror="this.style.display='none'">
+                                            <img src="../static/images/gauge-light.png" alt="Gauge Icon"
+                                                class="icon-small Icon" onerror="this.style.display='none'">
                                             <div class="param-inputs">
                                                 <div class="param-field">
                                                     <span>Mín (hPa)</span>
-                                                    <input type="number" id="pressMin" class="input-number" value="20"
+                                                    <input type="number" id="pressMin" class="input-number" value="90"
                                                         step="1">
                                                 </div>
                                                 <div class="param-field">
                                                     <span>Máx (hPa)</span>
-                                                    <input type="number" id="pressMax" class="input-number" value="100"
+                                                    <input type="number" id="pressMax" class="input-number" value="95"
                                                         step="1">
                                                 </div>
                                             </div>
@@ -309,17 +303,35 @@
 
                                         <!-- Altitude -->
                                         <div class="param-item">
-                                            <img src="../static/images/icons/altitude.png" alt="Mountain Icon"
-                                                class="icon-small" onerror="this.style.display='none'">
+                                            <img src="../static/images/altitude-light.png" alt="Mountain Icon"
+                                                class="icon-small Icon" onerror="this.style.display='none'">
                                             <div class="param-inputs">
                                                 <div class="param-field">
                                                     <span>Mín (m)</span>
-                                                    <input type="number" id="altiMin" class="input-number" value="15"
+                                                    <input type="number" id="altiMin" class="input-number" value="770"
                                                         step="1">
                                                 </div>
                                                 <div class="param-field">
                                                     <span>Máx (m)</span>
-                                                    <input type="number" id="altiMax" class="input-number" value="120"
+                                                    <input type="number" id="altiMax" class="input-number" value="800"
+                                                        step="1">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Luminosidade -->
+                                        <div class="param-item">
+                                            <img src="../static/images/lux-light.png" alt="Lux-Icon" class="icon-small Icon"
+                                                onerror="this.style.display='none'">
+                                            <div class="param-inputs">
+                                                <div class="param-field">
+                                                    <span>Mín (lux)</span>
+                                                    <input type="number" id="luxMin" class="input-number" value="200"
+                                                        step="1">
+                                                </div>
+                                                <div class="param-field">
+                                                    <span>Máx (lux)</span>
+                                                    <input type="number" id="luxMax" class="input-number" value="500"
                                                         step="1">
                                                 </div>
                                             </div>
@@ -393,7 +405,7 @@
                                 <!-- TIMESTAMP DISPLAY -->
                                 <div class="timestamp-box" style="margin-top: 16px;">
                                     <div class="timestamp-label">Data/Hora Envio:</div>
-                                    <div id="displayTimestamp" class="timestamp-value">15/10/2023 15:00:00</div>
+                                    <div id="displayTimestamp" class="timestamp-value">30/10/2026 08:00:00</div>
                                 </div>
 
                                 <!-- READINGS DISPLAY CARDS -->
@@ -403,30 +415,84 @@
                                     <div class="reading-card">
                                         <div class="card-header">
                                             <img src="../static/images/thermometer-light.png" alt="Thermometer"
-                                                class="icon-large" onerror="this.style.display='none'">
+                                                class="icon-large Icon" onerror="this.style.display='none'">
                                         </div>
-                                        <span class="card-label">Temperatura:</span>
-                                        <span id="displayTemp" class="card-value">24.2 °C</span>
+                                        <div class="card-content">
+                                            <span class="card-label">Temperatura:</span>
+                                            <span id="displayTemp" class="card-value">24.2 °C</span>
+                                        </div>
                                     </div>
 
                                     <!-- Humidity Display -->
                                     <div class="reading-card">
                                         <div class="card-header">
-                                            <img src="../static/images/drop-light.png" alt="Drop" class="icon-large"
+                                            <img src="../static/images/drop-light.png" alt="Drop"
+                                                class="icon-large Icon" onerror="this.style.display='none'">
+                                        </div>
+                                        <div class="card-content">
+                                            <span class="card-label">Umidade:</span>
+                                            <span id="displayUmid" class="card-value">65 %</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pressao Display -->
+                                    <div class="reading-card">
+                                        <div class="card-header">
+                                            <img src="../static/images/gauge-light.png" alt="Pressao"
+                                                class="icon-large Icon" onerror="this.style.display='none'">
+                                        </div>
+                                        <div class="card-content">
+                                            <span class="card-label">Pressão:</span>
+                                            <span id="displayPressao" class="card-value">93 hPa</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Altitude Display -->
+                                    <div class="reading-card">
+                                        <div class="card-header">
+                                            <img src="../static/images/altitude-light.png" alt="Alti"
+                                                class="icon-large Icon" onerror="this.style.display='none'">
+                                        </div>
+                                        <div class="card-content">
+                                            <span class="card-label">Altitude:</span>
+                                            <span id="displayAlti" class="card-value">770 m</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Luminosidade Display -->
+                                    <div class="reading-card">
+                                        <div class="card-header">
+                                            <img src="../static/images/lux-light.png" alt="Lux" class="icon-large Icon"
                                                 onerror="this.style.display='none'">
                                         </div>
-                                        <span class="card-label">Umidade:</span>
-                                        <span id="displayUmid" class="card-value">65 %</span>
+                                        <div class="card-content">
+                                            <span class="card-label">Luminosidade:</span>
+                                            <span id="displayLux" class="card-value">450 Lux</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Sinal Display -->
+                                    <div class="reading-card">
+                                        <div class="card-header">
+                                            <img src="../static/images/sinal-light.png" alt="Sinal" class="icon-large Icon"
+                                                onerror="this.style.display='none'">
+                                        </div>
+                                        <div class="card-content">
+                                            <span class="card-label">Sinal:</span>
+                                            <span id="displayLux" class="card-value">30 dBm</span>
+                                        </div>
                                     </div>
 
                                     <!-- LEDs Status Display -->
                                     <div class="reading-card">
                                         <div class="card-header">
-                                            <img src="../static/images/icons/chip.png" alt="Chip" class="icon-large"
-                                                onerror="this.style.display='none'">
+                                            <img src="../static/images/icons/chip.png" alt="Chip"
+                                                class="icon-large Icon" onerror="this.style.display='none'">
                                         </div>
-                                        <span class="card-label">LEDs:</span>
-                                        <span id="displayLeds" class="card-value">1-ON...</span>
+                                        <div class="card-content">
+                                            <span class="card-label">LEDs:</span>
+                                            <span id="displayLeds" class="card-value">1-ON...</span>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -864,11 +930,11 @@
 <script src="../static/js/cadastro.js"></script>
 <script src="../static/js/chartAll.js" type="module"></script>
 <script src="../static/js/chartInicio.js" type="module"></script>
-<script src="../static/js/chartDisp.js"></script>
 <script src="../static/js/chartTemp.js" type="module"></script>
 <script src="../static/js/chartWifi.js" type="module"></script>
 <script src="../static/js/chartAlti.js" type="module"></script>
 <script src="../static/js/config/mapaInterativo.js"></script>
+<script src="../static/js/dispositivos.js" type="module"></script>
 <script src="../static/js/mapa.js" type="module"></script>
 
 </html>

@@ -9,39 +9,43 @@ let cache = {
     alti: null
 };
 
-// Função para teste local sem o backend
+
 export async function carregarDadosGerais() {
-    if (!cache.dispositivos || !cache.wifi || !cache.temp || !cache.alti) {
-        const baseUrl = "http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/";
-        const [disp, atua, wifi, temp, alti] = await Promise.all([
-            fetch(baseUrl + "dispositivo.json").then(r => r.json()),
-            fetch(baseUrl + "atuador.json").then(r => r.json()),
-            fetch(baseUrl + "wifi.json").then(r => r.json()),
-            fetch(baseUrl + "temp.json").then(r => r.json()),
-            fetch(baseUrl + "alti.json").then(r => r.json())
-        ]);
+    try {
+        // Função para o teste com o backend
+        if (!cache.dispositivos || !cache.wifi || !cache.temp || !cache.alti) {
+            const baseUrl = "http://10.83.138.31:8080/";
+            const [disp, atua, wifi, temp, alti] = await Promise.all([
+                fetch(baseUrl + "dispositivo").then(r => r.json()),
+                fetch(baseUrl + "atuador").then(r => r.json()),
+                fetch(baseUrl + "dashboard/sinal").then(r => r.json()),
+                fetch(baseUrl + "dashboard/temperatura").then(r => r.json()),
+                fetch(baseUrl + "dashboard/altitude").then(r => r.json())
+            ]);
 
-        cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
+            cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
+            // console.log(disp, atua, wifi, temp, alti)
+        }
+        return cache;
+    } catch (e) {
+        // Função para o teste sem o backend
+        if (!cache.dispositivos || !cache.wifi || !cache.temp || !cache.alti) {
+            const baseUrl = "http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/";
+            const [disp, atua, wifi, temp, alti] = await Promise.all([
+                fetch(baseUrl + "dispositivo.json").then(r => r.json()),
+                fetch(baseUrl + "atuador.json").then(r => r.json()),
+                fetch(baseUrl + "wifi.json").then(r => r.json()),
+                fetch(baseUrl + "temp.json").then(r => r.json()),
+                fetch(baseUrl + "alti.json").then(r => r.json())
+            ]);
+
+            cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
+            console.error("Erro: " + e)
+            console.warn("Devido ao erro de requisição de dados, estão sendo requisitado dandos exemplares fixos!")
+        }
+        return cache;
     }
-    return cache;
 }
-
-// Função para o teste com o backend
-// export async function carregarDadosGerais() {
-//     if (!cache.dispositivos || !cache.wifi || !cache.temp || !cache.alti) {
-//         const baseUrl = "http://localhost:8080/";
-//         const [disp, atua, wifi, temp, alti] = await Promise.all([
-//             fetch(baseUrl + "dispositivo").then(r => r.json()),
-//             fetch(baseUrl + "atuador").then(r => r.json()),
-//             fetch(baseUrl + "dashboard/sinal").then(r => r.json()),
-//             fetch(baseUrl + "dashboard/temperatura").then(r => r.json()),
-//             fetch(baseUrl + "dashboard/altitude").then(r => r.json())
-//         ]);
-
-//         cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
-//     }
-//     return cache;
-// }
 
 export function parseDataJson(dataStr) {
     if (!dataStr) return null;

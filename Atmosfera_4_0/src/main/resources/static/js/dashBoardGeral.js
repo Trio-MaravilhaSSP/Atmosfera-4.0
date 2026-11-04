@@ -5,6 +5,7 @@ var manometroChart = null;
 var luminosidadeChart = null;
 var graficoTendencia = null;
 var graficoAltPress = null;
+var ventoChart = null; // Instância global do gráfico de rosa dos ventos
 
 var intervalAutoGeral = null;
 var indiceDispositivoAuto = 0;
@@ -16,9 +17,41 @@ var cacheWifi = null;
 var cacheTemp = null;
 var cacheAlti = null;
 
+if (typeof Chart !== 'undefined') {
+    if (localStorage.getItem("tema") == 'dark') Chart.defaults.color = '#ccc';
+    else Chart.defaults.color = '#575757';
+
+    Chart.defaults.font.family = 'Inter';
+}
+
 // =============================================================
 // FUNÇÕES UTILITÁRIAS COMPARTILHADAS
 // =============================================================
+
+// Helper para converter graus em rumo cardeal (ex: 135° -> SE)
+function formatarDirecaoVento(graus) {
+    if (graus === null || graus === undefined || isNaN(graus)) return '--';
+    const direcoes = ['N', 'NE', 'L', 'SE', 'S', 'SO', 'O', 'NO'];
+    const idx = Math.round(((Number(graus) % 360) / 45)) % 8;
+    return `${direcoes[idx]} (${graus}°)`;
+}
+
+// Helper para obter o ID do dispositivo de forma flexível do DTO
+function obterIdDispositivo(item) {
+    if (!item) return null;
+    if (typeof item === 'number' || typeof item === 'string') return item;
+    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
+        return item.dispositivo.id;
+    }
+    return item.dispositivo ?? item.dispositivoId ?? item.id_dispositivo ?? item.id_dispositivo_fk ?? item.id;
+}
+
+// Helper para obter o nome do dispositivo vindo do Spring Boot
+function obterNomeDispositivo(disp) {
+    if (!disp) return 'Dispositivo';
+    return disp.nomeDispositivo || disp.nome || `Dispositivo ${disp.id}`;
+}
+
 function arredondarHoras(date) {
     const ms = 1000 * 60 * 60;
     return new Date(Math.round(date.getTime() / ms) * ms);
@@ -36,9 +69,23 @@ function formatarHoraMinuto(date, incluirMinutos = false) {
     return `${horas}:${mins}`;
 }
 
-function parseDataJson(dataStr) {
-    if (!dataStr) return null;
-    const partes = dataStr.split(/[:\-\sT\/]/);
+function parseDataJson(dado) {
+    if (!dado) return null;
+
+    // Se passar o objeto inteiro, extrai a propriedade de data automaticamente
+    if (typeof dado === 'object') {
+        dado = dado.dataHora ?? dado.data ?? dado.timestamp ?? null;
+        if (!dado) return null;
+    }
+
+    if (dado instanceof Date) return dado;
+
+    let dataParsed = new Date(dado);
+    if (!isNaN(dataParsed.getTime())) {
+        return dataParsed;
+    }
+
+    const partes = String(dado).split(/[:\-\sT\/]/);
     return new Date(
         partes[0],
         partes[1] - 1,
@@ -59,43 +106,15 @@ function dbmParaPorcentagem(dbm) {
 
 //Função para o teste local sem o backend
 // Carrega os dados dos JSONs
-async function carregarTodosBancos() {
-    if (!cacheDispositivos || !cacheAtuadores || !cacheWifi || !cacheTemp || !cacheAlti) {
-        const baseUrl = "http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/";
-        const [dispResp, atuaResp, wifiResp, tempResp, altiResp] = await Promise.all([
-            fetch(baseUrl + "dispositivo.json"),
-            fetch(baseUrl + "atuador.json"),
-            fetch(baseUrl + "wifi.json"),
-            fetch(baseUrl + "temp.json"),
-            fetch(baseUrl + "alti.json")
-        ]);
-
-        cacheDispositivos = await dispResp.json();
-        cacheAtuadores = await atuaResp.json();
-        cacheWifi = await wifiResp.json();
-        cacheTemp = await tempResp.json();
-        cacheAlti = await altiResp.json();
-    }
-    return {
-        bancoDispositivos: cacheDispositivos,
-        bancoAtuadores: cacheAtuadores,
-        bancoWifi: cacheWifi,
-        bancoTemp: cacheTemp,
-        bancoAlti: cacheAlti
-    };
-}
-
-// Função para o teste com o backend
-// Carrega os dados dos JSONs
 // async function carregarTodosBancos() {
 //     if (!cacheDispositivos || !cacheAtuadores || !cacheWifi || !cacheTemp || !cacheAlti) {
-//         const baseUrl = "http://localhost:8080/";
+//         const baseUrl = "http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/";
 //         const [dispResp, atuaResp, wifiResp, tempResp, altiResp] = await Promise.all([
-//             fetch(baseUrl + "dispositivo"),
-//             fetch(baseUrl + "atuador"),
-//             fetch(baseUrl + "dashboard/sinal"),
-//             fetch(baseUrl + "dashboard/temperatura"),
-//             fetch(baseUrl + "dashboard/altitude")
+//             fetch(baseUrl + "dispositivo.json"),
+//             fetch(baseUrl + "atuador.json"),
+//             fetch(baseUrl + "wifi.json"),
+//             fetch(baseUrl + "temp.json"),
+//             fetch(baseUrl + "alti.json")
 //         ]);
 
 //         cacheDispositivos = await dispResp.json();
@@ -113,6 +132,43 @@ async function carregarTodosBancos() {
 //     };
 // }
 
+// Função para o teste com o backend
+// Carrega os dados dos JSONs
+async function carregarTodosBancos() {
+    try {
+        const baseUrl = "http://10.83.138.31:8080/";
+        const [dispResp, atuaResp, wifiResp, tempResp, altiResp] = await Promise.all([
+            fetch(baseUrl + "dispositivo"),
+            fetch(baseUrl + "atuador"),
+            fetch(baseUrl + "dashboard/sinal"),
+            fetch(baseUrl + "dashboard/temperatura"),
+            fetch(baseUrl + "dashboard/altitude")
+        ]);
+
+        cacheDispositivos = await dispResp.json();
+        cacheAtuadores = await atuaResp.json();
+        cacheWifi = await wifiResp.json();
+        cacheTemp = await tempResp.json();
+        cacheAlti = await altiResp.json();
+    } catch (e) {
+        console.error("Erro ao carregar do backend, mantendo cache anterior:", e);
+        cacheDispositivos = cacheDispositivos || [];
+        cacheAtuadores = cacheAtuadores || [];
+        cacheWifi = cacheWifi || [];
+        cacheTemp = cacheTemp || [];
+        cacheAlti = cacheAlti || [];
+    }
+
+    return {
+        bancoDispositivos: cacheDispositivos,
+        bancoAtuadores: cacheAtuadores,
+        bancoWifi: cacheWifi,
+        bancoTemp: cacheTemp,
+        bancoAlti: cacheAlti,
+        bancoVento: []
+    };
+}
+
 // =============================================================
 // CONTROLE DO DROPDOWN SELECT
 // =============================================================
@@ -121,14 +177,14 @@ function toggleSelect() {
     if (drop) drop.classList.toggle('Select-active');
 }
 
-// Popula o menu de opções dinamicamente com base em dispositivo.json
 function popularDropdownSalas(dispositivos) {
     const dropOptions = document.querySelector('.dropdown-options');
     if (!dropOptions) return;
 
     let html = `<div class="option" onclick="initDashboardGeral('auto', 'Auto')">Auto</div>`;
     dispositivos.forEach(d => {
-        html += `<div class="option" onclick="initDashboardGeral('${d.id}', '${d.nome}')">${d.nome}</div>`;
+        const nome = obterNomeDispositivo(d);
+        html += `<div class="option" onclick="initDashboardGeral('${d.id}', '${nome}')">${nome}</div>`;
     });
 
     dropOptions.innerHTML = html;
@@ -146,7 +202,7 @@ function atualizarCardsKPI(bancoDispositivos, bancoAtuadores, bancoTemp) {
     if (elStatusDisp) elStatusDisp.innerText = "Todos Online";
 
     const totalAtuadores = bancoAtuadores ? bancoAtuadores.length : 0;
-    const ativos = bancoAtuadores ? bancoAtuadores.filter(a => a.status === true) : [];
+    const ativos = bancoAtuadores ? bancoAtuadores.filter(a => a.status === true || a.status === 1) : [];
 
     const elAtuadoresVal = document.getElementById('kpiAtuadoresAtivos');
     const elAtuadorExemplo = document.getElementById('kpiAtuadorExemplo');
@@ -156,8 +212,9 @@ function atualizarCardsKPI(bancoDispositivos, bancoAtuadores, bancoTemp) {
     if (elAtuadorExemplo) {
         if (ativos.length > 0) {
             const primeiroAtivo = ativos[0];
-            const dispAssociado = bancoDispositivos.find(d => d.id == primeiroAtivo.id_dispositivo_fk);
-            const nomeDisp = dispAssociado ? dispAssociado.nome : `Disp ${primeiroAtivo.id_dispositivo_fk}`;
+            const fkDisp = obterIdDispositivo(primeiroAtivo);
+            const dispAssociado = bancoDispositivos.find(d => d.id == fkDisp);
+            const nomeDisp = dispAssociado ? obterNomeDispositivo(dispAssociado) : `Disp ${fkDisp}`;
             elAtuadorExemplo.innerText = `Ex: ${nomeDisp}: ATIVO`;
         } else {
             elAtuadorExemplo.innerText = "Nenhum atuador ativo";
@@ -169,7 +226,7 @@ function atualizarCardsKPI(bancoDispositivos, bancoAtuadores, bancoTemp) {
         let somaTemp = 0, somaUmid = 0, totalRegistros = 0;
 
         bancoDispositivos.forEach(disp => {
-            const dadosDisp = bancoTemp.filter(t => t.dispositivo == disp.id);
+            const dadosDisp = bancoTemp.filter(t => obterIdDispositivo(t) == disp.id);
             if (dadosDisp.length > 0) {
                 const ultimoReg = dadosDisp[dadosDisp.length - 1];
                 if (ultimoReg.temperatura != null) somaTemp += Number(ultimoReg.temperatura);
@@ -233,7 +290,10 @@ function renderizarManometro(valorSinalDbm) {
     const elementoCanvas = document.getElementById('graficoSinal');
     const valorTexto = document.getElementById('valorTexto');
 
-    if (!elementoCanvas) return;
+    if (!elementoCanvas) {
+        console.error("❌ [DOM ERRO] Canvas 'graficoSinal' não encontrado!");
+        return;
+    }
     if (valorTexto) valorTexto.innerText = `${valorSinalDbm} dBm`;
 
     if (manometroChart) {
@@ -292,7 +352,10 @@ function renderizarGraficoLuminosidade(historicoLuminosidade) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: { grid: { display: false }, ticks: { maxTicksLimit: 6 } },
+                x: {
+                    grid: { display: false },
+                    ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 }
+                },
                 y: { beginAtZero: true }
             }
         }
@@ -300,32 +363,36 @@ function renderizarGraficoLuminosidade(historicoLuminosidade) {
 }
 
 function atualizarWifiELuminosidade(dadosDisp) {
-    if (!dadosDisp || dadosDisp.length === 0) return;
+    if (!dadosDisp || dadosDisp.length === 0) {
+        renderizarManometro(-90);
+        renderizarGraficoLuminosidade([]);
+        return;
+    }
 
     let dataMaisRecente = null;
     dadosDisp.forEach(item => {
-        const d = parseDataJson(item.data);
-        if (!dataMaisRecente || d > dataMaisRecente) dataMaisRecente = d;
+        const d = parseDataJson(item);
+        if (d && (!dataMaisRecente || d.getTime() > dataMaisRecente.getTime())) dataMaisRecente = d;
     });
 
+    if (!dataMaisRecente) return;
+
     const fimCiclo = arredondarHoras(dataMaisRecente);
-    const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
+    const inicioCiclo = new Date(fimCiclo.getTime() - (23 * 60 * 60 * 1000));
 
     const timelineMap = new Map();
-    let pTempo = new Date(inicioCiclo);
-
-    while (pTempo <= fimCiclo) {
-        timelineMap.set(pTempo.getTime(), {
-            horaFormatada: formatarHoraMinuto(pTempo, false),
+    for (let i = 0; i < 24; i++) {
+        const slotData = new Date(inicioCiclo.getTime() + (i * 60 * 60 * 1000));
+        timelineMap.set(slotData.getTime(), {
+            horaFormatada: formatarHoraMinuto(slotData, false),
             somasLux: 0, qtdLux: 0,
             somasSinal: 0, qtdSinal: 0
         });
-        pTempo.setHours(pTempo.getHours() + 1);
     }
 
     dadosDisp.forEach(item => {
-        const d = parseDataJson(item.data);
-        if (d >= inicioCiclo && d <= fimCiclo) {
+        const d = parseDataJson(item);
+        if (d) {
             const ms = arredondarHoras(d).getTime();
             if (timelineMap.has(ms)) {
                 const slot = timelineMap.get(ms);
@@ -353,37 +420,52 @@ function atualizarWifiELuminosidade(dadosDisp) {
 
 function atualizarTemperaturaEUmidade(dadosDisp) {
     const ctx = document.getElementById('graficoTempUmi');
-    if (!ctx || !dadosDisp || dadosDisp.length === 0) return;
+    if (!ctx) return;
+
+    if (!dadosDisp || dadosDisp.length === 0) {
+        if (graficoTendencia) graficoTendencia.destroy();
+        return;
+    }
 
     let dataMaisRecente = null;
     dadosDisp.forEach(item => {
-        const d = parseDataJson(item.data);
-        if (!dataMaisRecente || d > dataMaisRecente) dataMaisRecente = d;
+        const d = parseDataJson(item);
+        if (d && (!dataMaisRecente || d.getTime() > dataMaisRecente.getTime())) dataMaisRecente = d;
     });
 
-    const fimCiclo = arredondarMinutos(dataMaisRecente, 5);
-    const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
+    if (!dataMaisRecente) return;
+
+    const fimCiclo = arredondarHoras(dataMaisRecente);
+    const inicioCiclo = new Date(fimCiclo.getTime() - (23 * 60 * 60 * 1000));
 
     const timelineMap = new Map();
-    let pTempo = new Date(inicioCiclo);
-
-    while (pTempo <= fimCiclo) {
-        timelineMap.set(pTempo.getTime(), { horaFormatada: formatarHoraMinuto(pTempo, true) });
-        pTempo.setMinutes(pTempo.getMinutes() + 5);
+    for (let i = 0; i < 24; i++) {
+        const slotData = new Date(inicioCiclo.getTime() + (i * 60 * 60 * 1000));
+        timelineMap.set(slotData.getTime(), {
+            horaFormatada: formatarHoraMinuto(slotData, false),
+            somasTemp: 0, qtdTemp: 0,
+            somasUmid: 0, qtdUmid: 0
+        });
     }
 
     dadosDisp.forEach(item => {
-        const d = parseDataJson(item.data);
-        if (d >= inicioCiclo && d <= fimCiclo) {
-            const ms = arredondarMinutos(d, 5).getTime();
+        const d = parseDataJson(item);
+        if (d) {
+            const ms = arredondarHoras(d).getTime();
             if (timelineMap.has(ms)) {
-                timelineMap.get(ms).temperatura = item.temperatura;
-                timelineMap.get(ms).umidade = item.umidade;
+                const slot = timelineMap.get(ms);
+                if (item.temperatura != null) { slot.somasTemp += Number(item.temperatura); slot.qtdTemp++; }
+                if (item.umidade != null) { slot.somasUmid += Number(item.umidade); slot.qtdUmid++; }
             }
         }
     });
 
-    const slots = Array.from(timelineMap.values());
+    const slots = Array.from(timelineMap.values()).map(s => ({
+        horaFormatada: s.horaFormatada,
+        temperatura: s.qtdTemp > 0 ? Number((s.somasTemp / s.qtdTemp).toFixed(1)) : null,
+        umidade: s.qtdUmid > 0 ? Math.round(s.somasUmid / s.qtdUmid) : null
+    }));
+
     const labels = slots.map(s => s.horaFormatada);
 
     if (graficoTendencia) graficoTendencia.destroy();
@@ -401,7 +483,10 @@ function atualizarTemperaturaEUmidade(dadosDisp) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: { grid: { display: false }, ticks: { callback: (val, idx) => idx % 12 === 0 ? labels[val] : '' } },
+                x: {
+                    grid: { display: false },
+                    ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 }
+                },
                 yTemp: { position: 'left', min: 0, max: 50 },
                 yUmid: { position: 'right', min: 0, max: 100, grid: { drawOnChartArea: false } }
             }
@@ -411,37 +496,52 @@ function atualizarTemperaturaEUmidade(dadosDisp) {
 
 function atualizarAltitudeEPressao(dadosDisp) {
     const ctx = document.getElementById('graficoAltitude');
-    if (!ctx || !dadosDisp || dadosDisp.length === 0) return;
+    if (!ctx) return;
+
+    if (!dadosDisp || dadosDisp.length === 0) {
+        if (graficoAltPress) graficoAltPress.destroy();
+        return;
+    }
 
     let dataMaisRecente = null;
     dadosDisp.forEach(item => {
-        const d = parseDataJson(item.data);
-        if (!dataMaisRecente || d > dataMaisRecente) dataMaisRecente = d;
+        const d = parseDataJson(item);
+        if (d && (!dataMaisRecente || d.getTime() > dataMaisRecente.getTime())) dataMaisRecente = d;
     });
 
+    if (!dataMaisRecente) return;
+
     const fimCiclo = arredondarHoras(dataMaisRecente);
-    const inicioCiclo = new Date(fimCiclo.getTime() - (24 * 60 * 60 * 1000));
+    const inicioCiclo = new Date(fimCiclo.getTime() - (23 * 60 * 60 * 1000));
 
     const timelineMap = new Map();
-    let pTempo = new Date(inicioCiclo);
-
-    while (pTempo <= fimCiclo) {
-        timelineMap.set(pTempo.getTime(), { horaFormatada: formatarHoraMinuto(pTempo, false) });
-        pTempo.setHours(pTempo.getHours() + 1);
+    for (let i = 0; i < 24; i++) {
+        const slotData = new Date(inicioCiclo.getTime() + (i * 60 * 60 * 1000));
+        timelineMap.set(slotData.getTime(), {
+            horaFormatada: formatarHoraMinuto(slotData, false),
+            somasAltitude: 0, qtdAltitude: 0,
+            somasPressao: 0, qtdPressao: 0
+        });
     }
 
     dadosDisp.forEach(item => {
-        const d = parseDataJson(item.data);
-        if (d >= inicioCiclo && d <= fimCiclo) {
+        const d = parseDataJson(item);
+        if (d) {
             const ms = arredondarHoras(d).getTime();
             if (timelineMap.has(ms)) {
-                timelineMap.get(ms).altitude = item.altitude;
-                timelineMap.get(ms).pressao = item.pressao;
+                const slot = timelineMap.get(ms);
+                if (item.altitude != null) { slot.somasAltitude += Number(item.altitude); slot.qtdAltitude++; }
+                if (item.pressao != null) { slot.somasPressao += Number(item.pressao); slot.qtdPressao++; }
             }
         }
     });
 
-    const slots = Array.from(timelineMap.values());
+    const slots = Array.from(timelineMap.values()).map(s => ({
+        horaFormatada: s.horaFormatada,
+        altitude: s.qtdAltitude > 0 ? Number((s.somasAltitude / s.qtdAltitude).toFixed(1)) : null,
+        pressao: s.qtdPressao > 0 ? Number((s.somasPressao / s.qtdPressao).toFixed(2)) : null
+    }));
+
     const labels = slots.map(s => s.horaFormatada);
 
     if (graficoAltPress) graficoAltPress.destroy();
@@ -459,7 +559,10 @@ function atualizarAltitudeEPressao(dadosDisp) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: { grid: { display: false } },
+                x: {
+                    grid: { display: false },
+                    ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 }
+                },
                 yAlt: { position: 'left', min: 700, max: 800 },
                 yPress: { position: 'right', min: 0.88, max: 0.98, grid: { drawOnChartArea: false } }
             }
@@ -472,59 +575,59 @@ function atualizarAltitudeEPressao(dadosDisp) {
 // =============================================================
 async function renderizarDashboardDispositivo(dispositivoId, modoAuto = false) {
     try {
-        const { bancoDispositivos, bancoAtuadores, bancoWifi, bancoTemp, bancoAlti } = await carregarTodosBancos();
+        // 1. Extrai todos os bancos de dados do cache unificado (incluindo o bancoVento)
+        const { bancoDispositivos, bancoAtuadores, bancoWifi, bancoTemp, bancoAlti, bancoVento } = await carregarTodosBancos();
 
-        // Garante que o menu suspenso carregue todas as salas direto do dispositivo.json
         popularDropdownSalas(bancoDispositivos);
-
-        // Atualiza os três cards KPI do topo
         atualizarCardsKPI(bancoDispositivos, bancoAtuadores, bancoTemp);
 
         const dispositivo = typeof dispositivoId === 'object'
             ? dispositivoId
             : bancoDispositivos.find(d => d.id == dispositivoId);
 
-        if (!dispositivo) return;
-
-        // Atualiza o texto do selector principal
-        const elSeletor = document.getElementById('selected-value');
-        if (elSeletor) {
-            elSeletor.innerHTML = modoAuto ? `Auto <br> (${dispositivo.nome})` : dispositivo.nome;
+        if (!dispositivo) {
+            console.warn("⚠️ [AVISO] Dispositivo não encontrado para o ID:", dispositivoId);
+            return;
         }
 
-        // Atualiza títulos secundários caso existam
+        const nomeExibicao = obterNomeDispositivo(dispositivo);
+
+        const elSeletor = document.getElementById('selected-value');
+        if (elSeletor) {
+            elSeletor.innerHTML = modoAuto ? `Auto <br> (${nomeExibicao})` : nomeExibicao;
+        }
+
         document.querySelectorAll('[data-seVa]').forEach(el => {
-            el.innerHTML = modoAuto ? `Auto <br> (${dispositivo.nome})` : dispositivo.nome;
+            el.innerHTML = modoAuto ? `Auto <br> (${nomeExibicao})` : nomeExibicao;
         });
 
-        // Filtragem por dispositivo.id (FK)
-        const dadosWifi = bancoWifi.filter(i => i.dispositivo == dispositivo.id && i.data);
-        const dadosTemp = bancoTemp.filter(i => i.dispositivo == dispositivo.id && i.data);
-        const dadosAlti = bancoAlti.filter(i => i.dispositivo == dispositivo.id && i.data);
+        // 2. Filtragem flexível por FK e validação de data
+        const dadosWifi = bancoWifi ? bancoWifi.filter(i => obterIdDispositivo(i) == dispositivo.id && parseDataJson(i) !== null) : [];
+        const dadosTemp = bancoTemp ? bancoTemp.filter(i => obterIdDispositivo(i) == dispositivo.id && parseDataJson(i) !== null) : [];
+        const dadosAlti = bancoAlti ? bancoAlti.filter(i => obterIdDispositivo(i) == dispositivo.id && parseDataJson(i) !== null) : [];
+        const dadosVento = bancoVento ? bancoVento.filter(i => obterIdDispositivo(i) == dispositivo.id && parseDataJson(i) !== null) : [];
 
-        // Renderiza gráficos
+        // 3. Chamada dos renderizadores
         atualizarWifiELuminosidade(dadosWifi);
         atualizarTemperaturaEUmidade(dadosTemp);
         atualizarAltitudeEPressao(dadosAlti);
+        atualizarVento(dadosVento); // Agora dadosVento está definido!
 
     } catch (e) {
-        console.error("Erro no Dashboard Geral:", e);
+        console.error("💥 Erro no Dashboard Geral:", e);
     }
 }
 
-// Inicializador invocado pelo evento onclick das opções
-async function initDashboardGeral(dispositivoId) {
+async function initDashboardGeral(dispositivoId = 'auto') {
     const dropOptions = document.querySelector('.dropdown-options');
     if (dropOptions) dropOptions.classList.remove('Select-active');
 
-    // Cancela o intervalo automático atual se existir
     if (intervalAutoGeral) {
         clearInterval(intervalAutoGeral);
         intervalAutoGeral = null;
     }
 
-    // MODO AUTOMÁTICO
-    if (dispositivoId === 'auto') {
+    if (dispositivoId === 'auto' || dispositivoId === -2) {
         modoManualAtivo = false;
         const { bancoDispositivos } = await carregarTodosBancos();
         if (!bancoDispositivos || bancoDispositivos.length === 0) return;
@@ -540,14 +643,81 @@ async function initDashboardGeral(dispositivoId) {
         return;
     }
 
-    // MODO SELEÇÃO MANUAL DE DISPOSITIVO/LABORATÓRIO
     modoManualAtivo = true;
     await renderizarDashboardDispositivo(dispositivoId, false);
 }
 
-function toggleSelect() {
-    document.querySelector('.dropdown-options').classList.toggle('Select-active');
+function atualizarVento(dadosVentoDisp) {
+    const elVelo = document.getElementById('valorVeloVento');
+    const elDire = document.getElementById('valorDireVento');
+    const ctxVento = document.getElementById('graficoDirecaoVento');
+
+    if (!dadosVentoDisp || dadosVentoDisp.length === 0) {
+        if (elVelo) elVelo.innerText = '-- km/h';
+        if (elDire) elDire.innerText = '--';
+        if (ventoChart) ventoChart.destroy();
+        return;
+    }
+
+    // Pega na medição mais recente do vento com data válida
+    const ultimoRegistro = dadosVentoDisp[dadosVentoDisp.length - 1];
+
+    const velocidade = ultimoRegistro.velocidade_vento ?? ultimoRegistro.velocidade ?? 0;
+    const grausDirecao = ultimoRegistro.direcao_vento ?? ultimoRegistro.direcao ?? 0;
+
+    if (elVelo) elVelo.innerText = `${velocidade} km/h`;
+    if (elDire) elDire.innerText = formatarDirecaoVento(grausDirecao);
+
+    if (!ctxVento) return;
+
+    // Converte a direção em destaque na Rosa dos Ventos (8 direções)
+    const direcoesLabels = ['N', 'NE', 'L', 'SE', 'S', 'SO', 'O', 'NO'];
+    const idxAtivo = Math.round(((Number(grausDirecao) % 360) / 45)) % 8;
+
+    // Destaca a direção atual com valor 100 e as outras com 10 no radar
+    const valoresRadar = direcoesLabels.map((_, index) => index === idxAtivo ? 100 : 15);
+
+    if (ventoChart) ventoChart.destroy();
+
+    ventoChart = new Chart(ctxVento, {
+        type: 'radar',
+        data: {
+            labels: direcoesLabels,
+            datasets: [{
+                label: 'Direção do Vento',
+                data: valoresRadar,
+                backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                borderColor: '#2563eb',
+                pointBackgroundColor: direcoesLabels.map((_, index) => index === idxAtivo ? '#da000d' : '#2563eb'),
+                pointRadius: direcoesLabels.map((_, index) => index === idxAtivo ? 6 : 2),
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    angleLines: { display: true },
+                    suggestedMin: 0,
+                    suggestedMax: 100,
+                    ticks: { display: false } // Oculta números para ficar limpo
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
 }
 
+// Expõe globalmente para botões/menus HTML
+window.initDashboardGeral = initDashboardGeral;
+window.toggleSelect = toggleSelect;
+
 // Inicialização Automática ao carregar a página
-initDashboardGeral('auto');
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => initDashboardGeral('auto'));
+} else {
+    initDashboardGeral('auto');
+}
