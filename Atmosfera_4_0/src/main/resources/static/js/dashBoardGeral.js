@@ -136,7 +136,7 @@ function dbmParaPorcentagem(dbm) {
 // Carrega os dados dos JSONs
 async function carregarTodosBancos() {
     try {
-        const baseUrl = "http://10.83.138.31:8080/";
+        const baseUrl = "http://10.83.139.51:8080/";
         const [dispResp, atuaResp, wifiResp, tempResp, altiResp] = await Promise.all([
             fetch(baseUrl + "dispositivo"),
             fetch(baseUrl + "atuador"),

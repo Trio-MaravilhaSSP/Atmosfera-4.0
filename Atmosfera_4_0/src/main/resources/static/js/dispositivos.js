@@ -2,7 +2,7 @@
 // simulador.js — Módulo de Simulação e Envio de Dados IoT (POST)
 // =============================================================
 
-const API_BASE_URL = "http://10.83.138.31:8080";
+const API_BASE_URL = "http://10.83.139.51:8080";
 
 let timerSimulacao = null;
 let simulacaoAtiva = false;
@@ -85,16 +85,16 @@ async function executarCicloSimulacao() {
         // 3. Montar o Payload padrão do DTO do Spring Boot
         const payloadMedicao = {
             dispositivo: dispSimulado, // Ajuste o ID conforme o cadastrado no seu banco de dados
+            timestamp: timestampMs,
+            dataHora: dataHoraISO,
             temperatura: temperaturaSimulada,
             umidade: umidadeSimulada,
             pressao: pressaoSimulada,
             altitude: altitudeSimulada,
             luminosidade: luminosidadeSimulada,
-            sinal: 30,
-            dataHora: dataHoraISO,
-            timestamp: timestampMs,
-            velocidade_vento: 0,
-            direcao_vento: 50,
+            intensidadeWifi: 30,
+            velVento: 0,
+            direcaoVento: 50,
         };
 
         console.log("🚀 [SIMULADOR] Enviando medição ao backend:", payloadMedicao);
@@ -166,8 +166,8 @@ export function iniciarSimulacao() {
     }
 
     executarCicloSimulacao();
-    timerSimulacao = setInterval(executarCicloSimulacao, 5000);
-    console.log("▶️ [SIMULADOR] Simulação iniciada (Intervalo: 5s).");
+    timerSimulacao = setInterval(executarCicloSimulacao, 60000);
+    console.log("▶️ [SIMULADOR] Simulação iniciada (Intervalo: 1min).");
 }
 
 export function pararSimulacao() {

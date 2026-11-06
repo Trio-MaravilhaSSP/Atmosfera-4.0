@@ -12,7 +12,7 @@ export async function carregarDadosGerais() {
     console.log("🔄 Executando carregarDadosGerais...");
 
     try {
-        const baseUrl = "http://10.83.138.31:8080";
+        const baseUrl = "http://10.83.139.51:8080";
 
         const [disp, atua, wifi, temp, alti] = await Promise.all([
             fetch(`${baseUrl}/dispositivo`).then(r => {
@@ -63,24 +63,6 @@ export async function carregarDadosGerais() {
             }
         }
         return cache;
-    }
-    return cache;
-}
-
-// Função para o teste com o backend
-export async function carregarDadosGerais() {
-    if (!cache.dispositivos || !cache.wifi || !cache.temp || !cache.alti) {
-        const baseUrl = "http://10.83.139.51:8080/";
-        const [disp, atua, wifi, temp, alti] = await Promise.all([
-            fetch(baseUrl + "dispositivo").then(r => r.json()),
-            fetch(baseUrl + "atuador").then(r => r.json()),
-            fetch(baseUrl + "dashboard/sinal").then(r => r.json()),
-            fetch(baseUrl + "dashboard/temperatura").then(r => r.json()),
-            fetch(baseUrl + "dashboard/altitude").then(r => r.json())
-        ]);
-
-        cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
-        // console.log(disp, atua, wifi, temp, alti)
     }
     return cache;
 }
