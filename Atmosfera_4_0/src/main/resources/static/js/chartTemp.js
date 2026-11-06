@@ -16,9 +16,27 @@ let graficoTendencia = null;
 let intervalAutoTemp = null;
 let indiceDispositivoAutoTemp = 0;
 
-// =============================================================
-// 1. ATUALIZADOR PRINCIPAL DO GRÁFICO DE TEMPERATURA E UMIDADE
-// =============================================================
+if (typeof Chart !== 'undefined') {
+    if (localStorage.getItem("tema") == 'dark') Chart.defaults.color = '#ccc';
+    else Chart.defaults.color = '#575757';
+
+    Chart.defaults.font.family = 'Inter';
+}
+
+function obterIdDispositivo(item) {
+    if (!item) return null;
+    if (typeof item === 'number' || typeof item === 'string') return item;
+    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
+        return item.dispositivo.id;
+    }
+    return item.dispositivo ?? item.dispositivoId ?? item.id_dispositivo ?? item.idDispositivoFK ?? item.id;
+}
+
+function obterNomeDispositivo(disp) {
+    if (!disp) return 'Dispositivo';
+    return disp.nomeDispositivo || disp.nome || `Dispositivo ${disp.id}`;
+}
+
 export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = false) {
     try {
         const { dispositivos, temp } = await carregarDadosGerais();
@@ -148,7 +166,7 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
                         borderColor: '#ff828a',
                         backgroundColor: 'rgba(255, 130, 138, 0.15)',
                         borderWidth: 2,
-                        tension: 0.3,
+                        tension: 0.1,
                         fill: true,
                         yAxisID: 'yTemp',
                         spanGaps: true
@@ -159,7 +177,7 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
                         borderColor: '#42a5f5',
                         backgroundColor: 'rgba(66, 165, 245, 0.15)',
                         borderWidth: 2,
-                        tension: 0.3,
+                        tension: 0.1,
                         fill: true,
                         yAxisID: 'yUmid',
                         spanGaps: true
@@ -177,11 +195,9 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
                     x: {
                         grid: { display: false },
                         ticks: {
-                            maxRotation: 0,
-                            callback: function (val) {
-                                // Exibe todas as 24 horas no eixo X
-                                return this.getLabelForValue(val);
-                            }
+                            autoSkip: false,
+                            maxRotation: 45,
+                            minRotation: 0
                         },
                         title: {
                             display: true,
