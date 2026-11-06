@@ -8,7 +8,9 @@ import {
     arredondarHoras, 
     formatarHoraMinuto, 
     formatarDataHoraCompleta,
-    popularDropdownDispositivos
+    popularDropdownDispositivos,
+    obterIdDispositivo,
+    obterNomeDispositivo
 } from './chartAll.js';
 
 // Instância local do gráfico do Chart.js
@@ -21,20 +23,6 @@ if (typeof Chart !== 'undefined') {
     else Chart.defaults.color = '#575757';
 
     Chart.defaults.font.family = 'Inter';
-}
-
-function obterIdDispositivo(item) {
-    if (!item) return null;
-    if (typeof item === 'number' || typeof item === 'string') return item;
-    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
-        return item.dispositivo.id;
-    }
-    return item.dispositivo ?? item.dispositivoId ?? item.id_dispositivo ?? item.idDispositivoFK ?? item.id;
-}
-
-function obterNomeDispositivo(disp) {
-    if (!disp) return 'Dispositivo';
-    return disp.nomeDispositivo || disp.nome || `Dispositivo ${disp.id}`;
 }
 
 export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = false) {
@@ -54,7 +42,7 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
         }
 
         // --- 1. ATUALIZAÇÃO DOS INDICADORES NA TELA ---
-        const nomeExibicao = dispositivo.nome || `Dispositivo ${dispositivo.id}`;
+        const nomeExibicao = obterNomeDispositivo(dispositivo);
 
         const elementoSeletor = document.querySelector('[data-seVa-0]');
         if (elementoSeletor) {
@@ -66,8 +54,10 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
             indicadorTitulo.innerText = nomeExibicao;
         }
 
-        // Filtrar dados do temp.json usando a FK 'dispositivo'
-        const dadosDoDispositivo = temp.filter(item => item.dispositivo == dispositivo.id && item.data);
+        // Filtrar dados usando helpers seguros (trata dataHora e ID flexível)
+        const dadosDoDispositivo = temp.filter(item => {
+            return obterIdDispositivo(item) == dispositivo.id && parseDataJson(item) !== null;
+        });
 
         if (dadosDoDispositivo.length === 0) {
             console.warn(`Nenhum dado de temperatura encontrado para o dispositivo ${dispositivo.id}`);
@@ -75,14 +65,20 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
             return;
         }
 
-        // Descobre o registro mais recente
+        // Descobre o registro mais recente com validação de segurança
         let dataMaisRecente = null;
         dadosDoDispositivo.forEach(item => {
-            const d = parseDataJson(item.data);
-            if (!dataMaisRecente || d > dataMaisRecente) {
+            const d = parseDataJson(item);
+            if (d && (!dataMaisRecente || d > dataMaisRecente)) {
                 dataMaisRecente = d;
             }
         });
+
+        if (!dataMaisRecente) {
+            console.warn("Sem data válida para Temperatura.");
+            if (graficoTendencia) graficoTendencia.destroy();
+            return;
+        }
 
         // --- 2. DEFINIR JANELA DE 24 HORAS (INTERVALO DE 1 HORA) ---
         const fimCiclo = arredondarHoras(dataMaisRecente);
@@ -94,7 +90,7 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
             elIntervalo24h.innerText = metrica24h;
         }
 
-        // --- 3. GERAR OS SLOTS DE 1 EM 1 HORA (24 SLOTS NO TOTAL) ---
+        // --- 3. GERAR OS SLOTS DE 1 EM 1 HORA ---
         const timelineMap = new Map();
         let ponteiroTempo = new Date(inicioCiclo);
 
@@ -109,14 +105,14 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
                 temperatura: null,
                 umidade: null
             });
-            ponteiroTempo.setHours(ponteiroTempo.getHours() + 1); // Avança de 1 em 1 hora
+            ponteiroTempo.setHours(ponteiroTempo.getHours() + 1);
         }
 
         // --- 4. AGRUPAR DADOS DE 1 EM 1 HORA E CALCULAR MÉDIAS ---
         dadosDoDispositivo.forEach(item => {
-            const dataMedicao = parseDataJson(item.data);
+            const dataMedicao = parseDataJson(item);
 
-            if (dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
+            if (dataMedicao && dataMedicao >= inicioCiclo && dataMedicao <= fimCiclo) {
                 const chaveMs = arredondarHoras(dataMedicao).getTime();
 
                 if (timelineMap.has(chaveMs)) {
@@ -194,15 +190,8 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
                 scales: {
                     x: {
                         grid: { display: false },
-                        ticks: {
-                            autoSkip: false,
-                            maxRotation: 45,
-                            minRotation: 0
-                        },
-                        title: {
-                            display: true,
-                            text: `Últimas 24h — ${nomeExibicao} (${metrica24h})`
-                        }
+                        ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 },
+                        title: { display: true, text: `Últimas 24h — ${nomeExibicao} (${metrica24h})` }
                     },
                     yTemp: {
                         type: 'linear',
@@ -228,9 +217,6 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
     }
 }
 
-// =============================================================
-// 2. INICIALIZADOR PRINCIPAL (DROPDOWN / MODO AUTO)
-// =============================================================
 export async function initGraficoTemp(dispositivoId = 'auto', exibir = 'Auto') {
     if (intervalAutoTemp) {
         clearInterval(intervalAutoTemp);
@@ -242,12 +228,10 @@ export async function initGraficoTemp(dispositivoId = 'auto', exibir = 'Auto') {
 
     const { dispositivos } = await carregarDadosGerais();
 
-    // Popula o menu suspenso dinamicamente com as opções
     if (typeof popularDropdownDispositivos === 'function') {
         popularDropdownDispositivos(dispositivos, 'initGraficoTemp', '#select-temp .dropdown-options');
     }
 
-    // MODO AUTOMÁTICO ('auto' ou -2)
     if (dispositivoId === 'auto' || dispositivoId === -2) {
         if (!dispositivos || dispositivos.length === 0) return;
 
@@ -262,12 +246,10 @@ export async function initGraficoTemp(dispositivoId = 'auto', exibir = 'Auto') {
         return;
     }
 
-    // MODO SELEÇÃO MANUAL DE DISPOSITIVO
     const elSeletor = document.querySelector('[data-seVa-0]');
     if (elSeletor) elSeletor.innerText = exibir;
 
     await atualizarGraficoTemp(dispositivoId, false);
 }
 
-// Expõe a função globalmente para ser chamada via HTML (ex: onclick)
 window.initGraficoTemp = initGraficoTemp;

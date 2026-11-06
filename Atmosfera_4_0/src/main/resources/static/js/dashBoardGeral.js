@@ -18,7 +18,7 @@ var cacheTemp = null;
 var cacheAlti = null;
 
 if (typeof Chart !== 'undefined') {
-    if(localStorage.getItem("tema") == 'dark') Chart.defaults.color = '#ccc';
+    if (localStorage.getItem("tema") == 'dark') Chart.defaults.color = '#ccc';
     else Chart.defaults.color = '#575757';
 
     Chart.defaults.font.family = 'Inter';
@@ -135,8 +135,8 @@ function dbmParaPorcentagem(dbm) {
 // Função para o teste com o backend
 // Carrega os dados dos JSONs
 async function carregarTodosBancos() {
-    if (!cacheDispositivos || !cacheAtuadores || !cacheWifi || !cacheTemp || !cacheAlti) {
-        const baseUrl = "http://10.83.139.51:8080/";
+    try {
+        const baseUrl = "http://10.83.138.31:8080/";
         const [dispResp, atuaResp, wifiResp, tempResp, altiResp] = await Promise.all([
             fetch(baseUrl + "dispositivo"),
             fetch(baseUrl + "atuador"),
@@ -150,13 +150,22 @@ async function carregarTodosBancos() {
         cacheWifi = await wifiResp.json();
         cacheTemp = await tempResp.json();
         cacheAlti = await altiResp.json();
+    } catch (e) {
+        console.error("Erro ao carregar do backend, mantendo cache anterior:", e);
+        cacheDispositivos = cacheDispositivos || [];
+        cacheAtuadores = cacheAtuadores || [];
+        cacheWifi = cacheWifi || [];
+        cacheTemp = cacheTemp || [];
+        cacheAlti = cacheAlti || [];
     }
+
     return {
         bancoDispositivos: cacheDispositivos,
         bancoAtuadores: cacheAtuadores,
         bancoWifi: cacheWifi,
         bancoTemp: cacheTemp,
-        bancoAlti: cacheAlti
+        bancoAlti: cacheAlti,
+        bancoVento: []
     };
 }
 

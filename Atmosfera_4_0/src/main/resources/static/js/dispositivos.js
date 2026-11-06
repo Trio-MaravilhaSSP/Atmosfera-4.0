@@ -2,7 +2,7 @@
 // simulador.js — Módulo de Simulação e Envio de Dados IoT (POST)
 // =============================================================
 
-const API_BASE_URL = "http://10.83.139.51:8080";
+const API_BASE_URL = "http://10.83.138.31:8080";
 
 let timerSimulacao = null;
 let simulacaoAtiva = false;
@@ -35,19 +35,11 @@ function obterDataHoraFormatada() {
 }
 
 function defineNome(nome) {
-    let idDisp;
-
     switch (nome) {
-        case 'Athurmorgan':
-            idDisp = 1; 
-            break;
-
-        case 'DutchVanderLindim':
-            idDisp = 2; 
-            break;
+        case 'Athurmorgan': return 1;
+        case 'DutchVanderLindim': return 2;
+        default: return 1; // Fallback para não enviar undefined
     }
-
-    return idDisp;
 }
 
 function converterParaTimestamp(dataInput = new Date()) {

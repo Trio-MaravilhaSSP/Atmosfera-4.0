@@ -3,7 +3,11 @@
 // =============================================================
 
 import {
-    carregarDadosGerais
+    carregarDadosGerais,
+    obterIdDispositivo,
+    obterNomeDispositivo,
+    obterSinalWifi,
+    parseDataJson
 } from './chartAll.js';
 
 // Função auxiliar para converter graus do vento em direção (ex: 135° -> SE)
@@ -22,12 +26,14 @@ export async function loadCards(andarId = "0") {
         // 2. Busca os dados de vento com fallback seguro
         let vento = [];
         try {
-            const respVento = await fetch("http://localhost:8080/registro/vento");
-            // const respVento = await fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/vento.json");
+            const respVento = await fetch("http://10.83.138.31:8080/registro/vento");
+
             if (respVento.ok) {
                 vento = await respVento.json();
             }
         } catch (err) {
+            const respVento = await fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/vento.json");
+
             console.warn("⚠️ Não foi possível carregar o endpoint do vento:", err);
         }
 
@@ -40,33 +46,51 @@ export async function loadCards(andarId = "0") {
 
         // 4. Renderiza cada dispositivo
         dispositivosDoAndar.forEach(disp => {
-            // Filtra medições pelo ID do dispositivo (comparações com == para evitar erros de tipo)
-            const dadosWifi = wifi.filter(w => w.dispositivo == disp.id && w.data);
-            const dadosTemp = temp.filter(t => t.dispositivo == disp.id && t.data);
-            const dadosAlti = alti.filter(a => a.dispositivo == disp.id && a.data);
-            const dadosVento = vento.filter(v => v.dispositivo == disp.id && v.data);
+            // 1. Filtra medições usando os helpers seguros que tratam dataHora/data e Objetos/IDs
+            const dadosWifi = wifi.filter(w => obterIdDispositivo(w) == disp.id && parseDataJson(w) !== null);
+            const dadosTemp = temp.filter(t => obterIdDispositivo(t) == disp.id && parseDataJson(t) !== null);
+            const dadosAlti = alti.filter(a => obterIdDispositivo(a) == disp.id && parseDataJson(a) !== null);
+            const dadosVento = vento.filter(v => obterIdDispositivo(v) == disp.id && parseDataJson(v) !== null);
 
-            // Pega os últimos registros
+            // 2. Pega os últimos registros mais recentes
             const ultWifi = dadosWifi.length > 0 ? dadosWifi[dadosWifi.length - 1] : null;
             const ultTemp = dadosTemp.length > 0 ? dadosTemp[dadosTemp.length - 1] : null;
             const ultAlti = dadosAlti.length > 0 ? dadosAlti[dadosAlti.length - 1] : null;
             const ultVento = dadosVento.length > 0 ? dadosVento[dadosVento.length - 1] : null;
 
-            // Extrai e formata os valores
-            const sinal = ultWifi ? ultWifi.sinal : null;
-            const lux = (ultWifi && ultWifi.luminosidade !== undefined) ? `${ultWifi.luminosidade}` : '--';
-            const temperatura = ultTemp ? `${ultTemp.temperatura} °C` : '--';
-            const umidade = ultTemp ? `${ultTemp.umidade}%` : '--';
-            const pressao = ultAlti ? `${ultAlti.pressao} hPa` : '--';
-            const altitude = ultAlti ? `${ultAlti.altitude} m` : '--';
+            // 3. Extrai o nome do dispositivo do DTO backend (nomeDispositivo)
+            const nomeDispositivoFormatado = obterNomeDispositivo(disp);
 
-            // ATENÇÃO: Chaves exatas do teu JSON (velocidade_vento e direcao_vento)
-            const veloVento = (ultVento && ultVento.velocidade_vento !== undefined)
-                ? `${ultVento.velocidade_vento} km/h`
+            // 4. Extrai o nível do sinal usando a propriedade 'intensidadeWifi' do backend
+            const sinal = ultWifi ? obterSinalWifi(ultWifi) : null;
+
+            // 5. Extrai e formata os demais valores de medição
+            const lux = (ultWifi && ultWifi.luminosidade !== undefined && ultWifi.luminosidade !== null)
+                ? `${ultWifi.luminosidade}`
                 : '--';
 
-            const direVento = (ultVento && ultVento.direcao_vento !== undefined)
-                ? formatarDirecaoVento(ultVento.direcao_vento)
+            const temperatura = (ultTemp && ultTemp.temperatura !== undefined && ultTemp.temperatura !== null)
+                ? `${ultTemp.temperatura} °C`
+                : '--';
+
+            const umidade = (ultTemp && ultTemp.umidade !== undefined && ultTemp.umidade !== null)
+                ? `${ultTemp.umidade}%`
+                : '--';
+
+            const pressao = (ultAlti && ultAlti.pressao !== undefined && ultAlti.pressao !== null)
+                ? `${ultAlti.pressao} hPa`
+                : '--';
+
+            const altitude = (ultAlti && ultAlti.altitude !== undefined && ultAlti.altitude !== null)
+                ? `${ultAlti.altitude} m`
+                : '--';
+
+            const veloVento = (ultVento && (ultVento.velocidade_vento !== undefined || ultVento.velocidade !== undefined))
+                ? `${ultVento.velocidade_vento ?? ultVento.velocidade} km/h`
+                : '--';
+
+            const direVento = (ultVento && (ultVento.direcao_vento !== undefined || ultVento.direcao !== undefined))
+                ? formatarDirecaoVento(ultVento.direcao_vento ?? ultVento.direcao)
                 : '--';
 
             // Cores baseadas no nível de sinal (dBm)

@@ -6,7 +6,7 @@ import { carregarDadosGerais } from './chartAll.js';
 
 export async function atualizarSecaoInicio() {
     try {
-        const { dispositivos, atuadores, temp, wifi } = await carregarDadosGerais();
+        const { dispositivos, atuadores, wifi, temp } = await carregarDadosGerais();
 
         // Helper rápido para alterar texto do DOM
         const setTexto = (id, val) => {
@@ -28,7 +28,7 @@ export async function atualizarSecaoInicio() {
             let totalValidos = 0;
 
             dispositivos.forEach(disp => {
-                const registrosDisp = temp.filter(t => t.dispositivo == disp.id && t.data);
+                const registrosDisp = temp.filter(t => t.dispositivo == disp.id && t.dataHora);
                 if (registrosDisp.length > 0) {
                     const ultimo = registrosDisp[registrosDisp.length - 1];
                     if (ultimo.temperatura != null) somaTemp += Number(ultimo.temperatura);
