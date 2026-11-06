@@ -123,13 +123,13 @@ async function executarCicloSimulacao() {
         if (elUmid) elUmid.innerText = `${umidadeSimulada} %`;
 
         const elLux = document.getElementById('displayLux');
-        if (elLux) elLux.innerText = `${luminosidadeSimulada} %`;
+        if (elLux) elLux.innerText = `${luminosidadeSimulada} Lux`;
 
         const elAlti = document.getElementById('displayAlti');
-        if (elAlti) elAlti.innerText = `${altitudeSimulada} %`;
+        if (elAlti) elAlti.innerText = `${altitudeSimulada} m`;
 
         const elPressao = document.getElementById('displayPressao');
-        if (elPressao) elPressao.innerText = `${pressaoSimulada} %`;
+        if (elPressao) elPressao.innerText = `${pressaoSimulada} hPa`;
 
         const elSinal = document.getElementById('displaySinal');
         if (elSinal) elSinal.innerText = `30 dBm`;
