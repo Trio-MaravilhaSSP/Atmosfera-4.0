@@ -10,14 +10,14 @@ public record RegistroRequest(
      int dispositivo,
      Timestamp timestamp,
      LocalDateTime dataHora,
-     float temperatura,
-     float umidade,
-     float pressao,
-     float altitude,
-     float luminosidade,
-     float velVento,
-     int direcaoVento,
-     int intensidadeWifi
+     Float temperatura,
+     Float umidade,
+     Float pressao,
+     Float altitude,
+     Float luminosidade,
+     Float velVento,
+     Integer direcaoVento,
+     Integer intensidadeWifi
 ){
 
     public RegistroModel toModel() {
