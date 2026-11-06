@@ -35,27 +35,27 @@ public class RegistroModel {
     private LocalDateTime data_hora;
 
     @Column
-    private float temperatura;
+    private Float temperatura;
 
     @Column
-    private float umidade;
+    private Float umidade;
 
     @Column
-    private float pressao;
+    private Float pressao;
 
     @Column
-    private float altitude;
+    private Float altitude;
 
     @Column
-    private float luminosidade;
+    private Float luminosidade;
 
     @Column
-    private float velocidade_vento;
+    private Float velocidade_vento;
 
     @Column
-    private int direcao_vento;
+    private Integer direcao_vento;
 
     @Column
-    private int intensidade_wifi;
+    private Integer intensidade_wifi;
 
 }

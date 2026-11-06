@@ -7,7 +7,7 @@ public record DashAltResponse(
         Long id,
         int dispositivo,
         LocalDateTime dataHora,
-        float pressao,
-        float altitude
+        Float pressao,
+        Float altitude
 ) {
 }

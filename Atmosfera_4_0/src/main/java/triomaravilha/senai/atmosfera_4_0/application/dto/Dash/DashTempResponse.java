@@ -7,7 +7,7 @@ public record DashTempResponse (
         Long id,
         int dispositivo,
         LocalDateTime dataHora,
-        float temperatura,
-        float umidade
+        Float temperatura,
+        Float umidade
 ){
 }
