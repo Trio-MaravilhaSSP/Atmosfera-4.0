@@ -1,6 +1,7 @@
-package triomaravilha.senai.atmosfera_4_0.infra.model;
+package triomaravilha.senai.atmosfera_4_0.infra.persistence.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class RegistroModel {
     private Long id;
 
     @Column(name = "id_dispositivo_fk", nullable = false)
+    @NotNull(message = "O dispositivo é obrigatório")
     private int id_dispositivo_fk;
 
     @Column
@@ -33,28 +35,27 @@ public class RegistroModel {
     private LocalDateTime data_hora;
 
     @Column
-    private float temperatura;
+    private Float temperatura;
 
     @Column
-    private float umidade;
+    private Float umidade;
 
     @Column
-    private float pressao;
+    private Float pressao;
 
     @Column
-    private float altitude;
+    private Float altitude;
 
     @Column
-    private float luminosidade;
+    private Float luminosidade;
 
     @Column
-    private float velocidade_vento;
+    private Float velocidade_vento;
 
     @Column
-    private int direcao_vento;
+    private Integer direcao_vento;
 
     @Column
-    private int intensidade_wifi;
-
+    private Integer intensidade_wifi;
 
 }

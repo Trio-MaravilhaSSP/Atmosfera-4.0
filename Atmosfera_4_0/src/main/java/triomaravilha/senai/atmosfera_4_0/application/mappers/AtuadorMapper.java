@@ -1,8 +1,7 @@
 package triomaravilha.senai.atmosfera_4_0.application.mappers;
 
 import triomaravilha.senai.atmosfera_4_0.application.dto.AtuadorResponse;
-import triomaravilha.senai.atmosfera_4_0.application.dto.DispositivoResponse;
-import triomaravilha.senai.atmosfera_4_0.infra.model.AtuadorModel;
+import triomaravilha.senai.atmosfera_4_0.infra.persistence.model.AtuadorModel;
 import triomaravilha.senai.atmosfera_4_0.interface_.dto.AtuadorRequest;
 
 public interface AtuadorMapper {

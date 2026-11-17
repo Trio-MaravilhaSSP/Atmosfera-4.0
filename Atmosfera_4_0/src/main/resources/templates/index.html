@@ -93,8 +93,7 @@
                 </div>
 
                 <div class="Option" onclick="changeWindow('wifi'), initGraficoWifi('auto', 'Auto')">
-                    <img class="Aside-Wifi" src="../static/images/icons/wifi-icon-inactive.png" 
-                        alt="Wifi_Icon" />
+                    <img class="Aside-Wifi" src="../static/images/icons/wifi-icon-inactive.png" alt="Wifi_Icon" />
                     <p class="BeautyUnderline">Wifi</p>
                 </div>
 
@@ -267,8 +266,8 @@
 
                                         <!-- Humidity -->
                                         <div class="param-item">
-                                            <img src="../static/images/drop-light.png" alt="Drop Icon"
-                                                class="icon-small" onerror="this.style.display='none'">
+                                            <img src="../static/images/drop-light.png" alt="Drop Icon" class="icon-small"
+                                                onerror="this.style.display='none'">
                                             <div class="param-inputs">
                                                 <div class="param-field">
                                                     <span>Mín (%)</span>
@@ -285,8 +284,8 @@
 
                                         <!-- Pressure -->
                                         <div class="param-item">
-                                            <img src="../static/images/gauge-light.png" alt="Gauge Icon"
-                                                class="icon-small Icon" onerror="this.style.display='none'">
+                                            <img src="../static/images/icons/gauge.png" alt="Gauge Icon" class="icon-small"
+                                                onerror="this.style.display='none'">
                                             <div class="param-inputs">
                                                 <div class="param-field">
                                                     <span>Mín (hPa)</span>
@@ -336,6 +335,24 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        
+                                        <!-- Luminosidade -->
+                                        <div class="param-item">
+                                            <img src="../static/images/icons/altitude.png" alt="Mountain Icon"
+                                                class="icon-small" onerror="this.style.display='none'">
+                                            <div class="param-inputs">
+                                                <div class="param-field">
+                                                    <span>Mín (lux)</span>
+                                                    <input type="number" id="luxMin" class="input-number" value="15"
+                                                        step="1">
+                                                </div>
+                                                <div class="param-field">
+                                                    <span>Máx (lux)</span>
+                                                    <input type="number" id="luxMax" class="input-number" value="120"
+                                                        step="1">
+                                                </div>
+                                            </div>
+                                        </div>
 
                                     </div>
                                 </div>
@@ -345,7 +362,7 @@
                                     <span class="section-label">Estado dos Atuadores (LEDs)</span>
                                     <div class="leds-grid">
                                         <div class="led-item">
-                                            <span class="led-title">LED 1</span>
+                                            <span class="led-title">Status</span>
                                             <label class="switch">
                                                 <input type="checkbox" id="led1" checked>
                                                 <span class="slider"></span>
@@ -519,30 +536,30 @@
 
                             <div class="campoFormulario">
                                 <label for="nome">Nome:</label>
-                                <input type="text" id="nome" name="nome" aria-describedby="mensagemErroNome"
-                                    autocomplete="name" required>
+                                <input type="text" id="nome" name="nome"
+                                    aria-describedby="mensagemErroNome" autocomplete="name" required>
                                 <span id="mensagemErroNome" class="mensagemErro" hidden></span>
                             </div>
 
                             <div class="campoFormulario">
                                 <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" aria-describedby="mensagemErroEmail"
-                                    autocomplete="email" required>
+                                <input type="email" id="email" name="email"
+                                    aria-describedby="mensagemErroEmail" autocomplete="email" required>
                                 <span id="mensagemErroEmail" class="mensagemErro" hidden></span>
                             </div>
 
                             <div class="campoFormulario">
                                 <label for="turma">Turma:</label>
-                                <input type="text" id="turma" name="turma" aria-describedby="mensagemErroTurma"
-                                    autocomplete="off" required>
+                                <input type="text" id="turma" name="turma"
+                                    aria-describedby="mensagemErroTurma" autocomplete="off" required>
                                 <span id="mensagemErroTurma" class="mensagemErro" hidden></span>
                             </div>
 
                             <div class="campoFormulario">
                                 <label for="senha">Senha:</label>
                                 <div class="setorSenha">
-                                    <input type="password" id="senha" name="senha" aria-describedby="mensagemErroSenha"
-                                        autocomplete="new-password" required>
+                                    <input type="password" id="senha" name="senha"
+                                        aria-describedby="mensagemErroSenha" autocomplete="new-password" required>
                                     <button type="button" id="exibirSenha" aria-label="Mostrar senha"
                                         aria-pressed="false">
                                         <img src="../static/images/icons/olho-fechado.svg" alt="">
@@ -573,7 +590,8 @@
                             <div class="campoFormulario">
                                 <label for="emailLogin">Email:</label>
                                 <input type="email" id="emailLogin" name="email"
-                                    aria-describedby="mensagemErroEmailLogin" autocomplete="email" required>
+                                    aria-describedby="mensagemErroEmailLogin"
+                                    autocomplete="email" required>
                                 <span id="mensagemErroEmailLogin" class="mensagemErro" hidden></span>
                             </div>
 
@@ -581,10 +599,10 @@
                                 <label for="senhaLogin">Senha:</label>
                                 <div class="setorSenha">
                                     <input type="password" id="senhaLogin" name="senha"
-                                        aria-describedby="mensagemErroSenhaLogin" autocomplete="current-password"
-                                        required>
-                                    <button type="button" class="exibirSenhaLogin" aria-label="Mostrar senha"
-                                        aria-pressed="false">
+                                        aria-describedby="mensagemErroSenhaLogin"
+                                        autocomplete="current-password" required>
+                                    <button type="button" class="exibirSenhaLogin"
+                                        aria-label="Mostrar senha" aria-pressed="false">
                                         <img src="../static/images/icons/olho-fechado.svg" alt="">
                                     </button>
                                 </div>
@@ -907,7 +925,7 @@
 <script src="../static/js/chartWifi.js" type="module"></script>
 <script src="../static/js/chartAlti.js" type="module"></script>
 <script src="../static/js/config/mapaInterativo.js"></script>
-<script src="../static/js/dispositivos.js" type="module"></script>
+<script src="../static/js/robo.js" type="module"></script>
 <script src="../static/js/mapa.js" type="module"></script>
 <!-- <script src="../static/js/robo.js"></script> -->
 

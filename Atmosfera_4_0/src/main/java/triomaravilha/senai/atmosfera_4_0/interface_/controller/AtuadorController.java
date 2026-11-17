@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import triomaravilha.senai.atmosfera_4_0.application.dto.AtuadorResponse;
-import triomaravilha.senai.atmosfera_4_0.domain.repository.RepositoryAtuador;
+import triomaravilha.senai.atmosfera_4_0.domain.gateway.AtuadorGateway;
 import triomaravilha.senai.atmosfera_4_0.interface_.dto.AtuadorRequest;
 
 import java.net.URI;
@@ -15,9 +15,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/atuador")
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 public class AtuadorController {
 
-    private final RepositoryAtuador atuador;
+    private final AtuadorGateway atuador;
 
     @GetMapping
     public ResponseEntity<List<AtuadorResponse>> findAll(){
@@ -35,8 +36,13 @@ public class AtuadorController {
     public ResponseEntity<AtuadorResponse> save(@RequestBody AtuadorRequest atuadorRequest){
         AtuadorResponse at = atuador.save(atuadorRequest);
         return ResponseEntity.created(
-                URI.create("/atuador" + at.id())
+                URI.create("/atuador/" + at.id())
         ).body(at);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AtuadorResponse> update(@PathVariable int id, @RequestBody AtuadorRequest atuadorRequest){
+        return ResponseEntity.ok(atuador.update(id, atuadorRequest));
     }
 
     @DeleteMapping("/{id}")

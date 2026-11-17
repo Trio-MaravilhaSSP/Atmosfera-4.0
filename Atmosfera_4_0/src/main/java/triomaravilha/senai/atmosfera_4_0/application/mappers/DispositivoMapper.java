@@ -1,14 +1,8 @@
 package triomaravilha.senai.atmosfera_4_0.application.mappers;
 
-import lombok.RequiredArgsConstructor;
 import triomaravilha.senai.atmosfera_4_0.application.dto.DispositivoResponse;
-import triomaravilha.senai.atmosfera_4_0.domain.entity.Dispositivo;
-import triomaravilha.senai.atmosfera_4_0.domain.repository.RepositoryDispositivo;
-import triomaravilha.senai.atmosfera_4_0.infra.model.DispositivoModel;
-import triomaravilha.senai.atmosfera_4_0.interface_.controller.DispositivoController;
+import triomaravilha.senai.atmosfera_4_0.infra.persistence.model.DispositivoModel;
 import triomaravilha.senai.atmosfera_4_0.interface_.dto.DispositivoRequest;
-
-import java.util.List;
 
 public interface DispositivoMapper {
 

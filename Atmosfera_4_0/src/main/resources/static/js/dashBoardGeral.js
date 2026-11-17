@@ -69,30 +69,25 @@ function formatarHoraMinuto(date, incluirMinutos = false) {
     return `${horas}:${mins}`;
 }
 
-function parseDataJson(dado) {
-    if (!dado) return null;
+function parseDataJson(dataStr) {
+    if (!dataStr) return null;
 
-    // Se passar o objeto inteiro, extrai a propriedade de data automaticamente
-    if (typeof dado === 'object') {
-        dado = dado.dataHora ?? dado.data ?? dado.timestamp ?? null;
-        if (!dado) return null;
-    }
-
-    if (dado instanceof Date) return dado;
-
-    let dataParsed = new Date(dado);
+    // Converte formato ISO "YYYY-MM-DDTHH:MM:SS" para Date de forma direta
+    // Se falhar ou estiver em outro formato com espaço, trata as partes manualmente
+    let dataParsed = new Date(dataStr);
     if (!isNaN(dataParsed.getTime())) {
         return dataParsed;
     }
 
-    const partes = String(dado).split(/[:\-\sT\/]/);
+    // Fallback manual para strings customizadas (ex: "YYYY-MM-DD HH:MM:SS" ou "DD/MM/YYYY HH:MM:SS")
+    const partes = dataStr.split(/[:\-\sT\/]/);
     return new Date(
-        partes[0],
-        partes[1] - 1,
-        partes[2],
-        partes[3] || 0,
-        partes[4] || 0,
-        partes[5] || 0
+        partes[0],          // Ano
+        partes[1] - 1,      // Mês (JavaScript conta meses de 0 a 11)
+        partes[2],          // Dia
+        partes[3] || 0,     // Hora
+        partes[4] || 0,     // Minuto
+        partes[5] || 0      // Segundo
     );
 }
 
@@ -135,7 +130,7 @@ function dbmParaPorcentagem(dbm) {
 // Função para o teste com o backend
 // Carrega os dados dos JSONs
 async function carregarTodosBancos() {
-    try {
+    if (!cacheDispositivos || !cacheAtuadores || !cacheWifi || !cacheTemp || !cacheAlti) {
         const baseUrl = "http://10.83.139.51:8080/";
         const [dispResp, atuaResp, wifiResp, tempResp, altiResp] = await Promise.all([
             fetch(baseUrl + "dispositivo"),
@@ -150,22 +145,13 @@ async function carregarTodosBancos() {
         cacheWifi = await wifiResp.json();
         cacheTemp = await tempResp.json();
         cacheAlti = await altiResp.json();
-    } catch (e) {
-        console.error("Erro ao carregar do backend, mantendo cache anterior:", e);
-        cacheDispositivos = cacheDispositivos || [];
-        cacheAtuadores = cacheAtuadores || [];
-        cacheWifi = cacheWifi || [];
-        cacheTemp = cacheTemp || [];
-        cacheAlti = cacheAlti || [];
     }
-
     return {
         bancoDispositivos: cacheDispositivos,
         bancoAtuadores: cacheAtuadores,
         bancoWifi: cacheWifi,
         bancoTemp: cacheTemp,
-        bancoAlti: cacheAlti,
-        bancoVento: []
+        bancoAlti: cacheAlti
     };
 }
 

@@ -4,13 +4,26 @@
 
 import {
     carregarDadosGerais,
-    obterIdDispositivo,
-    obterNomeDispositivo,
-    obterSinalWifi,
     parseDataJson
 } from './chartAll.js';
 
-// Função auxiliar para converter graus do vento em direção (ex: 135° -> SE)
+// Helper para obter o ID do dispositivo de forma flexível a partir de qualquer DTO
+function obterIdDispositivo(item) {
+    if (!item) return null;
+    if (typeof item === 'number' || typeof item === 'string') return item;
+    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
+        return item.dispositivo.id;
+    }
+    return item.dispositivo ?? item.dispositivoId ?? item.id_dispositivo ?? item.idDispositivoFK ?? item.id;
+}
+
+// Helper para obter o nome do dispositivo vindo do Spring Boot (nomeDispositivo ou nome)
+function obterNomeDispositivo(disp) {
+    if (!disp) return 'Dispositivo';
+    return disp.nomeDispositivo || disp.nome || `Dispositivo ${disp.id}`;
+}
+
+// Helper para converter graus do vento em direção (ex: 135° -> SE)
 function formatarDirecaoVento(graus) {
     if (graus === null || graus === undefined || isNaN(graus)) return '--';
     const direcoes = ['N', 'NE', 'L', 'SE', 'S', 'SO', 'O', 'NO'];
@@ -20,14 +33,19 @@ function formatarDirecaoVento(graus) {
 
 export async function loadCards(andarId = "0") {
     try {
-        // 1. Carrega os dados base
-        const { dispositivos, wifi, temp, alti } = await carregarDadosGerais();
+        // 1. Carrega os dados base do backend
+        const dadosGerais = await carregarDadosGerais();
+        if (!dadosGerais) {
+            console.error("❌ [ERRO MAPA] Não foi possível carregar dados em carregarDadosGerais().");
+            return;
+        }
+
+        const { dispositivos = [], wifi = [], temp = [], alti = [] } = dadosGerais;
 
         // 2. Busca os dados de vento com fallback seguro
         let vento = [];
         try {
-            const respVento = await fetch("http://10.83.139.51:8080/registro/vento");
-
+            const respVento = await fetch("http://10.83.139.51:8080/dashboard/vento");
             if (respVento.ok) {
                 vento = await respVento.json();
             }
@@ -37,61 +55,49 @@ export async function loadCards(andarId = "0") {
             console.warn("⚠️ Não foi possível carregar o endpoint do vento:", err);
         }
 
-        // 3. Filtra os dispositivos do andar (usando == para ignorar string/number)
+        // 3. Filtra os dispositivos do andar (usando == para ignorar diferenças de string/number)
         const dispositivosDoAndar = dispositivos.filter(d => d.localizacao == andarId);
 
         const planilha = document.getElementById('Jojo');
-        if (!planilha) return;
+        if (!planilha) {
+            console.error("❌ [DOM ERRO] Elemento do mapa com ID 'Jojo' não foi encontrado no HTML!");
+            return;
+        }
         planilha.innerHTML = '';
 
-        // 4. Renderiza cada dispositivo
+        // 4. Renderiza cada dispositivo nos cards do mapa
         dispositivosDoAndar.forEach(disp => {
-            // 1. Filtra medições usando os helpers seguros que tratam dataHora/data e Objetos/IDs
+            // Filtra medições verificando a FK e se possuem dataValida (dataHora ou data)
             const dadosWifi = wifi.filter(w => obterIdDispositivo(w) == disp.id && parseDataJson(w) !== null);
             const dadosTemp = temp.filter(t => obterIdDispositivo(t) == disp.id && parseDataJson(t) !== null);
             const dadosAlti = alti.filter(a => obterIdDispositivo(a) == disp.id && parseDataJson(a) !== null);
             const dadosVento = vento.filter(v => obterIdDispositivo(v) == disp.id && parseDataJson(v) !== null);
 
-            // 2. Pega os últimos registros mais recentes
+            // Pega os últimos registros de cada array
             const ultWifi = dadosWifi.length > 0 ? dadosWifi[dadosWifi.length - 1] : null;
             const ultTemp = dadosTemp.length > 0 ? dadosTemp[dadosTemp.length - 1] : null;
             const ultAlti = dadosAlti.length > 0 ? dadosAlti[dadosAlti.length - 1] : null;
             const ultVento = dadosVento.length > 0 ? dadosVento[dadosVento.length - 1] : null;
 
-            // 3. Extrai o nome do dispositivo do DTO backend (nomeDispositivo)
-            const nomeDispositivoFormatado = obterNomeDispositivo(disp);
+            // Extrai e formata os valores para exibição
+            const sinal = ultWifi ? ultWifi.intensidadeWifi : null;
+            const lux = (ultWifi && ultWifi.luminosidade !== undefined) ? `${ultWifi.luminosidade}` : '--';
+            const temperatura = ultTemp ? `${ultTemp.temperatura} °C` : '--';
+            const umidade = ultTemp ? `${ultTemp.umidade}%` : '--';
+            const pressao = ultAlti ? `${ultAlti.pressao} hPa` : '--';
+            const altitude = ultAlti ? `${ultAlti.altitude} m` : '--';
 
-            // 4. Extrai o nível do sinal usando a propriedade 'intensidadeWifi' do backend
-            const sinal = ultWifi ? obterSinalWifi(ultWifi) : null;
-
-            // 5. Extrai e formata os demais valores de medição
-            const lux = (ultWifi && ultWifi.luminosidade !== undefined && ultWifi.luminosidade !== null)
-                ? `${ultWifi.luminosidade}`
-                : '--';
-
-            const temperatura = (ultTemp && ultTemp.temperatura !== undefined && ultTemp.temperatura !== null)
-                ? `${ultTemp.temperatura} °C`
-                : '--';
-
-            const umidade = (ultTemp && ultTemp.umidade !== undefined && ultTemp.umidade !== null)
-                ? `${ultTemp.umidade}%`
-                : '--';
-
-            const pressao = (ultAlti && ultAlti.pressao !== undefined && ultAlti.pressao !== null)
-                ? `${ultAlti.pressao} hPa`
-                : '--';
-
-            const altitude = (ultAlti && ultAlti.altitude !== undefined && ultAlti.altitude !== null)
-                ? `${ultAlti.altitude} m`
-                : '--';
-
-            const veloVento = (ultVento && (ultVento.velocidade_vento !== undefined || ultVento.velocidade !== undefined))
-                ? `${ultVento.velocidade_vento ?? ultVento.velocidade} km/h`
+            // Propriedades do Vento
+            const veloVento = (ultVento && ultVento.velocidade_vento !== undefined)
+                ? `${ultVento.velocidade_vento} km/h`
                 : '--';
 
             const direVento = (ultVento && (ultVento.direcao_vento !== undefined || ultVento.direcao !== undefined))
                 ? formatarDirecaoVento(ultVento.direcao_vento ?? ultVento.direcao)
                 : '--';
+
+            // Obter o nome formatado do DTO Spring Boot
+            const nomeExibicao = obterNomeDispositivo(disp);
 
             // Cores baseadas no nível de sinal (dBm)
             let badgeColor = 'text-slate-400';
@@ -109,7 +115,7 @@ export async function loadCards(andarId = "0") {
             card.className = `planDiv h-full room-block bg-slate-800/80 border ${badgeBg} ${badgeBr} rounded-lg p-3 flex flex-col justify-between cursor-pointer hover:border-brand-accent transition-colors`;
 
             card.innerHTML = `
-                <span class="text-xs font-bold text-slate-300">${disp.nome}</span>
+                <span class="text-xs font-bold text-slate-300">${nomeExibicao}</span>
                 <div class="flex justify-between items-end">
                     <span class="text-[10px] font-mono dbmSpan ${badgeColor}">${sinalTexto}</span>
                     <span class="w-2 h-2 rounded-full dbmCircle ${badgeBg} ${badgeBr}"></span>
@@ -125,10 +131,10 @@ export async function loadCards(andarId = "0") {
                 </div>
             `;
 
-            // Clique no Card envia TODAS as métricas coletadas ao painel lateral/detalhes
+            // Clique no Card envia TODAS as métricas ao painel lateral
             card.addEventListener('click', () => {
                 selecionarSala(
-                    disp.nome,
+                    nomeExibicao,
                     sinal,
                     temperatura,
                     umidade,
@@ -144,7 +150,7 @@ export async function loadCards(andarId = "0") {
         });
 
     } catch (erro) {
-        console.error("Erro ao sincronizar os dados do mapa: ", erro);
+        console.error("💥 [EXCEÇÃO CRÍTICA] Erro ao sincronizar os dados do mapa: ", erro);
     }
 }
 
@@ -189,23 +195,22 @@ export function selecionarSala(nome, dbm, temp, umid, press, alti, lux, velo, di
     setTexto('salaDire', dire);
 
     const containerVento = document.querySelectorAll('#containerVento');
-    if (containerVento) {
-        // Verifica se a sala atual é o Pátio (case insensitive)
+    if (containerVento && containerVento.length > 0) {
         const ePatio = nome.toLowerCase().includes('pátio') || nome.toLowerCase().includes('patio');
-        const mapViewport = document.getElementById('viewport')
-        const detailViewport = document.getElementById('viewportDetail')
+        const mapViewport = document.getElementById('viewport');
+        const detailViewport = document.getElementById('viewportDetail');
 
         containerVento.forEach(i => {
             if (ePatio) {
-                mapViewport.style.height = '688px'
-                detailViewport.style.height = '688px'
-                i.classList.remove('hidden'); // Exibe os cards de vento
+                if (mapViewport) mapViewport.style.height = '688px';
+                if (detailViewport) detailViewport.style.height = '688px';
+                i.classList.remove('hidden');
             } else {
-                mapViewport.style.height = '590px'
-                detailViewport.style.height = '590px'
-                i.classList.add('hidden');    // Oculta em qualquer laboratório
+                if (mapViewport) mapViewport.style.height = '590px';
+                if (detailViewport) detailViewport.style.height = '590px';
+                i.classList.add('hidden');
             }
-        })
+        });
     }
 
     const elConexao = document.getElementById('salaConexao');
@@ -223,18 +228,18 @@ export function selecionarSala(nome, dbm, temp, umid, press, alti, lux, velo, di
 }
 
 export function simularRecarregamento(event) {
-    const btn = event.target;
-    if (!btn) return;
-
-    btn.innerText = "Sincronizando...";
+    const btn = event ? event.target : null;
+    if (btn) btn.innerText = "Sincronizando...";
 
     loadCards("0").then(() => {
-        setTimeout(() => {
-            btn.innerText = "Sincronizar Dados";
-        }, 800);
+        if (btn) {
+            setTimeout(() => {
+                btn.innerText = "Sincronizar Dados";
+            }, 800);
+        }
     });
 }
 
-// Expõe globalmente para botões HTML (ex: onclick="simularRecarregamento(event)")
+// Expõe globalmente para chamadas via atributos HTML (onclick)
 window.loadCards = loadCards;
 window.simularRecarregamento = simularRecarregamento;

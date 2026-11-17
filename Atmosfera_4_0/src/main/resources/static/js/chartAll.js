@@ -8,6 +8,8 @@ let cache = {
     alti: null
 };
 
+/*
+// Função para teste local sem o backend
 export async function carregarDadosGerais() {
     console.log("🔄 Executando carregarDadosGerais...");
 
@@ -65,56 +67,53 @@ export async function carregarDadosGerais() {
         return cache;
     }
     return cache;
-}
+}*/
 
-// Extrai o ID do dispositivo com suporte a objeto ou valor primitivo
-export function obterIdDispositivo(item) {
-    if (!item) return null;
-    if (typeof item === 'number' || typeof item === 'string') return item;
-    if (typeof item.dispositivo === 'object' && item.dispositivo !== null) {
-        return item.dispositivo.id;
+// Função para o teste com o backend
+export async function carregarDadosGerais() {
+    if (!cache.dispositivos || !cache.wifi || !cache.temp || !cache.alti) {
+        const baseUrl = "http://10.83.139.51:8080/";
+        const [disp, atua, wifi, temp, alti] = await Promise.all([
+            fetch(baseUrl + "dispositivo").then(r => r.json()),
+            fetch(baseUrl + "atuador").then(r => r.json()),
+            fetch(baseUrl + "dashboard/sinal").then(r => r.json()),
+            fetch(baseUrl + "dashboard/temperatura").then(r => r.json()),
+            fetch(baseUrl + "dashboard/altitude").then(r => r.json())
+        ]);
+
+        cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
     }
-    return item.dispositivo ?? item.dispositivoId ?? item.id_dispositivo ?? item.id;
+    return cache;
 }
 
-// Extrai o nome do dispositivo respeitando a resposta do Java (nomeDispositivo)
-export function obterNomeDispositivo(disp) {
-    if (!disp) return 'Dispositivo';
-    return disp.nomeDispositivo || disp.nome || `Dispositivo ${disp.id}`;
-}
-
-// Extrai o nível do sinal com fallback seguro (intensidadeWifi ou sinal)
-export function obterSinalWifi(item) {
-    if (!item) return -90;
-    return item.intensidadeWifi ?? item.sinal ?? -90;
-}
-
-// Realiza o parse flexível da data (suporta dataHora ou data)
 export function parseDataJson(dado) {
     if (!dado) return null;
 
-    if (typeof dado === 'object' && !(dado instanceof Date)) {
-        dado = dado.dataHora ?? dado.data ?? dado.timestamp ?? null;
+    // Se passou o objeto inteiro (ex: item), extrai a propriedade de data automaticamente
+    if (typeof dado === 'object') {
+        dado = dado.dataHora ?? dado.data ?? dado.data_hora ?? null;
         if (!dado) return null;
     }
 
+    // Se já for uma instância de Date
     if (dado instanceof Date) return dado;
 
+    // Converte formato ISO nativamente ("2026-10-09T15:40:04")
     const dataParsed = new Date(dado);
-    if (!isNaN(dataParsed.getTime())) return dataParsed;
-
-    const partes = String(dado).split(/[:\-\sT\/]/);
-    if (partes.length >= 3) {
-        return new Date(
-            partes[0],
-            (partes[1] || 1) - 1,
-            partes[2] || 1,
-            partes[3] || 0,
-            partes[4] || 0,
-            partes[5] || 0
-        );
+    if (!isNaN(dataParsed.getTime())) {
+        return dataParsed;
     }
-    return null;
+
+    // Fallback manual para formatos sem 'T' (ex: "2026-10-09 15:40:04")
+    const partes = String(dado).split(/[:\-\sT\/]/);
+    return new Date(
+        partes[0],
+        partes[1] - 1,
+        partes[2],
+        partes[3] || 0,
+        partes[4] || 0,
+        partes[5] || 0
+    );
 }
 
 export function arredondarHoras(date) {
