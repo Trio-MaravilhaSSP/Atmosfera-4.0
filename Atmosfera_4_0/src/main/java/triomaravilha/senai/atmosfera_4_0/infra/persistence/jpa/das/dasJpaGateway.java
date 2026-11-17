@@ -91,7 +91,7 @@ public class dasJpaGateway implements DashGateway {
                 r.dispositivo(),
                 r.data(),
                 r.luminosidade(),
-                (int) r.sinal()
+                r.sinal()
 
         )).toList();
     }
@@ -119,7 +119,7 @@ public class dasJpaGateway implements DashGateway {
                 r.dispositivo(),
                 r.data(),
                 r.velVento(),
-                (int) r.sinal()
+                r.sinal()
 
         )).toList();
     }

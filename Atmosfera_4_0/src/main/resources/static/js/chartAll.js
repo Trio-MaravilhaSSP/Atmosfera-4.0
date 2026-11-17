@@ -1,6 +1,5 @@
 // chartAll.js
 
-// Caches globais compartilhados no módulo
 let cache = {
     dispositivos: null,
     atuadores: null,
@@ -12,17 +11,60 @@ let cache = {
 /*
 // Função para teste local sem o backend
 export async function carregarDadosGerais() {
-    if (!cache.dispositivos || !cache.wifi || !cache.temp || !cache.alti) {
-        const baseUrl = "http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/";
+    console.log("🔄 Executando carregarDadosGerais...");
+
+    try {
+        const baseUrl = "http://10.83.139.51:8080";
+
         const [disp, atua, wifi, temp, alti] = await Promise.all([
-            fetch(baseUrl + "dispositivo.json").then(r => r.json()),
-            fetch(baseUrl + "atuador.json").then(r => r.json()),
-            fetch(baseUrl + "wifi.json").then(r => r.json()),
-            fetch(baseUrl + "temp.json").then(r => r.json()),
-            fetch(baseUrl + "alti.json").then(r => r.json())
+            fetch(`${baseUrl}/dispositivo`).then(r => {
+                if (!r.ok) throw new Error(`Erro /dispositivo: ${r.status}`);
+                return r.json();
+            }),
+            fetch(`${baseUrl}/atuador`).then(r => {
+                if (!r.ok) throw new Error(`Erro /atuador: ${r.status}`);
+                return r.json();
+            }),
+            fetch(`${baseUrl}/dashboard/sinal`).then(r => {
+                if (!r.ok) throw new Error(`Erro /dashboard/sinal: ${r.status}`);
+                return r.json();
+            }),
+            fetch(`${baseUrl}/dashboard/temperatura`).then(r => {
+                if (!r.ok) throw new Error(`Erro /dashboard/temperatura: ${r.status}`);
+                return r.json();
+            }),
+            fetch(`${baseUrl}/dashboard/altitude`).then(r => {
+                if (!r.ok) throw new Error(`Erro /dashboard/altitude: ${r.status}`);
+                return r.json();
+            })
         ]);
 
+        console.log("✅ Dados da API recebidos com sucesso:", { disp, atua, wifi, temp, alti });
         cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
+        return cache;
+
+    } catch (e) {
+        console.error("❌ Falha na requisição principal:", e);
+
+        if (!cache.dispositivos) {
+            console.warn("⚠️ Buscando dados nos arquivos JSON locais...");
+            const baseUrlLocal = "http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/";
+
+            try {
+                const [disp, atua, wifi, temp, alti] = await Promise.all([
+                    fetch(baseUrlLocal + "dispositivo.json").then(r => r.json()),
+                    fetch(baseUrlLocal + "atuador.json").then(r => r.json()),
+                    fetch(baseUrlLocal + "wifi.json").then(r => r.json()),
+                    fetch(baseUrlLocal + "temp.json").then(r => r.json()),
+                    fetch(baseUrlLocal + "alti.json").then(r => r.json())
+                ]);
+                cache = { dispositivos: disp, atuadores: atua, wifi, temp, alti };
+            } catch (errLocal) {
+                console.error("❌ Erro ao carregar ficheiros locais:", errLocal);
+                cache = { dispositivos: [], atuadores: [], wifi: [], temp: [], alti: [] };
+            }
+        }
+        return cache;
     }
     return cache;
 }*/
@@ -100,16 +142,7 @@ export function dbmParaPorcentagem(dbm) {
     return ((dbm - minDbm) / (maxDbm - minDbm)) * 100;
 }
 
-// chartAll.js
-
-/**
- * Preenche o elemento HTML do Dropdown com os dispositivos vindos do dispositivo.json
- * @param {Array} listaDispositivos - Array de objetos do dispositivo.json
- * @param {String} nomeFuncaoCallback - Nome da função JS a ser chamada no onclick (ex: 'initGraficoWifi')
- */
-// chartAll.js
 export function popularDropdownDispositivos(listaDispositivos, nomeFuncaoCallback, seletorContainer) {
-    // Procura APENAS o dropdown do card específico
     const dropOptions = document.querySelector(seletorContainer);
     if (!dropOptions || !listaDispositivos) return;
 
@@ -120,7 +153,7 @@ export function popularDropdownDispositivos(listaDispositivos, nomeFuncaoCallbac
     `;
 
     listaDispositivos.forEach(dispositivo => {
-        const nomeFormatado = dispositivo.nome || `Dispositivo ${dispositivo.id}`;
+        const nomeFormatado = obterNomeDispositivo(dispositivo);
 
         htmlOptions += `
             <div class="option" onclick="${nomeFuncaoCallback}('${dispositivo.id}', '${nomeFormatado}')">

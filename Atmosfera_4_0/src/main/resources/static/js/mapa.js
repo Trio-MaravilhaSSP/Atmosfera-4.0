@@ -50,6 +50,8 @@ export async function loadCards(andarId = "0") {
                 vento = await respVento.json();
             }
         } catch (err) {
+            const respVento = await fetch("http://127.0.0.1:5500/Atmosfera_4_0/src/main/resources/static/js/json/vento.json");
+
             console.warn("⚠️ Não foi possível carregar o endpoint do vento:", err);
         }
 
@@ -90,8 +92,8 @@ export async function loadCards(andarId = "0") {
                 ? `${ultVento.velocidade_vento} km/h`
                 : '--';
 
-            const direVento = (ultVento && ultVento.direcao_vento !== undefined)
-                ? formatarDirecaoVento(ultVento.direcao_vento)
+            const direVento = (ultVento && (ultVento.direcao_vento !== undefined || ultVento.direcao !== undefined))
+                ? formatarDirecaoVento(ultVento.direcao_vento ?? ultVento.direcao)
                 : '--';
 
             // Obter o nome formatado do DTO Spring Boot

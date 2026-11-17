@@ -7,13 +7,13 @@ public record DashResponse(
         int dispositivo,
         Long sala,
         LocalDateTime data,
-        float temperatura,
-        float umidade,
-        float sinal,
-        float altitude,
-        float luminosidade,
-        float pressao,
-        float velVento,
-        int direcaoVento
+        Float temperatura,
+        Float umidade,
+        Integer sinal,
+        Float altitude,
+        Float luminosidade,
+        Float pressao,
+        Float velVento,
+        Integer direcaoVento
 ) {
 }
