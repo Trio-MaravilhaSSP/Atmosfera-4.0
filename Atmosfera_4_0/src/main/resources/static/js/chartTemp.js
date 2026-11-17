@@ -8,7 +8,9 @@ import {
     arredondarHoras,
     formatarHoraMinuto,
     formatarDataHoraCompleta,
-    popularDropdownDispositivos
+    popularDropdownDispositivos,
+    obterIdDispositivo,
+    obterNomeDispositivo
 } from './chartAll.js';
 
 let graficoTendencia = null;
@@ -154,7 +156,7 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
                         borderColor: '#ff828a',
                         backgroundColor: 'rgba(255, 130, 138, 0.15)',
                         borderWidth: 2,
-                        tension: 0.3,
+                        tension: 0.1,
                         fill: true,
                         yAxisID: 'yTemp',
                         spanGaps: true
@@ -165,7 +167,7 @@ export async function atualizarGraficoTemp(dispositivoIdOuObjeto, modoAuto = fal
                         borderColor: '#42a5f5',
                         backgroundColor: 'rgba(66, 165, 245, 0.15)',
                         borderWidth: 2,
-                        tension: 0.3,
+                        tension: 0.1,
                         fill: true,
                         yAxisID: 'yUmid',
                         spanGaps: true

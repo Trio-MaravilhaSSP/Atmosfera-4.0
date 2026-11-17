@@ -8,10 +8,11 @@ import {
     arredondarHoras,
     formatarHoraMinuto,
     formatarDataHoraCompleta,
-    popularDropdownDispositivos
+    popularDropdownDispositivos,
+    obterIdDispositivo,
+    obterNomeDispositivo
 } from './chartAll.js';
 
-// Instância local do gráfico do Chart.js
 let graficoAltPress = null;
 let intervalAutoAltPress = null;
 let indiceDispositivoAutoAltPress = 0;
@@ -158,7 +159,6 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
         const dadosAltitude = slots.map(s => s.altitude);
         const dadosPressao = slots.map(s => s.pressao);
 
-        // --- 6. RENDERIZAÇÃO DO GRÁFICO DE BARRAS DUPLAS ---
         const ctxAltPress = document.getElementById('graficoAltitude');
         if (!ctxAltPress) {
             console.error("❌ [DOM ERRO] Canvas com ID 'graficoAltitude' não foi encontrado no HTML!");
@@ -243,9 +243,6 @@ export async function atualizarGraficoAltPress(dispositivoIdOuObjeto, modoAuto =
     }
 }
 
-// =============================================================
-// 2. INICIALIZADOR PRINCIPAL (DROPDOWN / MODO AUTO)
-// =============================================================
 export async function initGraficoAlt(dispositivoId = 'auto', exibir = 'Auto') {
     try {
         if (intervalAutoAltPress) {

@@ -21,8 +21,15 @@
         box-shadow: var(--box-shadow);
         background: var(--cor-fundo-card);
 
+
+
         &:hover {
             transform: scale(1.05);
         }
+    }
+
+    * {
+        color: var(--cor-texto-comum) !important;
+        color: #ccc !important;
     }
 }

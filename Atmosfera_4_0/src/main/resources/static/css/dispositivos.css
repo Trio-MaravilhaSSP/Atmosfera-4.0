@@ -11,32 +11,6 @@
 }
 
 /* ==========================================
-           HEADER SECTION
-           ========================================== */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 2px dashed #94a3b8;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.header-title {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: #0f172a;
-}
-
-.header-subtitle {
-    font-size: 0.95rem;
-    color: #475569;
-    font-weight: 600;
-}
-
-/* ==========================================
            MAIN GRID LAYOUT (2 COLUMNS)
            ========================================== */
 .dashboard-grid {
@@ -178,10 +152,7 @@
            LED TOGGLES SECTION
            ========================================== */
 .leds-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    text-align: center;
+    display: flex;
 }
 
 @media (max-width: 500px) {
@@ -345,17 +316,18 @@ input:checked+.slider:before {
     border: 1.5px dashed #94a3b8;
     border-radius: 8px;
     padding: 16px 12px;
+    
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
-    justify-content: space-between;
-    min-height: 140px;
+    justify-content: space-around;
+    min-height: 70px;
 }
 
 .card-header {
     display: flex;
     align-items: center;
-    width: 100%;
+    width: 30%;
     margin-bottom: 12px;
 }
 
@@ -363,6 +335,13 @@ input:checked+.slider:before {
     font-size: 0.95rem;
     font-weight: 700;
     color: #334155;
+}
+
+.card-content {
+    width: max-content;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .card-value {
